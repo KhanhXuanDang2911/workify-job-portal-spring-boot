@@ -1,0 +1,52 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /workify
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 2000MB
+      max-request-size: 2000MB
+  application:
+    name: Workify
+  messages:
+    basename: messages
+    encoding: UTF-8
+  mail:
+    from: ${GMAIL_USERNAME}
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+azure:
+  storage:
+    connection-string: ${AZURE_STORAGE_CONNECTION_STRING}
+    container-name: ${AZURE_STORAGE_CONTAINER_NAME}
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  refresh-key: ${JWT_REFRESH_KEY}
+  reset-key: ${JWT_RESET_KEY}
+  confirm-key: ${JWT_CONFIRM_KEY}
+  create-password-key: ${JWT_CREATE_PASSWORD_KEY}
+  expiry-hour: ${JWT_EXPIRY_HOUR:1}
+  expiry-day: ${JWT_EXPIRY_DAY:3}
+  expiry-minute: ${JWT_EXPIRY_MINUTE:30}
+
+oauth2:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_REDIRECT_URI}
+  linkedin:
+    client-id: ${LINKEDIN_CLIENT_ID}
+    client-secret: ${LINKEDIN_CLIENT_SECRET}
+    redirect-uri: ${LINKEDIN_REDIRECT_URI}
