@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
         if (request.getGender() != null) {
             user.setGender(Gender.getGenderFromName(request.getGender()));
         }
-        if (request.getPassword() != null){
+        if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         user.setNoPassword(false);
@@ -233,12 +233,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         User user = findUserByEmail(request.getEmail());
         if (!user.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(user);
+        mailService.sendResetLink(user, isMobile);
     }
 
     @Override
@@ -258,7 +258,8 @@ public class UserServiceImpl implements UserService {
     public TokenResponse<UserResponse> createPassword(String token, UserCreationPasswordRequest request) {
         String email = jwtService.extractEmail(token, TokenType.CREATE_PASSWORD_TOKEN);
         User user = findUserByEmail(email);
-        if (StringUtils.isBlank(user.getPassword()) && user.getNoPassword() && jwtService.isTokenValid(token, user, TokenType.CREATE_PASSWORD_TOKEN)) {
+        if (StringUtils.isBlank(user.getPassword()) && user.getNoPassword()
+                && jwtService.isTokenValid(token, user, TokenType.CREATE_PASSWORD_TOKEN)) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setNoPassword(false);
             userRepository.save(user);
@@ -285,7 +286,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse signUp(UserRequest request) throws MessagingException, UnsupportedEncodingException {
+    public UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email {}", request.getEmail());
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -304,7 +305,7 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
-        mailService.sendConfirmLink(user);
+        mailService.sendConfirmLink(user, isMobile);
         UserResponse response = userMapper.toDTO(user);
         response.setRole(user.getRole().getRole());
         log.info("User signed up successfully with id = {}", user.getId());

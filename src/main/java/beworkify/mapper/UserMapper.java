@@ -5,7 +5,7 @@ import beworkify.dto.response.UserResponse;
 import beworkify.entity.User;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", uses = {ProvinceMapper.class, DistrictMapper.class})
+@Mapper(componentModel = "spring", uses = { ProvinceMapper.class, DistrictMapper.class })
 public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)

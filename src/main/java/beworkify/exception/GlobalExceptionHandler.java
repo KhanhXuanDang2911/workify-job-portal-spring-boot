@@ -30,7 +30,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -81,7 +80,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<ErrorResponse> handleMissingRequestHeader(MissingRequestHeaderException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleMissingRequestHeader(MissingRequestHeaderException ex,
+            WebRequest request) {
         String headerName = ex.getHeaderName();
         String message = messageSource.getMessage("error.missing.header",
                 new Object[] { headerName },
@@ -100,7 +100,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<ErrorResponse> handleMissingRequestPart(MissingServletRequestPartException e,
-                                                             WebRequest request) {
+            WebRequest request) {
         String message = messageSource.getMessage("error.validation.params.missing",
                 new Object[] { e.getRequestPartName() },
                 LocaleContextHolder.getLocale());
@@ -135,12 +135,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request, null);
     }
 
-//    @ExceptionHandler(FeignException.BadRequest.class)
-//    public ResponseEntity<?> handleFeignBadRequest(FeignException.BadRequest ex, WebRequest request) {
-//        String message = messageSource.getMessage("error.oauth2", null,
-//                LocaleContextHolder.getLocale());
-//        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request, null);
-//    }
+    @ExceptionHandler(FeignException.BadRequest.class)
+    public ResponseEntity<?> handleFeignBadRequest(FeignException.BadRequest ex,
+            WebRequest request) {
+        String message = messageSource.getMessage("error.oauth2", null,
+                LocaleContextHolder.getLocale());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request, null);
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException e, WebRequest request) {
@@ -196,14 +197,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, message, request, null);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleInternalError(Exception e,
-//            WebRequest request) {
-//        String message = messageSource.getMessage("error.internal.server", null,
-//                LocaleContextHolder.getLocale());
-//        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request,
-//                null);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleInternalError(Exception e,
+            WebRequest request) {
+        String message = messageSource.getMessage("error.internal.server", null,
+                LocaleContextHolder.getLocale());
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request,
+                null);
+    }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> handleAppError(AppException e, WebRequest request) {
@@ -218,7 +219,6 @@ public class GlobalExceptionHandler {
                         .errors(null)
                         .build());
     }
-
 
     private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus status, String message, WebRequest request,
             List<ErrorResponse.FieldError> errors) {

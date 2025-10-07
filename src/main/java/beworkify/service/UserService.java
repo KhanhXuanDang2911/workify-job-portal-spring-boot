@@ -1,6 +1,5 @@
 package beworkify.service;
 
-
 import beworkify.dto.request.*;
 import beworkify.dto.response.PageResponse;
 import beworkify.dto.response.TokenResponse;
@@ -14,11 +13,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public interface UserService {
-    
 
     UserResponse getUserById(Long id);
 
-    UserResponse signUp(UserRequest request) throws MessagingException, UnsupportedEncodingException;
+    UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void deleteUser(Long id);
 
@@ -26,7 +24,7 @@ public interface UserService {
 
     @Transactional(readOnly = true)
     PageResponse<List<UserResponse>> getUsersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
-                                                                              List<String> sorts, String keyword);
+            List<String> sorts, String keyword);
 
     UserResponse createUser(UserRequest request, MultipartFile avatar);
 
@@ -40,7 +38,7 @@ public interface UserService {
 
     void updatePassword(Long userId, UpdatePasswordRequest request);
 
-    void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException;
+    void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void resetPassword(String token, ResetPasswordRequest request);
 

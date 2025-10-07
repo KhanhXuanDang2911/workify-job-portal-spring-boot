@@ -8,12 +8,13 @@ public enum Gender {
     OTHER("OTHER");
 
     private final String name;
-    Gender(String name){
+
+    Gender(String name) {
         this.name = name;
     }
 
-    public static Gender getGenderFromName(String name){
-        for (Gender gender : Gender.values()){
+    public static Gender getGenderFromName(String name) {
+        for (Gender gender : Gender.values()) {
             if (gender.name.equalsIgnoreCase(name))
                 return gender;
         }

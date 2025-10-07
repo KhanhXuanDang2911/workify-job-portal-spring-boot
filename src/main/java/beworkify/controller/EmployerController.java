@@ -1,6 +1,7 @@
 package beworkify.controller;
 
 import beworkify.dto.request.EmployerRequest;
+import beworkify.dto.request.EmployerWebsiteUpdateRequest;
 import beworkify.dto.request.UpdatePasswordRequest;
 import beworkify.dto.response.EmployerResponse;
 import beworkify.dto.response.PageResponse;
@@ -56,14 +57,14 @@ public class EmployerController {
                         @ValueOfEnum(enumClass = LevelCompanySize.class, message = "{error.invalid.level.company.size.enum}", required = false) @RequestParam(required = false) String companySize,
                         @Min(value = 1, message = "{validation.province.invalid}") @RequestParam(required = false) Long provinceId) {
                 LevelCompanySize levelCompanySize = null;
-                if (StringUtils.isNotBlank(companySize)){
+                if (StringUtils.isNotBlank(companySize)) {
                         levelCompanySize = LevelCompanySize.fromLabel(companySize);
                 }
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 boolean isAdmin = AppUtils.hasRole(authentication, UserRole.ADMIN.getName());
                 PageResponse<List<EmployerResponse>> response = employerService
-                        .getEmployersWithPaginationAndKeywordAndSorts(pageNumber, pageSize, sorts, keyword,
-                                levelCompanySize, provinceId, isAdmin);
+                                .getEmployersWithPaginationAndKeywordAndSorts(pageNumber, pageSize, sorts, keyword,
+                                                levelCompanySize, provinceId, isAdmin);
 
                 String message = messageSource.getMessage("employer.get.many.successfully", null,
                                 LocaleContextHolder.getLocale());
@@ -91,9 +92,12 @@ public class EmployerController {
 
         @PostMapping("/sign-up")
         public ResponseEntity<ResponseData<EmployerResponse>> signUpEmployer(
+                @RequestHeader(value = "User-Agent") String userAgent,
                         @RequestBody @Validated({ OnCreate.class, Default.class }) EmployerRequest request)
                         throws MessagingException, UnsupportedEncodingException {
-                EmployerResponse response = employerService.signUpEmployer(request);
+                log.info("User-Agent: {}", userAgent);
+                boolean isMobile = AppUtils.isMobile(userAgent);
+                EmployerResponse response = employerService.signUpEmployer(request, isMobile);
                 String message = messageSource.getMessage("employer.sign.up.successfully", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
@@ -171,12 +175,23 @@ public class EmployerController {
         @PatchMapping("/me/password")
         public ResponseEntity<ResponseData<Void>> changePassword(@Valid @RequestBody UpdatePasswordRequest request) {
                 Long employerId = AppUtils.getEmployerIdFromSecurityContext();
-                log.info("Request: Update password for user ID = {}", employerId);
+                log.info("Request: Update password for employer ID = {}", employerId);
                 employerService.updatePassword(employerId, request);
                 log.info("Response: password updated");
                 String message = messageSource.getMessage("user.password.update.success", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.noData(HttpStatus.OK, message);
+        }
+
+        @PreAuthorize("hasRole('EMPLOYER')")
+        @PatchMapping("/me/website-urls")
+        public ResponseEntity<ResponseData<EmployerResponse>> updateWebsiteUrls(
+                        @RequestBody EmployerWebsiteUpdateRequest request) {
+                Long employerId = AppUtils.getEmployerIdFromSecurityContext();
+                EmployerResponse response = employerService.updateWebsiteUrls(employerId, request);
+                String message = messageSource.getMessage("employer.update.website.success", null,
+                                LocaleContextHolder.getLocale());
+                return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }
 
 }

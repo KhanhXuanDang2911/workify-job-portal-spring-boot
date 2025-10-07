@@ -39,7 +39,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendConfirmLink(UserDetails recipient) throws MessagingException, UnsupportedEncodingException {
+    public void sendConfirmLink(UserDetails recipient, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         String userEmail = null;
         String fullName = null;
 
@@ -52,8 +52,13 @@ public class MailServiceImpl implements MailService {
 
             String confirmToken = jwtService.generateToken(recipient,
                     TokenType.CONFIRM_TOKEN, 24);
-            properties.put("confirmationUrl",
-                    String.format("http://localhost:5173/verify-email?token=%s", confirmToken));
+            if (!isMobile){
+                properties.put("confirmationUrl",
+                        String.format("http://localhost:5173/verify-email?token=%s", confirmToken));
+            } else {
+                properties.put("confirmationUrl",
+                        String.format("workify://verify-email?token=%s", confirmToken));
+            }
             if (recipient instanceof User) {
                 userEmail = ((User) recipient).getEmail();
                 fullName = ((User) recipient).getFullName();
@@ -95,7 +100,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendResetLink(UserDetails recipient) throws MessagingException, UnsupportedEncodingException {
+    public void sendResetLink(UserDetails recipient, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         String userEmail = null;
         String fullName = null;
         try {
@@ -107,8 +112,13 @@ public class MailServiceImpl implements MailService {
 
             String resetToken = jwtService.generateToken(recipient,
                     TokenType.RESET_TOKEN, 1);
-            properties.put("resetUrl",
-                    String.format("http://localhost:5173/reset-password?token=%s", resetToken));
+            if (!isMobile){
+                properties.put("resetUrl",
+                        String.format("http://localhost:5173/reset-password?token=%s", resetToken));
+            } else {
+                properties.put("resetUrl",
+                        String.format("workify://reset-password?token=%s", resetToken));
+            }
             if (recipient instanceof User) {
                 userEmail = ((User) recipient).getEmail();
                 fullName = ((User) recipient).getFullName();

@@ -98,4 +98,9 @@ public class AppUtils {
         }
         return false;
     }
+
+    public static boolean isMobile(String userAgent) {
+        String ua = userAgent.toLowerCase();
+        return ua.contains("android") || ua.contains("iphone") || ua.contains("ipad") || ua.contains("mobile");
+    }
 }

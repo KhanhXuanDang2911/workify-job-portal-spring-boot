@@ -46,8 +46,6 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.expiry-minute}")
     private long expiryMinute;
 
-
-
     @Value("${spring.application.name}")
     private String provider;
 

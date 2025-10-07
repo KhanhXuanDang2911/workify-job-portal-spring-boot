@@ -53,7 +53,8 @@ public class ProvinceDistrictInitializer implements CommandLineRunner {
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            List<ProvinceInput> provinces = mapper.readValue(response.getBody(), new TypeReference<>() {});
+            List<ProvinceInput> provinces = mapper.readValue(response.getBody(), new TypeReference<>() {
+            });
 
             for (ProvinceInput p : provinces) {
                 if (p.code == null)
@@ -109,7 +110,8 @@ public class ProvinceDistrictInitializer implements CommandLineRunner {
     }
 
     private static String toEnglishName(String vietnamese) {
-        if (vietnamese == null) return null;
+        if (vietnamese == null)
+            return null;
         String normalized = Normalizer.normalize(vietnamese, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         String withoutAccent = pattern.matcher(normalized).replaceAll("");

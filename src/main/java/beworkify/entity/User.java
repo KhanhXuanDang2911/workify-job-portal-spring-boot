@@ -30,6 +30,7 @@ public class User extends BaseEntity implements UserDetails {
     private String phoneNumber;
     private String password;
     private String avatarUrl;
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private StatusUser status;
     private LocalDate birthDate;

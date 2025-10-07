@@ -49,7 +49,8 @@ public class UserController {
             @RequestParam(defaultValue = "") String keyword) {
         log.info("Request: Get users with pageNumber={}, pageSize={}, sorts={}, keyword={}", pageNumber, pageSize,
                 sorts, keyword);
-        PageResponse<List<UserResponse>> response = userService.getUsersWithPaginationAndKeywordAndSorts(pageNumber, pageSize,
+        PageResponse<List<UserResponse>> response = userService.getUsersWithPaginationAndKeywordAndSorts(pageNumber,
+                pageSize,
                 sorts, keyword);
         log.info("Response: {} users fetched (page {}/{})", response.getNumberOfElements(), response.getPageNumber(),
                 response.getTotalPages());
@@ -68,7 +69,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(consumes= MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseData<UserResponse>> createUser(
             @RequestPart(value = "avatar", required = false) @ValidImageFile(required = false, message = "image.file.invalid") MultipartFile avatar,
             @RequestPart("user") @Validated({ Default.class, OnAdmin.class, OnCreate.class }) UserRequest request) {
@@ -79,9 +80,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping(value = "/{id}",
-            consumes= MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseData<UserResponse>> updateUser(
             @Min(value = 1, message = "{validation.id.min}}") @PathVariable Long id,
             @RequestPart(value = "avatar", required = false) @ValidImageFile(required = false, message = "image.file.invalid") MultipartFile avatar,
@@ -104,11 +103,15 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<ResponseData<UserResponse>> signUp(@RequestBody @Validated({Default.class, OnCreate.class}) UserRequest request) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<ResponseData<UserResponse>> signUp(
+            @RequestHeader("User-Agent") String userAgent,
+            @RequestBody @Validated({ Default.class, OnCreate.class }) UserRequest request)
+            throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email: {}", request.getEmail());
-        UserResponse response = userService.signUp(request);
+        boolean isMobile = AppUtils.isMobile(userAgent);
+        UserResponse response = userService.signUp(request, isMobile);
         String message = messageSource.getMessage("user.sign.up.successfully", null, LocaleContextHolder.getLocale());
-        return ResponseBuilder.withData(HttpStatus.OK, message , response);
+        return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
 
     @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
@@ -137,7 +140,7 @@ public class UserController {
     @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
     @PatchMapping("/me/avatar")
     public ResponseEntity<ResponseData<UserResponse>> updateAvatar(
-            @RequestPart(value = "avatar") @ValidImageFile(message = "image.file.invalid")  MultipartFile avatar) {
+            @RequestPart(value = "avatar") @ValidImageFile(message = "image.file.invalid") MultipartFile avatar) {
         Long userId = AppUtils.getUserIdFromSecurityContext();
         log.info("Request: Update avatar for user with id {}", userId);
         UserResponse response = userService.updateAvatar(userId, avatar);
@@ -157,6 +160,5 @@ public class UserController {
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
-
 
 }

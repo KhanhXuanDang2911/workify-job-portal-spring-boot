@@ -2,15 +2,11 @@ package beworkify.controller;
 
 import beworkify.dto.request.DistrictRequest;
 import beworkify.dto.response.DistrictResponse;
-import beworkify.dto.response.PageResponse;
 import beworkify.dto.response.ResponseData;
 import beworkify.service.DistrictService;
 import beworkify.util.ResponseBuilder;
-import beworkify.validation.OnCreate;
-import beworkify.validation.OnUpdate;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -20,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

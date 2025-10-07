@@ -106,7 +106,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
-    public Province findProvinceById(Long id){
+    public Province findProvinceById(Long id) {
         return repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("province.not.found", null,
                     LocaleContextHolder.getLocale());

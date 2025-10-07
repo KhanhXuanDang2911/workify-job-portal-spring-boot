@@ -43,7 +43,6 @@ public class DistrictServiceImpl implements DistrictService {
         });
         District entity = mapper.toEntity(request);
         entity.setProvince(province);
-        // generate slug from name
         entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
         repository.save(entity);
         return mapper.toDTO(entity);
@@ -73,7 +72,6 @@ public class DistrictServiceImpl implements DistrictService {
         }
 
         mapper.updateEntityFromRequest(request, entity);
-        // update slug from name
         entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
         repository.save(entity);
         return mapper.toDTO(entity);
@@ -98,9 +96,8 @@ public class DistrictServiceImpl implements DistrictService {
         return mapper.toDTO(entity);
     }
 
-
     @Override
-    public District findDistrictById(Long id){
+    public District findDistrictById(Long id) {
         return repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("district.not.found", null,
                     LocaleContextHolder.getLocale());
