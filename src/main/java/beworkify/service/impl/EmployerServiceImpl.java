@@ -1,15 +1,11 @@
 package beworkify.service.impl;
 
-import beworkify.dto.request.EmployerRequest;
-import beworkify.dto.request.ForgotPasswordRequest;
-import beworkify.dto.request.ResetPasswordRequest;
-import beworkify.dto.request.UpdatePasswordRequest;
+import beworkify.dto.request.*;
 import beworkify.dto.response.EmployerResponse;
 import beworkify.dto.response.PageResponse;
 import beworkify.entity.District;
 import beworkify.entity.Employer;
 import beworkify.entity.Province;
-import beworkify.entity.User;
 import beworkify.enumeration.ErrorCode;
 import beworkify.enumeration.TokenType;
 import beworkify.exception.AppException;
@@ -62,7 +58,8 @@ public class EmployerServiceImpl implements EmployerService {
         List<String> whiteListFieldSorts = List.of("companyName", "companySize", "status", "email", "createdAt",
                 "updatedAt", "province.name", "district.name");
         Pageable pageable = AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);
-        Page<Employer> page = employerRepository.searchEmployers(keyword.toLowerCase(), companySize, provinceId, isAdmin,
+        Page<Employer> page = employerRepository.searchEmployers(keyword.toLowerCase(), companySize, provinceId,
+                isAdmin,
                 pageable);
 
         List<EmployerResponse> items = page.getContent().stream().map(employerMapper::toDTO).toList();
@@ -76,7 +73,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public EmployerResponse signUpEmployer(EmployerRequest request)
+    public EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
             throws MessagingException, UnsupportedEncodingException {
         existsByEmail(request.getEmail());
         Province province = provinceService.findProvinceById(request.getProvinceId());
@@ -96,7 +93,7 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setDistrict(district);
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
-         mailService.sendConfirmLink(employer);
+        mailService.sendConfirmLink(employer, isMobile);
         return employerMapper.toDTO(employer);
     }
 
@@ -252,12 +249,12 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         Employer employer = findEmployerByEmail(request.getEmail());
         if (!employer.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(employer);
+        mailService.sendResetLink(employer, isMobile);
     }
 
     @Override
@@ -281,5 +278,18 @@ public class EmployerServiceImpl implements EmployerService {
         }
         employer.setPassword(passwordEncoder.encode(request.getNewPassword()));
         employerRepository.save(employer);
+    }
+
+    @Override
+    public EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request) {
+        Employer employer = findEmployerById(employerId);
+        employer.setWebsiteUrls(request.getWebsiteUrls());
+        employer.setFacebookUrl(request.getFacebookUrl());
+        employer.setTwitterUrl(request.getTwitterUrl());
+        employer.setLinkedinUrl(request.getLinkedinUrl());
+        employer.setGoogleUrl(request.getGoogleUrl());
+        employer.setYoutubeUrl(request.getYoutubeUrl());
+        employerRepository.save(employer);
+        return employerMapper.toDTO(employer);
     }
 }

@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class DistrictResponse extends BaseResponse {
+public class DistrictResponse extends BaseResponse{
     private String code;
     private String name;
     private String districtSlug;

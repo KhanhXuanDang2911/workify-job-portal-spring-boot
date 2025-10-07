@@ -74,7 +74,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${oauth2.linkedin.redirect-uri}")
     private String LINKEDIN_REDIRECT_URI;
 
-
     @Override
     public TokenResponse<UserResponse> userSignIn(SignInRequest request) {
         userAuthManager.authenticate(
@@ -163,8 +162,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
         } else {
             User userResponse = userService.findUserByEmail(userInfoResponse.getEmail());
-            if (userResponse.getNoPassword()){
-                String createdPasswordToken = jwtService.generateToken(userResponse, TokenType.CREATE_PASSWORD_TOKEN, 1);
+            if (userResponse.getNoPassword()) {
+                String createdPasswordToken = jwtService.generateToken(userResponse, TokenType.CREATE_PASSWORD_TOKEN,
+                        1);
                 return TokenResponse.<UserResponse>builder()
                         .accessToken(null)
                         .refreshToken(null)
@@ -254,10 +254,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 code,
                 LINKEDIN_REDIRECT_URI,
                 LINKEDIN_CLIENT_ID,
-                LINKEDIN_CLIENT_SECRET
-        );
-        System.out.println("Access token linkedin: " +exchangeTokenResponse.getAccessToken());
-        LinkedInUserInfoResponse userInfoResponse = linkedInUserInfoClient.getUserInfo("Bearer " + exchangeTokenResponse.getAccessToken());
+                LINKEDIN_CLIENT_SECRET);
+        System.out.println("Access token linkedin: " + exchangeTokenResponse.getAccessToken());
+        LinkedInUserInfoResponse userInfoResponse = linkedInUserInfoClient
+                .getUserInfo("Bearer " + exchangeTokenResponse.getAccessToken());
         System.out.println(userInfoResponse);
         if (!userRepository.existsByEmail(userInfoResponse.getEmail())) {
             Role role = roleService.findRoleByRoleName(UserRole.JOB_SEEKER.getName());
@@ -282,8 +282,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
         } else {
             User userResponse = userService.findUserByEmail(userInfoResponse.getEmail());
-            if (userResponse.getNoPassword()){
-                String createdPasswordToken = jwtService.generateToken(userResponse, TokenType.CREATE_PASSWORD_TOKEN, 1);
+            if (userResponse.getNoPassword()) {
+                String createdPasswordToken = jwtService.generateToken(userResponse, TokenType.CREATE_PASSWORD_TOKEN,
+                        1);
                 UserResponse data = userMapper.toDTO(userResponse);
                 data.setRole(userResponse.getRole().getRole());
                 return TokenResponse.<UserResponse>builder()

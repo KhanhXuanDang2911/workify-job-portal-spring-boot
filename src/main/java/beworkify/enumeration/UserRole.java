@@ -10,12 +10,12 @@ public enum UserRole {
 
     private final String name;
 
-    UserRole(String name){
+    UserRole(String name) {
         this.name = name;
     }
 
-    public static UserRole getRoleFromName(String name){
-        for (UserRole role : UserRole.values()){
+    public static UserRole getRoleFromName(String name) {
+        for (UserRole role : UserRole.values()) {
             if (role.name.equalsIgnoreCase(name))
                 return role;
         }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class EmployerDetailServiceImpl implements UserDetailsService {
     private final EmployerRepository employerRepository;
     private final MessageSource messageSource;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return employerRepository.findByEmail(email)

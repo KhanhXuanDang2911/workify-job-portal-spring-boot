@@ -9,21 +9,20 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class EmployerRequest {
-    @NotBlank(message = "{validation.email.not.blank}", groups = {OnCreate.class})
-    @Pattern(regexp = "^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$", message = "{validation.email.invalid}",
-    groups = {OnCreate.class})
+    @NotBlank(message = "{validation.email.not.blank}", groups = { OnCreate.class })
+    @Pattern(regexp = "^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$", message = "{validation.email.invalid}", groups = {
+            OnCreate.class })
     private String email;
 
-    @NotBlank(message = "{validation.password.not.blank}", groups = {OnCreate.class})
-    @Size(min = 8, max = 160, message = "{validation.password.size}", groups = {OnCreate.class})
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*$",
-            message = "{validation.password.invalid}",
-            groups = {OnCreate.class}
-    )
+    @NotBlank(message = "{validation.password.not.blank}", groups = { OnCreate.class })
+    @Size(min = 8, max = 160, message = "{validation.password.size}", groups = { OnCreate.class })
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*$", message = "{validation.password.invalid}", groups = {
+            OnCreate.class })
     private String password;
 
     @NotBlank(message = "{validation.companyName.not.blank}")
@@ -37,14 +36,14 @@ public class EmployerRequest {
     private String contactPerson;
 
     @Pattern(regexp = "^(?:\\+84|0)[35789][0-9]{8}$", message = "{validation.phone.invalid}")
-    @NotBlank(message="{validation.phoneNumber.not.blank}")
+    @NotBlank(message = "{validation.phoneNumber.not.blank}")
     private String phoneNumber;
 
-    @NotNull(message="{validation.province.not.null}")
+    @NotNull(message = "{validation.province.not.null}")
     @Min(value = 1, message = "{validation.province.invalid}")
     private Long provinceId;
 
-    @NotNull(message="{validation.district.not.null}")
+    @NotNull(message = "{validation.district.not.null}")
     @Min(value = 1, message = "{validation.district.invalid}")
     private Long districtId;
 
@@ -52,9 +51,15 @@ public class EmployerRequest {
     private String detailAddress;
 
     private String aboutCompany;
+    private String facebookUrl;
+    private String twitterUrl;
+    private String linkedinUrl;
+    private String googleUrl;
+    private String youtubeUrl;
+    private List<String> websiteUrls;
 
-    @NotNull(message = "{validation.status.user.not.null}", groups = {OnAdmin.class})
-    @ValueOfEnum(enumClass = StatusUser.class, message = "{validation.status.user.invalid}", groups = {OnAdmin.class})
+    @NotNull(message = "{validation.status.user.not.null}", groups = { OnAdmin.class })
+    @ValueOfEnum(enumClass = StatusUser.class, message = "{validation.status.user.invalid}", groups = { OnAdmin.class })
     private String status;
 
 }

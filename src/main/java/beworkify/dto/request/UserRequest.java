@@ -23,17 +23,15 @@ public class UserRequest {
         @Size(min = 3, max = 160, message = "{validation.fullname.size}")
         private String fullName;
 
-        @NotBlank(message = "{validation.email.not.blank}", groups = {OnCreate.class})
-        @Pattern(regexp = "^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$", message = "{validation.email.invalid}", groups = {OnCreate.class})
+        @NotBlank(message = "{validation.email.not.blank}", groups = { OnCreate.class })
+        @Pattern(regexp = "^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$", message = "{validation.email.invalid}", groups = {
+                        OnCreate.class })
         private String email;
 
-        @NotBlank(message = "{validation.password.not.blank}", groups = {OnCreate.class})
-        @Size(min = 8, max = 160, message = "{validation.password.size}", groups = {OnCreate.class})
-        @Pattern(
-                regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*$",
-                message = "{validation.password.invalid}",
-                groups = {OnCreate.class}
-        )
+        @NotBlank(message = "{validation.password.not.blank}", groups = { OnCreate.class })
+        @Size(min = 8, max = 160, message = "{validation.password.size}", groups = { OnCreate.class })
+        @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*$", message = "{validation.password.invalid}", groups = {
+                        OnCreate.class })
         private String password;
 
         @Pattern(regexp = "^(?:\\+84|0)[35789][0-9]{8}$", message = "{validation.phone.invalid}")
@@ -55,11 +53,12 @@ public class UserRequest {
 
         private String detailAddress;
 
-        @NotNull(message = "{validation.status.user.not.null}", groups = {OnAdmin.class})
-        @ValueOfEnum(enumClass = StatusUser.class, message = "{validation.status.user.invalid}", groups = {OnAdmin.class})
+        @NotNull(message = "{validation.status.user.not.null}", groups = { OnAdmin.class })
+        @ValueOfEnum(enumClass = StatusUser.class, message = "{validation.status.user.invalid}", groups = {
+                        OnAdmin.class })
         private String status;
 
-        @NotNull(message = "{validation.role.not.null}", groups = {OnAdmin.class})
-        @ValueOfEnum(enumClass = UserRole.class, message = "{validation.role.invalid}", groups = {OnAdmin.class})
+        @NotNull(message = "{validation.role.not.null}", groups = { OnAdmin.class })
+        @ValueOfEnum(enumClass = UserRole.class, message = "{validation.role.invalid}", groups = { OnAdmin.class })
         private String role;
 }

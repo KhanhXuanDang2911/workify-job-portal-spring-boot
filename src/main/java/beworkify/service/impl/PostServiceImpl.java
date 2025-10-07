@@ -57,8 +57,8 @@ public class PostServiceImpl implements PostService {
         User author;
         Long id = AppUtils.getUserIdFromSecurityContext();
         author = userRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException(messageSource.getMessage("user.not.found.by.id",
-                            new Object[] { id }, LocaleContextHolder.getLocale())));
+                .orElseThrow(() -> new ResourceNotFoundException(messageSource.getMessage("user.not.found.by.id",
+                        new Object[] { id }, LocaleContextHolder.getLocale())));
         entity.setAuthor(author);
         HtmlImageProcessor processor = new HtmlImageProcessor(storageService);
         String processedContent = processor.process(request.getContent());

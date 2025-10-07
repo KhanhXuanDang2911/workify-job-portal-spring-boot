@@ -1,9 +1,6 @@
 package beworkify.service;
 
-import beworkify.dto.request.EmployerRequest;
-import beworkify.dto.request.ForgotPasswordRequest;
-import beworkify.dto.request.ResetPasswordRequest;
-import beworkify.dto.request.UpdatePasswordRequest;
+import beworkify.dto.request.*;
 import beworkify.dto.response.EmployerResponse;
 import beworkify.dto.response.PageResponse;
 import beworkify.entity.Employer;
@@ -19,7 +16,7 @@ public interface EmployerService {
     PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
             List<String> sorts, String keyword, LevelCompanySize companySize, Long provinceId, boolean isAdmin);
 
-    EmployerResponse signUpEmployer(EmployerRequest request) throws MessagingException, UnsupportedEncodingException;
+    EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void verifyEmailEmployer(String confirmToken);
 
@@ -39,9 +36,11 @@ public interface EmployerService {
 
     Employer findEmployerByEmail(String email);
 
-    void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException;
+    void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void resetPassword(String token, ResetPasswordRequest request);
 
     void updatePassword(Long employerId, UpdatePasswordRequest request);
+
+    EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request);
 }

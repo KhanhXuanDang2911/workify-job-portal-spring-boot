@@ -33,8 +33,7 @@ public class ImageFileValidator implements ConstraintValidator<ValidImageFile, M
             "image/x-sony-arw",
             "image/x-olympus-orf",
             "image/x-panasonic-rw2",
-            "image/x-fuji-raf"
-    );
+            "image/x-fuji-raf");
 
     @Override
     public void initialize(ValidImageFile constraintAnnotation) {

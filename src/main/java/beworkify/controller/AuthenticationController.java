@@ -8,6 +8,7 @@ import beworkify.dto.response.UserResponse;
 import beworkify.service.AuthenticationService;
 import beworkify.service.EmployerService;
 import beworkify.service.UserService;
+import beworkify.util.AppUtils;
 import beworkify.util.ResponseBuilder;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -35,28 +36,32 @@ public class AuthenticationController {
     private final MessageSource messageSource;
 
     @PostMapping("/employers/sign-in")
-    public ResponseEntity<ResponseData<TokenResponse<EmployerResponse>>> employerSignIn(@Validated @RequestBody SignInRequest request) {
+    public ResponseEntity<ResponseData<TokenResponse<EmployerResponse>>> employerSignIn(
+            @Validated @RequestBody SignInRequest request) {
         TokenResponse<EmployerResponse> response = authenticationService.employerSignIn(request);
         String message = messageSource.getMessage("user.sign.in.successfully", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
 
     @PostMapping("/users/sign-in")
-    public ResponseEntity<ResponseData<TokenResponse<UserResponse>>> userSignIn(@Validated @RequestBody SignInRequest request) {
+    public ResponseEntity<ResponseData<TokenResponse<UserResponse>>> userSignIn(
+            @Validated @RequestBody SignInRequest request) {
         TokenResponse<UserResponse> response = authenticationService.userSignIn(request);
         String message = messageSource.getMessage("user.sign.in.successfully", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
 
     @PostMapping("/users/refresh-token")
-    public ResponseEntity<ResponseData<TokenResponse<Void>>> refreshTokenUser(@RequestHeader("Y-Token") String refreshToken) {
+    public ResponseEntity<ResponseData<TokenResponse<Void>>> refreshTokenUser(
+            @RequestHeader("Y-Token") String refreshToken) {
         TokenResponse<Void> response = authenticationService.refreshTokenUser(refreshToken);
         String message = messageSource.getMessage("auth.refresh.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
 
     @PostMapping("/employers/refresh-token")
-    public ResponseEntity<ResponseData<TokenResponse<Void>>> refreshTokenEmployer(@RequestHeader("Y-Token") String refreshToken) {
+    public ResponseEntity<ResponseData<TokenResponse<Void>>> refreshTokenEmployer(
+            @RequestHeader("Y-Token") String refreshToken) {
         TokenResponse<Void> response = authenticationService.refreshTokenEmployer(refreshToken);
         String message = messageSource.getMessage("auth.refresh.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
@@ -64,7 +69,7 @@ public class AuthenticationController {
 
     @PostMapping("/sign-out")
     public ResponseEntity<ResponseData<Void>> signOut(@RequestHeader("X-Token") String accessToken,
-                                                           @RequestHeader("Y-Token") String refreshToken) {
+            @RequestHeader("Y-Token") String refreshToken) {
         authenticationService.signOut(accessToken, refreshToken);
         String message = messageSource.getMessage("auth.logout.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
@@ -85,31 +90,40 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/users/forgot-password")
-    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(@Valid @RequestBody ForgotPasswordRequest request)
+    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(
+            @RequestHeader("User-Agent") String userAgent,
+            @Valid @RequestBody ForgotPasswordRequest request)
             throws MessagingException, UnsupportedEncodingException {
-        userService.forgotPassword(request);
-        String message = messageSource.getMessage("auth.forgot.password.success", null, LocaleContextHolder.getLocale());
+        boolean isMobile = AppUtils.isMobile(userAgent);
+        userService.forgotPassword(request, isMobile);
+        String message = messageSource.getMessage("auth.forgot.password.success", null,
+                LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
 
     @PostMapping(value = "/employers/forgot-password")
-    public ResponseEntity<ResponseData<Void>> forgotPasswordEmployer(@Valid @RequestBody ForgotPasswordRequest request)
+    public ResponseEntity<ResponseData<Void>> forgotPasswordEmployer(
+            @RequestHeader("User-Agent") String userAgent,
+            @Valid @RequestBody ForgotPasswordRequest request)
             throws MessagingException, UnsupportedEncodingException {
-        employerService.forgotPassword(request);
-        String message = messageSource.getMessage("auth.forgot.password.success", null, LocaleContextHolder.getLocale());
+        boolean isMobile = AppUtils.isMobile(userAgent);
+        employerService.forgotPassword(request, isMobile);
+        String message = messageSource.getMessage("auth.forgot.password.success", null,
+                LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
 
     @PostMapping("/users/reset-password")
     public ResponseEntity<ResponseData<Void>> resetPasswordUser(@RequestHeader("R-Token") String token,
-                                                                 @Valid @RequestBody ResetPasswordRequest request) {
+            @Valid @RequestBody ResetPasswordRequest request) {
         userService.resetPassword(token, request);
         String message = messageSource.getMessage("auth.reset.password.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
+
     @PostMapping("/employers/reset-password")
     public ResponseEntity<ResponseData<Void>> resetPasswordEmployer(@RequestHeader("R-Token") String token,
-                                                                @Valid @RequestBody ResetPasswordRequest request) {
+            @Valid @RequestBody ResetPasswordRequest request) {
         employerService.resetPassword(token, request);
         String message = messageSource.getMessage("auth.reset.password.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
@@ -142,6 +156,5 @@ public class AuthenticationController {
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
-
 
 }
