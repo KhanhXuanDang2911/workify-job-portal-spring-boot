@@ -62,8 +62,7 @@ public class UserServiceImpl implements UserService {
             List<String> sorts, String keyword) {
         log.info("Fetching users with pagination: pageNumber={}, pageSize={}", pageNumber, pageSize);
 
-        List<String> whiteListFieldSorts = List.of("fullName", "email", "phoneNumber", "birthDate", "gender",
-                "avatarUrl", "role", "status", "createdAt", "updatedAt");
+        List<String> whiteListFieldSorts = List.of("fullName", "email", "phoneNumber", "birthDate", "gender",  "role", "status", "createdAt", "updatedAt");
         Page<User> userPage = userRepository.searchUsers(keyword.toLowerCase(),
                 AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize));
 

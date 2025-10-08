@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,5 +111,11 @@ public class CategoryPostServiceImpl implements CategoryPostService {
                 .numberOfElements(page.getNumberOfElements())
                 .items(items)
                 .build();
+    }
+
+    @Override
+    public List<CategoryPostResponse> getAll() {
+        List<CategoryPost> list = repository.findAll(Sort.by(Sort.Direction.ASC, "title"));
+        return list.stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 }

@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class ResetPasswordRequest {
     @NotBlank(message = "{validation.password.not.blank}")
-    @Size(min = 8, max = 160, message = "{validation.password.size}")
-    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*$", message = "{validation.password.invalid}")
+    @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).{8,160}$", message = "{validation.password.invalid}")
     private String newPassword;
 }

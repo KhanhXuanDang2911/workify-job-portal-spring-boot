@@ -17,4 +17,6 @@ public interface CategoryPostService {
 
     PageResponse<List<CategoryPostResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
             List<String> sorts, String keyword);
+
+    List<CategoryPostResponse> getAll();
 }

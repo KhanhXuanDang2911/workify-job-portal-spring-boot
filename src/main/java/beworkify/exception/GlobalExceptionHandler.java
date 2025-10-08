@@ -140,7 +140,7 @@ public class GlobalExceptionHandler {
             WebRequest request) {
         String message = messageSource.getMessage("error.oauth2", null,
                 LocaleContextHolder.getLocale());
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request, null);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request, null);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

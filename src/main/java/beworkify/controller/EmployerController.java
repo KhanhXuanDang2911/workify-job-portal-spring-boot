@@ -100,7 +100,7 @@ public class EmployerController {
                 EmployerResponse response = employerService.signUpEmployer(request, isMobile);
                 String message = messageSource.getMessage("employer.sign.up.successfully", null,
                                 LocaleContextHolder.getLocale());
-                return ResponseBuilder.withData(HttpStatus.OK, message, response);
+                return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
         }
 
         @PreAuthorize("hasRole('ADMIN')")
@@ -113,7 +113,7 @@ public class EmployerController {
                 EmployerResponse response = employerService.createEmployer(request, avatar, background);
                 String message = messageSource.getMessage("employer.create.successfully", null,
                                 LocaleContextHolder.getLocale());
-                return ResponseBuilder.withData(HttpStatus.OK, message, response);
+                return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
         }
 
         @PreAuthorize("hasRole('ADMIN')")

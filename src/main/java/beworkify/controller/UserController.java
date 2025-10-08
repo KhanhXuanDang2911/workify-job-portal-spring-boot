@@ -76,7 +76,7 @@ public class UserController {
         log.info("Admin creating user with email: {}", request.getEmail());
         UserResponse response = userService.createUser(request, avatar);
         String message = messageSource.getMessage("user.create.successfully", null, LocaleContextHolder.getLocale());
-        return ResponseBuilder.withData(HttpStatus.OK, message, response);
+        return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -111,7 +111,7 @@ public class UserController {
         boolean isMobile = AppUtils.isMobile(userAgent);
         UserResponse response = userService.signUp(request, isMobile);
         String message = messageSource.getMessage("user.sign.up.successfully", null, LocaleContextHolder.getLocale());
-        return ResponseBuilder.withData(HttpStatus.OK, message, response);
+        return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
     }
 
     @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")

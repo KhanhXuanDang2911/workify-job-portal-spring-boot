@@ -32,6 +32,15 @@ public class CategoryPostController {
     private final CategoryPostService service;
     private final MessageSource messageSource;
 
+    @GetMapping("/all")
+    public ResponseEntity<ResponseData<List<CategoryPostResponse>>> getAll() {
+        log.info("Request: Get all categories post");
+        List<CategoryPostResponse> response = service.getAll();
+        String message = messageSource.getMessage("categoryPost.get.list.success", null,
+                LocaleContextHolder.getLocale());
+        return ResponseBuilder.withData(HttpStatus.OK, message, response);
+    }
+
     @GetMapping
     public ResponseEntity<ResponseData<PageResponse<List<CategoryPostResponse>>>> getAllWithPagination(
             @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
