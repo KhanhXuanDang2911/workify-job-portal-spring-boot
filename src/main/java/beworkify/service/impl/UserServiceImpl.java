@@ -232,12 +232,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
         User user = findUserByEmail(request.getEmail());
         if (!user.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(user, isMobile);
+        mailService.sendResetLink(user);
     }
 
     @Override
@@ -285,7 +285,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public UserResponse signUp(UserRequest request) throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email {}", request.getEmail());
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -304,7 +304,7 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
-        mailService.sendConfirmLink(user, isMobile);
+        mailService.sendConfirmLink(user);
         UserResponse response = userMapper.toDTO(user);
         response.setRole(user.getRole().getRole());
         log.info("User signed up successfully with id = {}", user.getId());

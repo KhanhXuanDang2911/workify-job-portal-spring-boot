@@ -2,10 +2,12 @@ package beworkify.entity;
 
 import beworkify.enumeration.*;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,17 +17,20 @@ import java.util.List;
 @Entity
 @Table(name = "jobs")
 public class Job extends BaseEntity {
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String companyName;
     @Column(nullable = false)
     private LevelCompanySize companySize;
+    @Column(length = 1000)
     private String companyWebsite;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String aboutCompany;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String jobTitle;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Location> jobLocations;
+    @BatchSize(size = 50)
+    @Builder.Default
+    private Set<Location> jobLocations = new HashSet<>();
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SalaryType salaryType;
@@ -33,9 +38,9 @@ public class Job extends BaseEntity {
     private Double maxSalary;
     @Enumerated(EnumType.STRING)
     private SalaryUnit salaryUnit;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String jobDescription;
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String requirement;
     @Column(nullable = false)
     private EducationLevel educationLevel;
@@ -46,10 +51,12 @@ public class Job extends BaseEntity {
     @Column(nullable = false)
     private JobType jobType;
     @Column(nullable = false)
-    private Gender gender;
+    private JobGender gender;
     private String jobCode;
-    @OneToMany(mappedBy = "job", orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<JobIndustry> jobIndustries;
+    @OneToMany(mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
+    @BatchSize(size = 50)
+    @Builder.Default
+    private Set<JobIndustry> jobIndustries = new HashSet<>();
     @Enumerated(EnumType.STRING)
     private AgeType ageType;
     private Long minAge;
@@ -57,14 +64,15 @@ public class Job extends BaseEntity {
     @Column(nullable = false)
     private String contactPerson;
     private String phoneNumber;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "contact_location_id", nullable = false)
     private Location contactLocation;
-    @ManyToOne
-    @JoinColumn(name = "province_id", nullable = false)
-    private Province province;
-    @ManyToOne
-    @JoinColumn(name = "district_id", nullable = false)
-    private District district;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    @Column(nullable = false)
     private LocalDate expirationDate;
     private JobStatus status;
+    @ManyToOne
+    @JoinColumn(name = "employer_id", nullable = false)
+    private Employer author;
 }

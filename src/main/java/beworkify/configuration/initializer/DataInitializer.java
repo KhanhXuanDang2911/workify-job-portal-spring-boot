@@ -1,4 +1,4 @@
-package beworkify.configuration;
+package beworkify.configuration.initializer;
 
 import beworkify.dto.request.RoleRequest;
 import beworkify.dto.request.UserRequest;

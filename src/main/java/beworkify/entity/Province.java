@@ -1,5 +1,6 @@
 package beworkify.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -23,5 +24,10 @@ public class Province extends BaseEntity {
     private String provinceSlug;
 
     @OneToMany(mappedBy = "province")
+    @JsonIgnore
     private List<District> district;
+
+    @OneToMany(mappedBy = "province")
+    @JsonIgnore
+    private List<Location> locations;
 }

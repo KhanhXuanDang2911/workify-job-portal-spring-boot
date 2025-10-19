@@ -59,4 +59,9 @@ public class HtmlImageProcessor {
         }
         return doc.body().html();
     }
+
+    public static String extractText(String html) {
+        Document doc = Jsoup.parse(html);
+        return doc.text();
+    }
 }

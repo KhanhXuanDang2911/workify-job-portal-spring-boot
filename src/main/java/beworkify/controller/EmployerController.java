@@ -47,7 +47,6 @@ public class EmployerController {
         private final EmployerService employerService;
         private final MessageSource messageSource;
 
-        @PreAuthorize("!hasRole('EMPLOYER') or isAnonymous()")
         @GetMapping
         public ResponseEntity<ResponseData<PageResponse<List<EmployerResponse>>>> getEmployers(
                         @RequestParam(defaultValue = "1") int pageNumber,
@@ -71,7 +70,6 @@ public class EmployerController {
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }
 
-        @PreAuthorize("!hasRole('EMPLOYER') or isAnonymous()")
         @GetMapping("/{id}")
         public ResponseEntity<ResponseData<EmployerResponse>> getEmployerById(@PathVariable Long id) {
                 EmployerResponse response = employerService.getEmployerById(id);
@@ -92,12 +90,9 @@ public class EmployerController {
 
         @PostMapping("/sign-up")
         public ResponseEntity<ResponseData<EmployerResponse>> signUpEmployer(
-                @RequestHeader(value = "User-Agent") String userAgent,
                         @RequestBody @Validated({ OnCreate.class, Default.class }) EmployerRequest request)
                         throws MessagingException, UnsupportedEncodingException {
-                log.info("User-Agent: {}", userAgent);
-                boolean isMobile = AppUtils.isMobile(userAgent);
-                EmployerResponse response = employerService.signUpEmployer(request, isMobile);
+                EmployerResponse response = employerService.signUpEmployer(request);
                 String message = messageSource.getMessage("employer.sign.up.successfully", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.CREATED, message, response);

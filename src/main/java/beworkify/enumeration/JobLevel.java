@@ -5,15 +5,15 @@ import lombok.Getter;
 
 @Getter
 public enum JobLevel {
-    INTERN("INTERN"), // Sinh viên / Thực tập sinh
-    ENTRY_LEVEL("ENTRY_LEVEL"), // Mới đi làm
-    STAFF("STAFF"), // Nhân viên
-    ENGINEER("ENGINEER"), // Kỹ thuật viên / Kỹ sư
-    SUPERVISOR("SUPERVISOR"), // Trưởng nhóm / Giám sát
-    MANAGER("MANAGER"), // Quản lý / Trưởng phòng
-    DIRECTOR("DIRECTOR"), // Giám đốc
-    SENIOR_MANAGER("SENIOR_MANAGER"), // Quản lý cấp cao
-    EXECUTIVE("EXECUTIVE"); // Điều hành cấp cao
+    INTERN("INTERN"),
+    ENTRY_LEVEL("ENTRY_LEVEL"),
+    STAFF("STAFF"),
+    ENGINEER("ENGINEER"),
+    SUPERVISOR("SUPERVISOR"),
+    MANAGER("MANAGER"),
+    DIRECTOR("DIRECTOR"),
+    SENIOR_MANAGER("SENIOR_MANAGER"),
+    EXECUTIVE("EXECUTIVE");
 
     private final String value;
 

@@ -1,0 +1,74 @@
+{
+  "analysis": {
+    "analyzer": {
+      "vn_folded": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": ["lowercase", "asciifolding", "synonym_filter"]
+      },
+      "vn_search": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "filter": ["lowercase", "asciifolding", "synonym_filter"]
+      }
+    },
+    "filter": {
+      "synonym_filter": {
+        "type": "synonym",
+        "synonyms": [
+          "fresher, junior, entry level, mới ra trường, chưa kinh nghiệm, 0 kinh nghiệm",
+          "senior, lead, chuyên viên, principal, team lead, tech lead, trưởng nhóm",
+          "intern, thực tập sinh, thực tập, tập sự",
+          "developer, dev, lập trình viên, coder, kỹ sư phần mềm, software engineer, se, lập trình",
+          "frontend, front-end, fe",
+          "backend, back-end, be",
+          "fullstack, full-stack, full stack, fs",
+          "javascript, js",
+          "typescript, ts",
+          "reactjs, react, react native",
+          "vuejs, vue",
+          "angular, angularjs",
+          "nodejs, node",
+          "java, j2ee, spring, hibernate",
+          "python, py, django, flask",
+          "php, laravel",
+          "c#, csharp, .net",
+          "ruby, rails",
+          "go, golang",
+          "mobile, di động, app, ứng dụng di động, native, cross-platform",
+          "ios, iphone, swift, objective-c",
+          "android, google, kotlin, java android",
+          "devops, sysadmin, system administrator, kỹ sư hệ thống, site reliability engineer, sre",
+          "database, db, sql, mysql, postgresql, nosql, mongodb",
+          "cloud, aws, azure, gcp, điện toán đám mây",
+          "data scientist, ds, data analyst, da, big data, kỹ sư dữ liệu, data engineer, machine learning, ai, trí tuệ nhân tạo, học máy, deep learning",
+          "product owner, po, quản lý sản phẩm, product manager, pm",
+          "business analyst, ba, chuyên viên phân tích nghiệp vụ",
+          "project manager, quản lý dự án, quản lý sản xuất, giám đốc dự án",
+          "manager, quản lý, trưởng phòng, giám đốc, director, leader, team leader, trưởng nhóm",
+          "designer, thiết kế, graphic designer, ui ux designer, ux/ui, ui/ux, web designer, nhà thiết kế, thiết kế đồ họa",
+          "tester, qa, quality assurance, kiểm thử, kỹ sư kiểm định chất lượng, qc, test engineer",
+          "sales, kinh doanh, nhân viên kinh doanh, chuyên viên bán hàng, account manager, am, chăm sóc khách hàng, telesales",
+          "marketing, tiếp thị, digital marketing, truyền thông, content creator, social media, seo, sem, quảng cáo, pr, thương hiệu",
+          "hr, nhân sự, tuyển dụng, rec, recruiter, hành chính nhân sự, human resource, hành chính, admin, office staff, thư ký, trợ lý, assistant",
+          "kế toán, accountant, tài chính, finance, financial analyst, kiểm toán, audit, auditor, ngân hàng, banker, kế toán viên",
+          "engineer, kỹ sư, kỹ thuật, cơ khí, điện, điện tử, bảo trì, bảo dưỡng, manufacturing, production, maintenance, vận hành, technician",
+          "logistics, supply chain, xuất nhập khẩu, kho vận, giao nhận, vận chuyển, shipping, procurement, mua hàng, inventory, kho bãi",
+          "receptionist, lễ tân, thư ký, trợ lý, nhân viên văn phòng, hành chính",
+          "bác sĩ, y tá, điều dưỡng, y tế, chăm sóc sức khỏe, dược sĩ, pharmacist, nurse, doctor, medical staff, healthcare",
+          "giáo viên, teacher, giảng viên, trainer, instructor, huấn luyện viên, đào tạo, education, lecturer, professor",
+          "xây dựng, construction, kỹ sư xây dựng, civil engineer, kiến trúc, architect, giám sát công trình, dự toán, thiết kế nội thất, interior designer",
+          "content, nội dung, biên tập, editor, sáng tạo nội dung, video editor, photographer, quay phim, dựng phim, producer, đạo diễn",
+          "lawyer, legal, pháp chế, pháp lý, luật sư, tư vấn pháp luật",
+          "nông nghiệp, agriculture, môi trường, environment, kỹ sư môi trường, bảo tồn, sinh học, biology, hóa học, chemistry"
+        ]
+      }
+    },
+    "normalizer": {
+      "vn_normalizer": {
+        "type": "custom",
+        "filter": ["lowercase", "asciifolding"]
+      }
+    }
+  }
+}

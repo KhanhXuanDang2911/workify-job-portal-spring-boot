@@ -73,7 +73,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
+    public EmployerResponse signUpEmployer(EmployerRequest request)
             throws MessagingException, UnsupportedEncodingException {
         existsByEmail(request.getEmail());
         Province province = provinceService.findProvinceById(request.getProvinceId());
@@ -93,7 +93,7 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setDistrict(district);
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
-        mailService.sendConfirmLink(employer, isMobile);
+        mailService.sendConfirmLink(employer);
         return employerMapper.toDTO(employer);
     }
 
@@ -249,12 +249,12 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
         Employer employer = findEmployerByEmail(request.getEmail());
         if (!employer.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(employer, isMobile);
+        mailService.sendResetLink(employer);
     }
 
     @Override

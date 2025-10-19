@@ -1,4 +1,4 @@
-package beworkify.configuration;
+package beworkify.configuration.initializer;
 
 import beworkify.entity.District;
 import beworkify.entity.Province;

@@ -22,6 +22,6 @@ public class Location extends BaseEntity {
     private District district;
     private String detailAddress;
     @ManyToOne
-    @JoinColumn(name = "job_id", nullable = false)
+    @JoinColumn(name = "job_id")
     private Job job;
 }

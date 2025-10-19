@@ -104,12 +104,10 @@ public class UserController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<ResponseData<UserResponse>> signUp(
-            @RequestHeader("User-Agent") String userAgent,
             @RequestBody @Validated({ Default.class, OnCreate.class }) UserRequest request)
             throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email: {}", request.getEmail());
-        boolean isMobile = AppUtils.isMobile(userAgent);
-        UserResponse response = userService.signUp(request, isMobile);
+        UserResponse response = userService.signUp(request);
         String message = messageSource.getMessage("user.sign.up.successfully", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
     }

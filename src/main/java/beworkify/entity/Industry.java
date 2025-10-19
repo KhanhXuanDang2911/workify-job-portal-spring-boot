@@ -13,10 +13,12 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class Industry extends BaseEntity {
-    @Column(nullable = false, unique = true, length = 150)
+    @Column(nullable = false)
     private String name;
 
-    @Column(length = 255)
+    @Column(nullable = false)
+    private String engName;
+
     private String description;
 
     @OneToMany(mappedBy = "industry", orphanRemoval = true, cascade = CascadeType.REMOVE)

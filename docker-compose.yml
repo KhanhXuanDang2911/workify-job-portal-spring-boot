@@ -1,4 +1,31 @@
 services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200 || exit 1" ]
+      interval: 10s
+      retries: 10
+
+  #  kibana:
+  #    image: docker.elastic.co/kibana/kibana:8.15.3
+  #    container_name: kibana
+  #    depends_on:
+  #      - elasticsearch
+  #    environment:
+  #      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+  #      - XPACK_SECURITY_ENABLED=false
+  #    ports:
+  #      - "5601:5601"
+
   workify-db:
     image: postgres:15
     container_name: postgres-db
@@ -17,7 +44,10 @@ services:
       dockerfile: Dockerfile
     container_name: be-workify-app
     depends_on:
-      - workify-db
+      elasticsearch:
+        condition: service_healthy
+      workify-db:
+        condition: service_started
     ports:
       - "8080:8080"
     env_file:
@@ -25,6 +55,8 @@ services:
     environment:
       - DB_HOST=workify-db
       - SPRING_PROFILES_ACTIVE=prod
+      - ELASTICSEARCH_URIS=http://elasticsearch:9200
 
 volumes:
   postgres_data:
+  es_data:

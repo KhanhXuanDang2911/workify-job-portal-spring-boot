@@ -17,6 +17,7 @@ public enum ErrorCode {
     INVALID_JOB_TYPE_ENUM(410, "error.invalid.job.type.enum"),
     INVALID_AGE_TYPE_ENUM(410, "error.invalid.age.type.enum"),
     INVALID_JOB_STATUS_ENUM(410, "error.invalid.job.status.enum"),
+    INVALID_JOB_GENDER_ENUM(410, "error.invalid.job.gender.enum"),
     VERIFY_EMAIL_FAILED(411, "user.verify.email.failed"),
     PASSWORD_MISMATCH(411, "user.password.mismatch"),
     ACCOUNT_NOT_ACTIVE(411, "user.not.active"),
