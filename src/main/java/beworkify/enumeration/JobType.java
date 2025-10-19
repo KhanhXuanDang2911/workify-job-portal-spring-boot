@@ -5,12 +5,12 @@ import lombok.Getter;
 
 @Getter
 public enum JobType {
-    FULL_TIME("FULL_TIME"), // Nhân viên toàn thời gian
-    TEMPORARY_FULL_TIME("TEMPORARY_FULL_TIME"), // Nhân viên toàn thời gian tạm thời
-    PART_TIME("PART_TIME"), // Nhân viên bán thời gian
-    TEMPORARY_PART_TIME("TEMPORARY_PART_TIME"), // Nhân viên bán thời gian tạm thời
-    CONTRACT("CONTRACT"), // Nhân viên hợp đồng
-    OTHER("OTHER"); // Khác
+    FULL_TIME("FULL_TIME"),
+    TEMPORARY_FULL_TIME("TEMPORARY_FULL_TIME"),
+    PART_TIME("PART_TIME"),
+    TEMPORARY_PART_TIME("TEMPORARY_PART_TIME"),
+    CONTRACT("CONTRACT"),
+    OTHER("OTHER");
 
     private final String value;
 

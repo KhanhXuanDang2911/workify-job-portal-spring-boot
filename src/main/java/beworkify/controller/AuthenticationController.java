@@ -90,12 +90,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/users/forgot-password")
-    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(
-            @RequestHeader("User-Agent") String userAgent,
-            @Valid @RequestBody ForgotPasswordRequest request)
+    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(@Valid @RequestBody ForgotPasswordRequest request)
             throws MessagingException, UnsupportedEncodingException {
-        boolean isMobile = AppUtils.isMobile(userAgent);
-        userService.forgotPassword(request, isMobile);
+        userService.forgotPassword(request);
         String message = messageSource.getMessage("auth.forgot.password.success", null,
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
@@ -103,11 +100,9 @@ public class AuthenticationController {
 
     @PostMapping(value = "/employers/forgot-password")
     public ResponseEntity<ResponseData<Void>> forgotPasswordEmployer(
-            @RequestHeader("User-Agent") String userAgent,
             @Valid @RequestBody ForgotPasswordRequest request)
             throws MessagingException, UnsupportedEncodingException {
-        boolean isMobile = AppUtils.isMobile(userAgent);
-        employerService.forgotPassword(request, isMobile);
+        employerService.forgotPassword(request);
         String message = messageSource.getMessage("auth.forgot.password.success", null,
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);

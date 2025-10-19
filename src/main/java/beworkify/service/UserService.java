@@ -16,7 +16,7 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
-    UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
+    UserResponse signUp(UserRequest request) throws MessagingException, UnsupportedEncodingException;
 
     void deleteUser(Long id);
 
@@ -38,7 +38,7 @@ public interface UserService {
 
     void updatePassword(Long userId, UpdatePasswordRequest request);
 
-    void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
+    void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException;
 
     void resetPassword(String token, ResetPasswordRequest request);
 

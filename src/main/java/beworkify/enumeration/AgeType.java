@@ -14,7 +14,7 @@ public enum AgeType {
         this.name = name;
     }
 
-    AgeType fromName(String name) {
+    public static AgeType fromName(String name) {
         for (AgeType ageType : AgeType.values()) {
             if (ageType.name.equalsIgnoreCase(name)) {
                 return ageType;

@@ -10,7 +10,7 @@ public enum JobStatus {
     APPROVED("APPROVED"),
     REJECTED("REJECTED"),
     CLOSED("CLOSED"),
-    EXPIRED("EXPIRED"),;
+    EXPIRED("EXPIRED");
 
     private final String value;
 

@@ -16,7 +16,7 @@ public enum SalaryType {
         this.value = value;
     }
 
-    SalaryType fromValue(String value) {
+    public static SalaryType fromValue(String value) {
         for (SalaryType salaryType : SalaryType.values()) {
             if (salaryType.getValue().equals(value)) {
                 return salaryType;

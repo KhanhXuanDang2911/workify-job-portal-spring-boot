@@ -39,6 +39,7 @@ public class Employer extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String contactPerson;
     private String backgroundUrl;
+    @Column(columnDefinition = "TEXT")
     private String aboutCompany;
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
@@ -56,6 +57,8 @@ public class Employer extends BaseEntity implements UserDetails {
     @JoinColumn(name = "district_id", nullable = false)
     private District district;
     private String detailAddress;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Job> jobs;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

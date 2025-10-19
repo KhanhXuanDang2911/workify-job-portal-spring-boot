@@ -1,9 +1,7 @@
 package beworkify.dto.request;
 
-import beworkify.validation.OnCreate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 

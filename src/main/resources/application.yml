@@ -10,6 +10,8 @@ spring:
       max-request-size: 2000MB
   application:
     name: Workify
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
   messages:
     basename: messages
     encoding: UTF-8
@@ -50,4 +52,3 @@ oauth2:
     client-id: ${LINKEDIN_CLIENT_ID}
     client-secret: ${LINKEDIN_CLIENT_SECRET}
     redirect-uri: ${LINKEDIN_REDIRECT_URI}
-
