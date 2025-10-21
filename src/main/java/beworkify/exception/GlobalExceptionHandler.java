@@ -197,14 +197,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, message, request, null);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleInternalError(Exception e,
-//            WebRequest request) {
-//        String message = messageSource.getMessage("error.internal.server", null,
-//                LocaleContextHolder.getLocale());
-//        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request,
-//                null);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleInternalError(Exception e,
+            WebRequest request) {
+        String message = messageSource.getMessage("error.internal.server", null,
+                LocaleContextHolder.getLocale());
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request,
+                null);
+    }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> handleAppError(AppException e, WebRequest request) {

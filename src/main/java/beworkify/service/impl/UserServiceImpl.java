@@ -46,6 +46,7 @@ public class UserServiceImpl implements UserService {
     private final WhitelistTokenService whitelistTokenService;
     private final ProvinceService provinceService;
     private final DistrictService districtService;
+    private final OTPService otpService;
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -222,6 +223,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void verifyEmailUserMobile(VerifyEmailMobileRequest request) {
+        User user = findUserByEmail(request.getEmail());
+        if (!user.getStatus().equals(StatusUser.PENDING)
+                || !otpService.isOTPCodeValid(request.getCode(), request.getEmail(),60)) {
+            throw new AppException(ErrorCode.VERIFY_EMAIL_FAILED);
+        }
+        user.setStatus(StatusUser.ACTIVE);
+        otpService.deleteOTPCode(request.getCode());
+        userRepository.save(user);
+    }
+
+
+
+    @Override
     public void updatePassword(Long id, UpdatePasswordRequest request) {
         User user = findUserById(id);
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
@@ -232,12 +247,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         User user = findUserByEmail(request.getEmail());
         if (!user.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(user);
+        if (isMobile){
+            mailService.sendResetLink(user, true, otpService.generateCode(request.getEmail()));
+        } else {
+            mailService.sendResetLink(user, false, null);
+        }
     }
 
     @Override
@@ -250,6 +269,17 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         whitelistTokenService.deleteByToken(token);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void resetPasswordUserMobile(ResetPasswordMobileRequest request) {
+        User user = findUserByEmail(request.getEmail());
+        if (!otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60 * 24)) {
+            throw new AppException(ErrorCode.RESET_PASSWORD_FAILED);
+        }
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        otpService.deleteOTPCode(request.getCode());
         userRepository.save(user);
     }
 
@@ -285,7 +315,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse signUp(UserRequest request) throws MessagingException, UnsupportedEncodingException {
+    public UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email {}", request.getEmail());
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -304,7 +334,11 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         userRepository.save(user);
-        mailService.sendConfirmLink(user);
+        if (isMobile) {
+            mailService.sendConfirmLink(user, true, otpService.generateCode(user.getEmail()));
+        } else {
+            mailService.sendConfirmLink(user, false, null);
+        }
         UserResponse response = userMapper.toDTO(user);
         response.setRole(user.getRole().getRole());
         log.info("User signed up successfully with id = {}", user.getId());

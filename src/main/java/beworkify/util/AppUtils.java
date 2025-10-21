@@ -12,10 +12,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AppUtils {
+
+    private static final String DIGITS = "0123456789";
+    private static final SecureRandom random = new SecureRandom();
+
     public static String toSlug(String input) {
         if (input == null || input.isEmpty())
             return "";
@@ -102,5 +107,13 @@ public class AppUtils {
     public static boolean isMobile(String userAgent) {
         String ua = userAgent.toLowerCase();
         return ua.contains("android") || ua.contains("iphone") || ua.contains("ipad") || ua.contains("mobile");
+    }
+
+    public static String generateOtp(int length) {
+        StringBuilder otp = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            otp.append(DIGITS.charAt(random.nextInt(DIGITS.length())));
+        }
+        return otp.toString();
     }
 }

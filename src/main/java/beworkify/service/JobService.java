@@ -3,7 +3,6 @@ package beworkify.service;
 import beworkify.dto.request.JobRequest;
 import beworkify.dto.response.*;
 import beworkify.enumeration.JobStatus;
-import jakarta.validation.constraints.Min;
 
 import java.util.List;
 

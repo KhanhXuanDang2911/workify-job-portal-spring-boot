@@ -16,7 +16,7 @@ public interface EmployerService {
     PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
             List<String> sorts, String keyword, LevelCompanySize companySize, Long provinceId, boolean isAdmin);
 
-    EmployerResponse signUpEmployer(EmployerRequest request) throws MessagingException, UnsupportedEncodingException;
+    EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void verifyEmailEmployer(String confirmToken);
 
@@ -36,11 +36,15 @@ public interface EmployerService {
 
     Employer findEmployerByEmail(String email);
 
-    void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException;
+    void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void resetPassword(String token, ResetPasswordRequest request);
 
     void updatePassword(Long employerId, UpdatePasswordRequest request);
 
     EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request);
+
+    void verifyEmailEmployerMobile(VerifyEmailMobileRequest request);
+
+    void resetPasswordEmployerMobile(ResetPasswordMobileRequest request);
 }

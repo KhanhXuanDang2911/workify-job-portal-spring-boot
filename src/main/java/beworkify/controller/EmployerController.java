@@ -90,9 +90,11 @@ public class EmployerController {
 
         @PostMapping("/sign-up")
         public ResponseEntity<ResponseData<EmployerResponse>> signUpEmployer(
-                        @RequestBody @Validated({ OnCreate.class, Default.class }) EmployerRequest request)
+                        @RequestBody @Validated({ OnCreate.class, Default.class }) EmployerRequest request,
+                        @RequestHeader("User-Agent") String userAgent)
                         throws MessagingException, UnsupportedEncodingException {
-                EmployerResponse response = employerService.signUpEmployer(request);
+                boolean isMobile = AppUtils.isMobile(userAgent);
+                EmployerResponse response = employerService.signUpEmployer(request, isMobile);
                 String message = messageSource.getMessage("employer.sign.up.successfully", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.CREATED, message, response);
