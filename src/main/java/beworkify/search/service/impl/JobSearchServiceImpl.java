@@ -62,15 +62,13 @@ public class JobSearchServiceImpl implements JobSearchService {
         repository.saveAll(docs);
     }
 
-    /**
-     * Chuẩn hóa keyword để search hiệu quả hơn
-     */
+
     private String normalizeKeyword(String keyword) {
         if (keyword == null)
             return "";
         return keyword.trim()
-                .replaceAll("\\s+", " ") // Loại bỏ nhiều khoảng trắng
-                .replaceAll("[^\\p{L}\\p{N}\\s]", "") // Giữ lại chữ, số và khoảng trắng
+                .replaceAll("\\s+", " ")
+                .replaceAll("[^\\p{L}\\p{N}\\s]", "")
                 .toLowerCase();
     }
 
@@ -267,14 +265,14 @@ public class JobSearchServiceImpl implements JobSearchService {
                         .terms(tv -> tv.value(educationLevels.stream().map(FieldValue::of).toList()))));
             }
 
-            if (minSalary != null) {
-                bool.filter(f -> f.range(r -> r.field("maxSalary").gte(JsonData.of(minSalary))));
-            }
-            if (maxSalary != null) {
-                bool.filter(f -> f.range(r -> r.field("minSalary").lte(JsonData.of(maxSalary))));
-            }
             if (salaryUnit != null && !salaryUnit.isBlank()) {
                 bool.filter(f -> f.term(t -> t.field("salaryUnit").value(salaryUnit)));
+                if (minSalary != null) {
+                    bool.filter(f -> f.range(r -> r.field("maxSalary").gte(JsonData.of(minSalary))));
+                }
+                if (maxSalary != null) {
+                    bool.filter(f -> f.range(r -> r.field("minSalary").lte(JsonData.of(maxSalary))));
+                }
             }
 
             return bool;

@@ -20,8 +20,8 @@ public enum ErrorCode {
     INVALID_JOB_GENDER_ENUM(410, "error.invalid.job.gender.enum"),
     INVALID_JOB_BENEFIT_ENUM(410, "error.invalid.job.benefit.enum"),
     VERIFY_EMAIL_FAILED(411, "user.verify.email.failed"),
+    RESET_PASSWORD_FAILED(411, "user.reset.password.failed"),
     PASSWORD_MISMATCH(411, "user.password.mismatch"),
-
     ACCOUNT_NOT_ACTIVE(411, "user.not.active"),
     UPLOAD_FILE_FAILED(501, "error.upload.failed");
 

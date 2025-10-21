@@ -89,10 +89,26 @@ public class AuthenticationController {
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
 
+    @PatchMapping(value = "/users/mobile/verify-email")
+    public ResponseEntity<ResponseData<Void>> verifyEmailUserMobile(@Valid @RequestBody VerifyEmailMobileRequest request) {
+        userService.verifyEmailUserMobile(request);
+        String message = messageSource.getMessage("user.verify.email.success", null, LocaleContextHolder.getLocale());
+        return ResponseBuilder.noData(HttpStatus.OK, message);
+    }
+
+    @PatchMapping(value = "/employers/mobile/verify-email")
+    public ResponseEntity<ResponseData<Void>> verifyEmailEmployerMobile(@Valid @RequestBody VerifyEmailMobileRequest request) {
+        employerService.verifyEmailEmployerMobile(request);
+        String message = messageSource.getMessage("user.verify.email.success", null, LocaleContextHolder.getLocale());
+        return ResponseBuilder.noData(HttpStatus.OK, message);
+    }
+
     @PostMapping(value = "/users/forgot-password")
-    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(@Valid @RequestBody ForgotPasswordRequest request)
+    public ResponseEntity<ResponseData<Void>> forgotPasswordUser(@Valid @RequestBody ForgotPasswordRequest request,
+                                                                 @RequestHeader("User-Agent") String userAgent)
             throws MessagingException, UnsupportedEncodingException {
-        userService.forgotPassword(request);
+        boolean isMobile = AppUtils.isMobile(userAgent);
+        userService.forgotPassword(request, isMobile);
         String message = messageSource.getMessage("auth.forgot.password.success", null,
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
@@ -100,9 +116,11 @@ public class AuthenticationController {
 
     @PostMapping(value = "/employers/forgot-password")
     public ResponseEntity<ResponseData<Void>> forgotPasswordEmployer(
-            @Valid @RequestBody ForgotPasswordRequest request)
+            @Valid @RequestBody ForgotPasswordRequest request,
+            @RequestHeader("User-Agent") String userAgent)
             throws MessagingException, UnsupportedEncodingException {
-        employerService.forgotPassword(request);
+        boolean isMobile = AppUtils.isMobile(userAgent);
+        employerService.forgotPassword(request, isMobile);
         String message = messageSource.getMessage("auth.forgot.password.success", null,
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
@@ -116,10 +134,24 @@ public class AuthenticationController {
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }
 
+    @PostMapping("/users/mobile/reset-password")
+    public ResponseEntity<ResponseData<Void>> resetPasswordUserMobile(@Valid @RequestBody ResetPasswordMobileRequest request) {
+        userService.resetPasswordUserMobile(request);
+        String message = messageSource.getMessage("auth.reset.password.success", null, LocaleContextHolder.getLocale());
+        return ResponseBuilder.noData(HttpStatus.OK, message);
+    }
+
     @PostMapping("/employers/reset-password")
     public ResponseEntity<ResponseData<Void>> resetPasswordEmployer(@RequestHeader("R-Token") String token,
             @Valid @RequestBody ResetPasswordRequest request) {
         employerService.resetPassword(token, request);
+        String message = messageSource.getMessage("auth.reset.password.success", null, LocaleContextHolder.getLocale());
+        return ResponseBuilder.noData(HttpStatus.OK, message);
+    }
+
+    @PostMapping("/employers/mobile/reset-password")
+    public ResponseEntity<ResponseData<Void>> resetPasswordEmployerMobile(@Valid @RequestBody ResetPasswordMobileRequest request) {
+        employerService.resetPasswordEmployerMobile(request);
         String message = messageSource.getMessage("auth.reset.password.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.noData(HttpStatus.OK, message);
     }

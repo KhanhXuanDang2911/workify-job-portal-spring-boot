@@ -50,6 +50,7 @@ public class EmployerServiceImpl implements EmployerService {
     private final ProvinceService provinceService;
     private final DistrictService districtService;
     private final WhitelistTokenService whitelistTokenService;
+    private final OTPService otpService;
 
     @Override
     public PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber,
@@ -73,7 +74,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public EmployerResponse signUpEmployer(EmployerRequest request)
+    public EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
             throws MessagingException, UnsupportedEncodingException {
         existsByEmail(request.getEmail());
         Province province = provinceService.findProvinceById(request.getProvinceId());
@@ -93,7 +94,11 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setDistrict(district);
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
-        mailService.sendConfirmLink(employer);
+        if (isMobile){
+            mailService.sendConfirmLink(employer, true, otpService.generateCode(employer.getEmail()));
+        } else{
+            mailService.sendConfirmLink(employer, false, null);
+        }
         return employerMapper.toDTO(employer);
     }
 
@@ -108,6 +113,20 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setStatus(StatusUser.ACTIVE);
         employerRepository.save(employer);
     }
+
+    @Override
+    public void verifyEmailEmployerMobile(VerifyEmailMobileRequest request) {
+        Employer employer = findEmployerByEmail(request.getEmail());
+        if (!employer.getStatus().equals(StatusUser.PENDING)
+                || !otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60)) {
+            throw new AppException(ErrorCode.VERIFY_EMAIL_FAILED);
+        }
+        employer.setStatus(StatusUser.ACTIVE);
+        otpService.deleteOTPCode(request.getCode());
+        employerRepository.save(employer);
+    }
+
+
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.status == T(beworkify.enumeration.StatusUser).ACTIVE")
     @Override
@@ -249,12 +268,16 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
         Employer employer = findEmployerByEmail(request.getEmail());
         if (!employer.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        mailService.sendResetLink(employer);
+        if (isMobile){
+            mailService.sendResetLink(employer, true, otpService.generateCode(request.getEmail()));
+        } else{
+            mailService.sendResetLink(employer, false, null);
+        }
     }
 
     @Override
@@ -267,6 +290,17 @@ public class EmployerServiceImpl implements EmployerService {
         }
         employer.setPassword(passwordEncoder.encode(request.getNewPassword()));
         whitelistTokenService.deleteByToken(token);
+        employerRepository.save(employer);
+    }
+
+    @Override
+    public void resetPasswordEmployerMobile(ResetPasswordMobileRequest request) {
+        Employer employer = findEmployerByEmail(request.getEmail());
+        if (!otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60 * 24)) {
+            throw new AppException(ErrorCode.RESET_PASSWORD_FAILED);
+        }
+        employer.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        otpService.deleteOTPCode(request.getCode());
         employerRepository.save(employer);
     }
 
@@ -292,4 +326,5 @@ public class EmployerServiceImpl implements EmployerService {
         employerRepository.save(employer);
         return employerMapper.toDTO(employer);
     }
+
 }

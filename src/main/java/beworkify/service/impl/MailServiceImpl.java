@@ -39,7 +39,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendConfirmLink(UserDetails recipient) throws MessagingException, UnsupportedEncodingException {
+    public void sendConfirmLink(UserDetails recipient, boolean isMobile, String code) throws MessagingException, UnsupportedEncodingException {
         String userEmail = null;
         String fullName = null;
 
@@ -50,24 +50,38 @@ public class MailServiceImpl implements MailService {
             Context context = new Context();
             Map<String, Object> properties = new HashMap<>();
 
-            String confirmToken = jwtService.generateToken(recipient,
-                    TokenType.CONFIRM_TOKEN, 24);
             if (recipient instanceof User) {
                 userEmail = ((User) recipient).getEmail();
                 fullName = ((User) recipient).getFullName();
-                properties.put("confirmationUrl",
-                        String.format("http://localhost:5173/verify-email?token=%s", confirmToken));
+                if (isMobile){
+                    properties.put("otpCode", code);
+                } else {
+                    String confirmToken = jwtService.generateToken(recipient,
+                            TokenType.CONFIRM_TOKEN, 24);
+                    properties.put("confirmationUrl",
+                            String.format("http://localhost:5173/verify-email?token=%s", confirmToken));
+                }
             } else if (recipient instanceof Employer) {
                 userEmail = ((Employer) recipient).getEmail();
                 fullName = ((Employer) recipient).getCompanyName();
-                properties.put("confirmationUrl",
-                        String.format("http://localhost:5173/employer/verify-email?token=%s", confirmToken));
+                if (isMobile){
+                    properties.put("otpCode", code);
+                } else {
+                    String confirmToken = jwtService.generateToken(recipient,
+                            TokenType.CONFIRM_TOKEN, 24);
+                    properties.put("confirmationUrl",
+                            String.format("http://localhost:5173/employer/verify-email?token=%s", confirmToken));
+                }
             }
             properties.put("fullName", fullName);
             properties.put("userEmail", userEmail);
             context.setVariables(properties);
-
-            String html = templateEngine.process("confirm-email", context);
+            String html;
+            if (isMobile){
+                html = templateEngine.process("confirm-email-mobile", context);
+            } else {
+                html = templateEngine.process("confirm-email", context);
+            }
 
             helper.setFrom(emailFrom, "Workify Platform");
             helper.setTo(userEmail);
@@ -97,7 +111,7 @@ public class MailServiceImpl implements MailService {
 
     @Override
     @Async
-    public void sendResetLink(UserDetails recipient) throws MessagingException, UnsupportedEncodingException {
+    public void sendResetLink(UserDetails recipient, boolean isMobile, String code) throws MessagingException, UnsupportedEncodingException {
         String userEmail = null;
         String fullName = null;
         try {
@@ -107,26 +121,44 @@ public class MailServiceImpl implements MailService {
             Context context = new Context();
             Map<String, Object> properties = new HashMap<>();
 
-            String resetToken = jwtService.generateToken(recipient,
-                    TokenType.RESET_TOKEN, 1);
             if (recipient instanceof User) {
                 userEmail = ((User) recipient).getEmail();
                 fullName = ((User) recipient).getFullName();
-                properties.put("resetUrl",
-                        String.format("http://localhost:5173/reset-password?token=%s", resetToken));
+                if (isMobile){
+                    properties.put("otpCode", code);
+                } else {
+                    String resetToken = jwtService.generateToken(recipient,
+                            TokenType.RESET_TOKEN, 1);
+                    whitelistTokenService.createToken(resetToken, TokenType.RESET_TOKEN,
+                            userEmail);
+                    properties.put("resetUrl",
+                            String.format("http://localhost:5173/reset-password?token=%s", resetToken));
+                }
             } else if (recipient instanceof Employer) {
                 userEmail = ((Employer) recipient).getEmail();
                 fullName = ((Employer) recipient).getCompanyName();
-                properties.put("resetUrl",
-                        String.format("http://localhost:5173/employer/reset-password?token=%s", resetToken));
+                if (isMobile){
+                    properties.put("otpCode", code);
+                } else {
+                    String resetToken = jwtService.generateToken(recipient,
+                            TokenType.RESET_TOKEN, 1);
+                    whitelistTokenService.createToken(resetToken, TokenType.RESET_TOKEN,
+                            userEmail);
+                    properties.put("resetUrl",
+                            String.format("http://localhost:5173/employer/reset-password?token=%s", resetToken));
+                }
             }
-            whitelistTokenService.createToken(resetToken, TokenType.RESET_TOKEN,
-                    userEmail);
+
             properties.put("userEmail", userEmail);
             properties.put("fullName", fullName);
             context.setVariables(properties);
 
-            String html = templateEngine.process("reset-password", context);
+            String html;
+            if (isMobile){
+                html = templateEngine.process("reset-password-mobile", context);
+            } else {
+                html = templateEngine.process("reset-password", context);
+            }
 
             helper.setFrom(emailFrom, "Workify Platform");
             helper.setTo(userEmail);
