@@ -1,14 +1,15 @@
 package beworkify.mapper;
 
+import beworkify.dto.db.JobBenefit;
 import beworkify.dto.request.JobRequest;
 import beworkify.dto.response.EmployerSummaryResponse;
 import beworkify.dto.response.IndustryResponse;
 import beworkify.dto.response.JobResponse;
 import beworkify.entity.Job;
+import beworkify.enumeration.BenefitType;
 import beworkify.enumeration.SalaryUnit;
 import org.mapstruct.*;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,5 +64,14 @@ public interface JobMapper {
                 .createdAt(job.getAuthor().getCreatedAt())
                 .updatedAt(job.getAuthor().getUpdatedAt())
                 .build());
+    }
+
+    default void mapJobBenefits(@MappingTarget Job job, JobRequest request) {
+        if (request.getJobBenefits() != null && !request.getJobBenefits().isEmpty()) {
+            job.setJobBenefits(request.getJobBenefits().stream().map(benefitRequest -> JobBenefit.builder()
+                    .type(BenefitType.fromValue(benefitRequest.getType()))
+                    .description(benefitRequest.getDescription())
+                    .build()).collect(Collectors.toList()));
+        }
     }
 }

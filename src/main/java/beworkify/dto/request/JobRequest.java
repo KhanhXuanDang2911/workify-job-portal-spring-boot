@@ -1,5 +1,6 @@
 package beworkify.dto.request;
 
+import beworkify.dto.db.JobBenefit;
 import beworkify.enumeration.*;
 import beworkify.validation.ValidAge;
 import beworkify.validation.ValidSalary;
@@ -61,6 +62,10 @@ public class JobRequest {
 
     @NotBlank(message = "{validation.job.requirement.notBlank}")
     private String requirement;
+
+    @Valid
+    @NotEmpty(message = "{validation.job.benefits.notEmpty}")
+    private List<JobBenefitRequest> jobBenefits;
 
     @ValueOfEnum(enumClass = EducationLevel.class, message = "{error.invalid.education.level.enum}")
     private String educationLevel;
