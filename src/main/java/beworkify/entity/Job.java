@@ -1,12 +1,16 @@
 package beworkify.entity;
 
+import beworkify.dto.db.JobBenefit;
 import beworkify.enumeration.*;
 import jakarta.persistence.*;
 import org.hibernate.annotations.BatchSize;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -42,6 +46,9 @@ public class Job extends BaseEntity {
     private String jobDescription;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String requirement;
+    @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<JobBenefit> jobBenefits;
     @Column(nullable = false)
     private EducationLevel educationLevel;
     @Column(nullable = false)

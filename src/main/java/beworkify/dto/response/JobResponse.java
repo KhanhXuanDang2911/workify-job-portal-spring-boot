@@ -1,5 +1,6 @@
 package beworkify.dto.response;
 
+import beworkify.dto.db.JobBenefit;
 import beworkify.enumeration.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -28,6 +30,7 @@ public class JobResponse extends BaseResponse {
     private SalaryUnit salaryUnit;
     private String jobDescription;
     private String requirement;
+    private List<JobBenefit> jobBenefits;
     private EducationLevel educationLevel;
     private ExperienceLevel experienceLevel;
     private JobLevel jobLevel;
