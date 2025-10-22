@@ -3,6 +3,7 @@ package beworkify.service;
 import beworkify.dto.request.JobRequest;
 import beworkify.dto.response.*;
 import beworkify.enumeration.JobStatus;
+import jakarta.validation.constraints.Min;
 
 import java.util.List;
 
@@ -32,4 +33,6 @@ public interface JobService {
     void closeJob(Long id);
 
     void updateStatus(Long id, JobStatus jobStatus);
+
+    PageResponse<List<JobResponse>> getHiringJobs(Long employerId, int pageNumber, int pageSize, List<String> sorts);
 }

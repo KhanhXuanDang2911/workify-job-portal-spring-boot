@@ -157,6 +157,16 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
+        public PageResponse<List<JobResponse>> getHiringJobs(Long employerId, int pageNumber, int pageSize,
+                        List<String> sorts) {
+
+                List<String> WHITE_LIST_SORTS = Arrays.asList("createdAt", "updatedAt", "expirationDate");
+                Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
+                Page<Job> page = jobRepository.findHiringJobs(employerId, pageable);
+                return toPageResponse(page);
+        }
+
+        @Override
         public PageResponse<List<JobResponse>> getAllJobs(int pageNumber, int pageSize, Long industryId,
                         Long provinceId, List<String> sorts, String keyword) {
                 List<String> WHITE_LIST_SORTS = Arrays.asList("jobTitle", "createdAt", "updatedAt",
@@ -358,7 +368,7 @@ public class JobServiceImpl implements JobService {
                                 .pageNumber(page.getNumber() + 1)
                                 .pageSize(page.getSize())
                                 .totalPages(page.getTotalPages())
-                                .numberOfElements((int) page.getTotalElements())
+                                .numberOfElements(page.getNumberOfElements())
                                 .items(items)
                                 .build();
         }

@@ -3,11 +3,13 @@ package beworkify.service.impl;
 import beworkify.dto.request.IndustryRequest;
 import beworkify.dto.response.IndustryResponse;
 import beworkify.dto.response.PageResponse;
+import beworkify.entity.CategoryJob;
 import beworkify.entity.Industry;
 import beworkify.exception.ResourceConflictException;
 import beworkify.exception.ResourceNotFoundException;
 import beworkify.mapper.IndustryMapper;
 import beworkify.repository.IndustryRepository;
+import beworkify.service.CategoryJobService;
 import beworkify.service.IndustryService;
 import beworkify.util.AppUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +30,12 @@ public class IndustryServiceImpl implements IndustryService {
     private final IndustryRepository repository;
     private final IndustryMapper mapper;
     private final MessageSource messageSource;
+    private final CategoryJobService categoryJobService;
 
     @Override
     @Transactional
     public IndustryResponse create(IndustryRequest request) {
+        CategoryJob categoryJob = categoryJobService.findById(request.getCategoryJobId());
         if (repository.existsByName(request.getName())) {
             String message = messageSource.getMessage("industry.exists.name", new Object[] { request.getName() },
                     LocaleContextHolder.getLocale());
@@ -43,6 +47,7 @@ public class IndustryServiceImpl implements IndustryService {
             throw new ResourceConflictException(message);
         }
         Industry entity = mapper.toEntity(request);
+        entity.setCategoryJob(categoryJob);
         repository.save(entity);
         return mapper.toDTO(entity);
     }
@@ -57,6 +62,8 @@ public class IndustryServiceImpl implements IndustryService {
                     return new ResourceNotFoundException(message);
                 });
 
+        CategoryJob categoryJob = categoryJobService.findById(request.getCategoryJobId());
+
         if (request.getName() != null && repository.existsByNameAndIdNot(request.getName(), id)) {
             String message = messageSource.getMessage("industry.exists.name", new Object[] { request.getName() },
                     LocaleContextHolder.getLocale());
@@ -68,7 +75,9 @@ public class IndustryServiceImpl implements IndustryService {
             throw new ResourceConflictException(message);
         }
 
+
         mapper.updateEntityFromRequest(request, entity);
+        entity.setCategoryJob(categoryJob);
         repository.save(entity);
         return mapper.toDTO(entity);
     }

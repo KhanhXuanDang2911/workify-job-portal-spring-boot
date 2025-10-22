@@ -63,8 +63,7 @@ public class AppUtils {
                     return Sort.Order.asc(sortPart[0]);
                 else
                     return Sort.Order.desc(sortPart[0]);
-            })
-                    .toList();
+            }).toList();
         }
         if (orders.isEmpty())
             pageable = PageRequest.of(pageNumber - 1, pageSize);

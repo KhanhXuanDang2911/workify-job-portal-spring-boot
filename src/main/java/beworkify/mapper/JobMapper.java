@@ -66,6 +66,7 @@ public interface JobMapper {
                 .build());
     }
 
+    @AfterMapping
     default void mapJobBenefits(@MappingTarget Job job, JobRequest request) {
         if (request.getJobBenefits() != null && !request.getJobBenefits().isEmpty()) {
             job.setJobBenefits(request.getJobBenefits().stream().map(benefitRequest -> JobBenefit.builder()

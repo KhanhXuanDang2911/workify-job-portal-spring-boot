@@ -62,10 +62,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "api/v1/provinces/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/districts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories-post/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/categories-job/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/industries/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/posts/public/**", "/api/v1/posts/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs/advanced/**",
-                                "/api/v1/jobs/locations/popular/**", "/api/v1/jobs/industries/popular/**")
+                                "/api/v1/jobs/locations/popular/**", "/api/v1/jobs/industries/popular/**", "/api/v1/jobs/openings/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
