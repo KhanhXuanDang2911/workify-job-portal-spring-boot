@@ -123,6 +123,20 @@ public class JobController {
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }
 
+        @GetMapping("/openings/{employerId}")
+        public ResponseEntity<ResponseData<PageResponse<List<JobResponse>>>> getHiringJobs(
+                @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
+                @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}") int pageSize,
+                @RequestParam(required = false) List<String> sorts,
+                @PathVariable @Min(value = 1, message = "{validation.id.min}") Long employerId) {
+                log.info("Request: Get hiring jobs with pageNumber={}, pageSize={}, sorts={}", pageNumber,
+                        pageSize, sorts);
+                PageResponse<List<JobResponse>> response = service.getHiringJobs(employerId, pageNumber, pageSize, sorts);
+                String message = messageSource.getMessage("job.get.hiring.job.success", null,
+                        LocaleContextHolder.getLocale());
+                return ResponseBuilder.withData(HttpStatus.OK, message, response);
+        }
+
         @GetMapping("/me/industries/current")
         @PreAuthorize("hasRole('EMPLOYER')")
         public ResponseEntity<ResponseData<List<IndustryResponse>>> getMyCurrentIndustries(

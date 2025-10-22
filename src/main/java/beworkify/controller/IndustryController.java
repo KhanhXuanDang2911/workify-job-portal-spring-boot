@@ -6,10 +6,8 @@ import beworkify.dto.response.PageResponse;
 import beworkify.dto.response.ResponseData;
 import beworkify.service.IndustryService;
 import beworkify.util.ResponseBuilder;
-import beworkify.validation.OnCreate;
-import beworkify.validation.OnUpdate;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -68,7 +66,7 @@ public class IndustryController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseData<IndustryResponse>> create(
-            @Validated({ OnCreate.class, Default.class }) @RequestBody IndustryRequest request) {
+            @Valid @RequestBody IndustryRequest request) {
         log.info("Request: Create industry = {}", request);
         IndustryResponse dto = service.create(request);
         String message = messageSource.getMessage("industry.create.success", null, LocaleContextHolder.getLocale());
@@ -79,7 +77,7 @@ public class IndustryController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ResponseData<IndustryResponse>> update(
             @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id,
-            @Validated({ OnUpdate.class, Default.class }) @RequestBody IndustryRequest request) {
+            @Valid @RequestBody IndustryRequest request) {
         log.info("Request: Update industry id = {}, data = {}", id, request);
         IndustryResponse dto = service.update(id, request);
         String message = messageSource.getMessage("industry.update.success", null, LocaleContextHolder.getLocale());

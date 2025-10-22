@@ -1,7 +1,9 @@
 package beworkify.enumeration;
 
 import beworkify.exception.AppException;
+import lombok.Getter;
 
+@Getter
 public enum LevelCompanySize {
     LESS_THAN_10("LESS_THAN_10"),
     FROM_10_TO_24("FROM_10_TO_24"),

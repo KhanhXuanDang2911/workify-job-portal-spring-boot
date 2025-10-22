@@ -23,4 +23,8 @@ public class Industry extends BaseEntity {
 
     @OneToMany(mappedBy = "industry", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<JobIndustry> jobIndustries;
+
+    @ManyToOne
+    @JoinColumn(name = "category_job_id", nullable = false)
+    private CategoryJob categoryJob;
 }

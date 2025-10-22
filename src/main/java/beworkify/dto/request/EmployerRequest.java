@@ -6,13 +6,15 @@ import beworkify.validation.OnAdmin;
 import beworkify.validation.OnCreate;
 import beworkify.validation.ValueOfEnum;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class EmployerRequest {
     @NotBlank(message = "{validation.email.not.blank}", groups = { OnCreate.class })
     @Pattern(regexp = "^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]{0,253}[a-zA-Z0-9])?\\.[a-zA-Z]{2,}$", message = "{validation.email.invalid}", groups = {

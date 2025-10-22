@@ -56,6 +56,7 @@ public interface JobRepository extends JpaRepository<Job, Long>, JobRepositoryCu
         @Query("select distinct ji.industry from Job j join j.jobIndustries ji where j.author.id = :employerId")
         List<Industry> findEmployerIndustries(@Param("employerId") Long employerId);
 
-        List<Job> findByStatus(JobStatus status);
+        @Query("select j from Job j where j.status = beworkify.enumeration.JobStatus.APPROVED and j.author.id = :employerId")
+        Page<Job> findHiringJobs(@Param("employerId") Long employerId, Pageable pageable);
 
 }
