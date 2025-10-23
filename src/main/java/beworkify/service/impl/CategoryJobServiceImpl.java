@@ -125,7 +125,7 @@ public class CategoryJobServiceImpl implements CategoryJobService {
                             .industries(new ArrayList<>())
                             .build());
             map.get(c.getId()).getIndustries().add(PopularIndustryResponse.builder()
-                            .id(c.getId())
+                            .id(i.getId())
                             .name(i.getName())
                             .engName(i.getEngName())
                             .description(i.getDescription())
