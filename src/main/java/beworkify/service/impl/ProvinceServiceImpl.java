@@ -11,6 +11,11 @@ import beworkify.repository.ProvinceRepository;
 import beworkify.service.ProvinceService;
 import beworkify.util.AppUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -23,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProvinceServiceImpl implements ProvinceService {
 
     private final ProvinceRepository repository;
@@ -31,6 +37,11 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "provinces", key = "'all'")
+    }, put = {
+            @CachePut(value = "provinces", key = "#result.id")
+    })
     public ProvinceResponse create(ProvinceRequest request) {
         if (repository.existsByCode(request.getCode())) {
             String message = messageSource.getMessage("province.exists", new Object[] { request.getCode() },
@@ -45,6 +56,11 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "provinces", key = "'all'"),
+    }, put = {
+            @CachePut(value = "provinces", key = "#id")
+    })
     public ProvinceResponse update(Long id, ProvinceRequest request) {
         Province entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -67,6 +83,11 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "provinces", key = "'all'"),
+            @CacheEvict(value = "provinces", key = "#id"),
+            @CacheEvict(value = "districts", key = "'p:' + #id")
+    })
     public void delete(Long id) {
         Province entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -78,6 +99,7 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
+    @Cacheable(value = "provinces", key = "#id")
     public ProvinceResponse getById(Long id) {
         Province entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -89,8 +111,10 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
+    @Cacheable(value = "provinces", key = "@keyGenerator.buildKeyWithPaginationSortsKeyword(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('name', 'createdAt', 'updatedAt'))")
     public PageResponse<List<ProvinceResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
             List<String> sorts, String keyword) {
+        log.info("Query provinces with pagination and sorts...");
         String kw = (keyword == null) ? "" : keyword.toLowerCase();
         Pageable pageable = AppUtils.generatePageableWithSort(sorts,
                 List.of("name", "createdAt", "updatedAt"), pageNumber, pageSize);
@@ -107,6 +131,7 @@ public class ProvinceServiceImpl implements ProvinceService {
 
     @Override
     public Province findProvinceById(Long id) {
+        log.info("Query entity province by id {}...", id);
         return repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("province.not.found", null,
                     LocaleContextHolder.getLocale());
@@ -115,7 +140,9 @@ public class ProvinceServiceImpl implements ProvinceService {
     }
 
     @Override
+    @Cacheable(value = "provinces", key = "'all'")
     public List<ProvinceResponse> getAll() {
+        log.info("Query all provinces...");
         List<Province> list = repository.findAllByOrderByNameAsc();
         return list.stream().map(mapper::toDTO).collect(Collectors.toList());
     }

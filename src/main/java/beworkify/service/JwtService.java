@@ -21,6 +21,8 @@ public interface JwtService {
 
     String extractAccountType(String token, TokenType tokenType);
 
+    String extractJwtId(String token, TokenType tokenType);
+
     Date extractExpiration(String token, TokenType tokenType);
 
     boolean isTokenValid(String token, UserDetails userDetails, TokenType tokenType);

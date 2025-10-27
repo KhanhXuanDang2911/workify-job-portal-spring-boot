@@ -13,6 +13,8 @@ import beworkify.exception.ResourceNotFoundException;
 import beworkify.mapper.UserMapper;
 import beworkify.repository.UserRepository;
 import beworkify.service.*;
+import beworkify.service.redis.RedisOTPCodeService;
+import beworkify.service.redis.RedisTokenService;
 import beworkify.util.AppUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
@@ -43,10 +45,10 @@ public class UserServiceImpl implements UserService {
     private final AzureBlobService azureBlobService;
     private final JwtService jwtService;
     private final MailService mailService;
-    private final WhitelistTokenService whitelistTokenService;
     private final ProvinceService provinceService;
     private final DistrictService districtService;
-    private final OTPService otpService;
+    private final RedisTokenService redisTokenService;
+    private final RedisOTPCodeService redisOTPCodeService;
 
     @Override
     public UserResponse getUserById(Long id) {
@@ -226,11 +228,11 @@ public class UserServiceImpl implements UserService {
     public void verifyEmailUserMobile(VerifyEmailMobileRequest request) {
         User user = findUserByEmail(request.getEmail());
         if (!user.getStatus().equals(StatusUser.PENDING)
-                || !otpService.isOTPCodeValid(request.getCode(), request.getEmail(),60)) {
+                || !redisOTPCodeService.isValidCode(request.getCode(), request.getEmail())) {
             throw new AppException(ErrorCode.VERIFY_EMAIL_FAILED);
         }
         user.setStatus(StatusUser.ACTIVE);
-        otpService.deleteOTPCode(request.getCode());
+        redisOTPCodeService.deleteOTPCode(request.getCode());
         userRepository.save(user);
     }
 
@@ -253,7 +255,7 @@ public class UserServiceImpl implements UserService {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
         if (isMobile){
-            mailService.sendResetLink(user, true, otpService.generateCode(request.getEmail()));
+            mailService.sendResetLink(user, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 60));
         } else {
             mailService.sendResetLink(user, false, null);
         }
@@ -264,22 +266,22 @@ public class UserServiceImpl implements UserService {
         String email = jwtService.extractEmail(token, TokenType.RESET_TOKEN);
         User user = findUserByEmail(email);
         if (!jwtService.isTokenValid(token, user, TokenType.RESET_TOKEN)
-                || !whitelistTokenService.existsByToken(token)) {
+                || !redisTokenService.existsByJwtId(token, TokenType.RESET_TOKEN)) {
             throw new InvalidTokenException();
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        whitelistTokenService.deleteByToken(token);
+        redisTokenService.deleteByJwtId(token, TokenType.RESET_TOKEN);
         userRepository.save(user);
     }
 
     @Override
     public void resetPasswordUserMobile(ResetPasswordMobileRequest request) {
         User user = findUserByEmail(request.getEmail());
-        if (!otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60 * 24)) {
+        if (!redisOTPCodeService.isValidCode(request.getCode(), request.getEmail())) {
             throw new AppException(ErrorCode.RESET_PASSWORD_FAILED);
         }
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        otpService.deleteOTPCode(request.getCode());
+        redisOTPCodeService.deleteOTPCode(request.getCode());
         userRepository.save(user);
     }
 
@@ -298,8 +300,8 @@ public class UserServiceImpl implements UserService {
         }
         String accessToken = jwtService.generateAccessToken(user, AccountType.USER);
         String refreshToken = jwtService.generateRefreshToken(user, AccountType.USER);
-        whitelistTokenService.createToken(accessToken, TokenType.ACCESS_TOKEN, user.getEmail());
-        whitelistTokenService.createToken(refreshToken, TokenType.REFRESH_TOKEN, user.getEmail());
+        redisTokenService.saveAccessToken(accessToken);
+        redisTokenService.saveRefreshToken(refreshToken);
         if (user.getStatus().equals(StatusUser.PENDING)) {
             user.setStatus(StatusUser.ACTIVE);
         }
@@ -335,7 +337,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         if (isMobile) {
-            mailService.sendConfirmLink(user, true, otpService.generateCode(user.getEmail()));
+            mailService.sendConfirmLink(user, true, redisOTPCodeService.generateAndSaveOTPCode(user.getEmail(), (long) 60 * 24));
         } else {
             mailService.sendConfirmLink(user, false, null);
         }

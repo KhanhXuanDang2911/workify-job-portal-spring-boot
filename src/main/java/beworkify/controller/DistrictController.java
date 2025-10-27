@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class DistrictController {
     @GetMapping
     public ResponseEntity<ResponseData<java.util.List<DistrictResponse>>> getAll() {
         log.info("Request: Get all districts");
-        java.util.List<DistrictResponse> response = service.getAll();
+        List<DistrictResponse> response = service.getAll();
         String message = messageSource.getMessage("district.get.list.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }
@@ -39,7 +41,7 @@ public class DistrictController {
     public ResponseEntity<ResponseData<java.util.List<DistrictResponse>>> getByProvinceId(
             @PathVariable("provinceId") @Min(value = 1, message = "{validation.id.min}") Long provinceId) {
         log.info("Request: Get districts by province id = {}", provinceId);
-        java.util.List<DistrictResponse> response = service.getByProvinceId(provinceId);
+        List<DistrictResponse> response = service.getByProvinceId(provinceId);
         String message = messageSource.getMessage("district.get.list.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }

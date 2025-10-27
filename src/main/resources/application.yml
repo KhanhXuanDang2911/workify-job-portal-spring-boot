@@ -10,11 +10,28 @@ spring:
       max-request-size: 2000MB
   application:
     name: Workify
+
+  cache:
+    type: redis
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: 6379
+      timeout: 6000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 1
+          time-between-eviction-runs: 10000ms
+
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS:http://localhost:9200}
+
   messages:
     basename: messages
     encoding: UTF-8
+
   mail:
     from: ${GMAIL_USERNAME}
     host: smtp.gmail.com

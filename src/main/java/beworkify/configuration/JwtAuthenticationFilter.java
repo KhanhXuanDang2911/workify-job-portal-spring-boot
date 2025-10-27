@@ -1,9 +1,9 @@
 package beworkify.configuration;
 
+import beworkify.enumeration.AccountType;
 import beworkify.enumeration.TokenType;
-import beworkify.exception.InvalidTokenException;
 import beworkify.service.JwtService;
-import beworkify.service.WhitelistTokenService;
+import beworkify.service.redis.RedisTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final WhitelistTokenService whitelistTokenService;
+    private final RedisTokenService redisTokenService;
+
     @Autowired
     @Qualifier("userDetailsService")
     private UserDetailsService userDetailsService;
@@ -57,14 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails;
-                if (accountType.equals("USER")) {
+                if (accountType.equals(AccountType.USER.getType())) {
                     userDetails = userDetailsService.loadUserByUsername(email);
                 } else {
                     userDetails = employerDetailsService.loadUserByUsername(email);
                 }
 
                 if (jwtService.isTokenValid(token, userDetails, TokenType.ACCESS_TOKEN)
-                        && whitelistTokenService.existsByToken(token)) {
+                        && redisTokenService.existsByJwtId(token, TokenType.ACCESS_TOKEN)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -73,8 +74,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (InvalidTokenException ex) {
-            SecurityContextHolder.clearContext();
         } catch (Exception ex) {
             SecurityContextHolder.clearContext();
         }

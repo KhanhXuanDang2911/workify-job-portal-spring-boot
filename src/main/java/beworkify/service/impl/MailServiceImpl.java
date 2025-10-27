@@ -5,7 +5,7 @@ import beworkify.entity.User;
 import beworkify.enumeration.TokenType;
 import beworkify.service.JwtService;
 import beworkify.service.MailService;
-import beworkify.service.WhitelistTokenService;
+import beworkify.service.redis.RedisTokenService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService {
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
     private final JwtService jwtService;
-    private final WhitelistTokenService whitelistTokenService;
+    private final RedisTokenService redisTokenService;
 
     @Value("${spring.mail.from}")
     private String emailFrom;
@@ -129,8 +129,7 @@ public class MailServiceImpl implements MailService {
                 } else {
                     String resetToken = jwtService.generateToken(recipient,
                             TokenType.RESET_TOKEN, 1);
-                    whitelistTokenService.createToken(resetToken, TokenType.RESET_TOKEN,
-                            userEmail);
+                    redisTokenService.saveResetToken(resetToken);
                     properties.put("resetUrl",
                             String.format("http://localhost:5173/reset-password?token=%s", resetToken));
                 }
@@ -142,8 +141,7 @@ public class MailServiceImpl implements MailService {
                 } else {
                     String resetToken = jwtService.generateToken(recipient,
                             TokenType.RESET_TOKEN, 1);
-                    whitelistTokenService.createToken(resetToken, TokenType.RESET_TOKEN,
-                            userEmail);
+                    redisTokenService.saveResetToken(resetToken);
                     properties.put("resetUrl",
                             String.format("http://localhost:5173/employer/reset-password?token=%s", resetToken));
                 }

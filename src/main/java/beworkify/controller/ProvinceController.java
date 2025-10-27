@@ -32,7 +32,7 @@ public class ProvinceController {
     @GetMapping
     public ResponseEntity<ResponseData<List<ProvinceResponse>>> getAll() {
         log.info("Request: Get all provinces");
-        java.util.List<ProvinceResponse> response = service.getAll();
+        List<ProvinceResponse> response = service.getAll();
         String message = messageSource.getMessage("province.get.list.success", null, LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
     }

@@ -13,6 +13,8 @@ import beworkify.exception.InvalidTokenException;
 import beworkify.exception.ResourceNotFoundException;
 import beworkify.mapper.EmployerMapper;
 import beworkify.service.*;
+import beworkify.service.redis.RedisOTPCodeService;
+import beworkify.service.redis.RedisTokenService;
 import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -49,8 +51,8 @@ public class EmployerServiceImpl implements EmployerService {
     private final JwtService jwtService;
     private final ProvinceService provinceService;
     private final DistrictService districtService;
-    private final WhitelistTokenService whitelistTokenService;
-    private final OTPService otpService;
+    private final RedisTokenService redisTokenService;
+    private final RedisOTPCodeService redisOTPCodeService;
 
     @Override
     public PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber,
@@ -95,7 +97,7 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
         if (isMobile){
-            mailService.sendConfirmLink(employer, true, otpService.generateCode(employer.getEmail()));
+            mailService.sendConfirmLink(employer, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 24 * 60));
         } else{
             mailService.sendConfirmLink(employer, false, null);
         }
@@ -118,11 +120,11 @@ public class EmployerServiceImpl implements EmployerService {
     public void verifyEmailEmployerMobile(VerifyEmailMobileRequest request) {
         Employer employer = findEmployerByEmail(request.getEmail());
         if (!employer.getStatus().equals(StatusUser.PENDING)
-                || !otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60)) {
+                || !redisOTPCodeService.isValidCode(request.getCode(), request.getEmail())) {
             throw new AppException(ErrorCode.VERIFY_EMAIL_FAILED);
         }
         employer.setStatus(StatusUser.ACTIVE);
-        otpService.deleteOTPCode(request.getCode());
+        redisOTPCodeService.deleteOTPCode(request.getCode());
         employerRepository.save(employer);
     }
 
@@ -274,7 +276,7 @@ public class EmployerServiceImpl implements EmployerService {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
         if (isMobile){
-            mailService.sendResetLink(employer, true, otpService.generateCode(request.getEmail()));
+            mailService.sendResetLink(employer, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), 60));
         } else{
             mailService.sendResetLink(employer, false, null);
         }
@@ -285,22 +287,22 @@ public class EmployerServiceImpl implements EmployerService {
         String email = jwtService.extractEmail(token, TokenType.RESET_TOKEN);
         Employer employer = findEmployerByEmail(email);
         if (!jwtService.isTokenValid(token, employer, TokenType.RESET_TOKEN)
-                || !whitelistTokenService.existsByToken(token)) {
+                || !redisTokenService.existsByJwtId(token, TokenType.RESET_TOKEN)) {
             throw new InvalidTokenException();
         }
         employer.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        whitelistTokenService.deleteByToken(token);
+        redisTokenService.deleteByJwtId(token, TokenType.RESET_TOKEN);
         employerRepository.save(employer);
     }
 
     @Override
     public void resetPasswordEmployerMobile(ResetPasswordMobileRequest request) {
         Employer employer = findEmployerByEmail(request.getEmail());
-        if (!otpService.isOTPCodeValid(request.getCode(), request.getEmail(), 60 * 24)) {
+        if (!redisOTPCodeService.isValidCode(request.getCode(), request.getEmail())) {
             throw new AppException(ErrorCode.RESET_PASSWORD_FAILED);
         }
         employer.setPassword(passwordEncoder.encode(request.getNewPassword()));
-        otpService.deleteOTPCode(request.getCode());
+        redisOTPCodeService.deleteOTPCode(request.getCode());
         employerRepository.save(employer);
     }
 
