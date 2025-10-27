@@ -13,7 +13,11 @@ import beworkify.repository.*;
 import beworkify.service.JobService;
 import beworkify.util.AppUtils;
 import beworkify.search.service.JobSearchService;
+import beworkify.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -44,6 +48,7 @@ public class JobServiceImpl implements JobService {
         private final ProvinceMapper provinceMapper;
         private final IndustryMapper industryMapper;
         private final JobSearchService jobSearchService;
+        private final RedisUtils redisUtils;
 
         @Override
         @Transactional
@@ -68,8 +73,10 @@ public class JobServiceImpl implements JobService {
                 entity = jobRepository.save(entity);
 
                 jobSearchService.index(entity);
-
-                return mapper.toDTO(entity);
+                JobResponse response = mapper.toDTO(entity);
+                evictCacheByPattern("jobs:pn:*");
+                evictCacheByPattern("jobs:popular:*");
+                return response;
         }
 
         @Override
@@ -110,7 +117,10 @@ public class JobServiceImpl implements JobService {
                 entity = jobRepository.save(entity);
 
                 jobSearchService.index(entity);
-                return mapper.toDTO(entity);
+                JobResponse response = mapper.toDTO(entity);
+                evictCacheByPattern("jobs:pn:*");
+                evictCacheByPattern("jobs:popular:*");
+                return response;
         }
 
         @Override
@@ -126,6 +136,8 @@ public class JobServiceImpl implements JobService {
                 jobRepository.delete(entity);
 
                 jobSearchService.deleteById(entity.getId());
+                evictCacheByPattern("jobs:pn:*");
+                evictCacheByPattern("jobs:popular:*");
         }
 
         @Override
@@ -157,6 +169,7 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
+        @Cacheable(value = "jobs", key = "@keyGenerator.buildKeyForHiringJobs(#employerId, #pageNumber, #pageSize, #sorts, T(java.util.List).of('createdAt','updatedAt','expirationDate'))")
         public PageResponse<List<JobResponse>> getHiringJobs(Long employerId, int pageNumber, int pageSize,
                         List<String> sorts) {
 
@@ -167,6 +180,7 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
+        @Cacheable(value = "jobs", key = "@keyGenerator.buildKeyForGetAllJobs(#pageNumber, #pageSize, #industryId, #provinceId ,#sorts, #keyword, T(java.util.List).of('jobTitle','createdAt','updatedAt','expirationDate','status'))")
         public PageResponse<List<JobResponse>> getAllJobs(int pageNumber, int pageSize, Long industryId,
                         Long provinceId, List<String> sorts, String keyword) {
                 List<String> WHITE_LIST_SORTS = Arrays.asList("jobTitle", "createdAt", "updatedAt",
@@ -191,6 +205,7 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
+        @Cacheable(value = "jobs", key = "'popular:locations:' + #limit")
         public List<PopularLocationResponse> getPopularLocations(Integer limit) {
                 List<Object[]> results = jobRepository.getPopularProvinces(limit);
                 return results.stream().map(r -> {
@@ -208,6 +223,7 @@ public class JobServiceImpl implements JobService {
         }
 
         @Override
+        @Cacheable(value = "jobs", key = "'popular:industries:' + #limit")
         public List<PopularIndustryResponse> getPopularIndustries(Integer limit) {
                 List<Object[]> results = jobRepository.getPopularIndustries(limit);
                 return results.stream().map(r -> {
@@ -235,6 +251,8 @@ public class JobServiceImpl implements JobService {
                 entity.setStatus(JobStatus.CLOSED);
                 jobRepository.save(entity);
                 jobSearchService.index(entity);
+                evictCacheByPattern("jobs:pn:*");
+                evictCacheByPattern("jobs:popular:*");
         }
 
         @Override
@@ -248,6 +266,8 @@ public class JobServiceImpl implements JobService {
                 entity.setStatus(jobStatus);
                 jobRepository.save(entity);
                 jobSearchService.index(entity);
+                evictCacheByPattern("jobs:pn:*");
+                evictCacheByPattern("jobs:popular:*");
         }
 
         private Location createLocationFromRequest(LocationRequest request) {
@@ -357,6 +377,7 @@ public class JobServiceImpl implements JobService {
                 if (isEmployer && !entity.getAuthor().getEmail().equals(email)) {
                         throw new AccessDeniedException("Access is denied");
                 }
+
         }
 
         private PageResponse<List<JobResponse>> toPageResponse(Page<Job> page) {
@@ -371,5 +392,9 @@ public class JobServiceImpl implements JobService {
                                 .numberOfElements(page.getNumberOfElements())
                                 .items(items)
                                 .build();
+        }
+
+        private void evictCacheByPattern(String pattern) {
+                redisUtils.evictCacheByPattern(pattern);
         }
 }

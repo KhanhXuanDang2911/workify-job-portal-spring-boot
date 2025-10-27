@@ -15,7 +15,9 @@ import beworkify.mapper.EmployerMapper;
 import beworkify.service.*;
 import beworkify.service.redis.RedisOTPCodeService;
 import beworkify.service.redis.RedisTokenService;
+import beworkify.util.RedisUtils;
 import jakarta.mail.MessagingException;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +32,8 @@ import org.springframework.context.MessageSource;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +57,7 @@ public class EmployerServiceImpl implements EmployerService {
     private final DistrictService districtService;
     private final RedisTokenService redisTokenService;
     private final RedisOTPCodeService redisOTPCodeService;
+    private final RedisUtils redisUtils;
 
     @Override
     public PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber,
@@ -76,6 +81,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
             throws MessagingException, UnsupportedEncodingException {
         existsByEmail(request.getEmail());
@@ -96,9 +102,10 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setDistrict(district);
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
-        if (isMobile){
-            mailService.sendConfirmLink(employer, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 24 * 60));
-        } else{
+        if (isMobile) {
+            mailService.sendConfirmLink(employer, true,
+                    redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 24 * 60));
+        } else {
             mailService.sendConfirmLink(employer, false, null);
         }
         return employerMapper.toDTO(employer);
@@ -114,6 +121,7 @@ public class EmployerServiceImpl implements EmployerService {
         }
         employer.setStatus(StatusUser.ACTIVE);
         employerRepository.save(employer);
+        evictCacheByPattern("employers:" + employer.getId());
     }
 
     @Override
@@ -126,18 +134,20 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setStatus(StatusUser.ACTIVE);
         redisOTPCodeService.deleteOTPCode(request.getCode());
         employerRepository.save(employer);
+        evictCacheByPattern("employers:" + employer.getId());
     }
-
-
 
     @PostAuthorize("hasRole('ADMIN') or returnObject.status == T(beworkify.enumeration.StatusUser).ACTIVE")
     @Override
+    @Cacheable(value = "employers", key = "#id")
     public EmployerResponse getEmployerById(Long id) {
         Employer employer = findEmployerById(id);
         return employerMapper.toDTO(employer);
     }
 
     @Override
+
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse createEmployer(EmployerRequest request, MultipartFile avatar, MultipartFile background) {
         existsByEmail(request.getEmail());
         Province province = provinceService.findProvinceById(request.getProvinceId());
@@ -162,6 +172,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse updateEmployer(Long id, EmployerRequest request, MultipartFile avatar,
             MultipartFile background) {
         Employer employer = findEmployerById(id);
@@ -195,6 +206,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse updateProfileEmployer(Long id, EmployerRequest request) {
         Employer employer = findEmployerById(id);
         Province province = provinceService.findProvinceById(request.getProvinceId());
@@ -209,6 +221,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse uploadAvatar(Long id, MultipartFile avatar) {
         Employer employer = findEmployerById(id);
         if (avatar != null && !avatar.isEmpty()) {
@@ -220,6 +233,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse uploadBackground(Long id, MultipartFile background) {
         Employer employer = findEmployerById(id);
         if (background != null && !background.isEmpty()) {
@@ -231,6 +245,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CacheEvict(value = "employers", key = "#id")
     public void deleteEmployer(Long id) {
         Employer employer = employerRepository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("employer.not.found", new Object[] { id },
@@ -270,14 +285,16 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile)
+            throws MessagingException, UnsupportedEncodingException {
         Employer employer = findEmployerByEmail(request.getEmail());
         if (!employer.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        if (isMobile){
-            mailService.sendResetLink(employer, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), 60));
-        } else{
+        if (isMobile) {
+            mailService.sendResetLink(employer, true,
+                    redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), 60));
+        } else {
             mailService.sendResetLink(employer, false, null);
         }
     }
@@ -317,6 +334,7 @@ public class EmployerServiceImpl implements EmployerService {
     }
 
     @Override
+    @CachePut(value = "employers", key = "#result.id", condition = "#result != null")
     public EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request) {
         Employer employer = findEmployerById(employerId);
         employer.setWebsiteUrls(request.getWebsiteUrls());
@@ -327,6 +345,10 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setYoutubeUrl(request.getYoutubeUrl());
         employerRepository.save(employer);
         return employerMapper.toDTO(employer);
+    }
+
+    private void evictCacheByPattern(String pattern) {
+        redisUtils.evictCacheByPattern(pattern);
     }
 
 }
