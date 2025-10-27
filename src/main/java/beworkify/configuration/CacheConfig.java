@@ -43,6 +43,14 @@ public class CacheConfig {
                                 cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
                 cacheConfigs.put("industries",
                                 cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
+                cacheConfigs.put("posts",
+                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
+                cacheConfigs.put("jobs",
+                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
+                cacheConfigs.put("employers",
+                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
+                cacheConfigs.put("users",
+                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
 
                 return RedisCacheManager
                                 .builder(redisConnectionFactory)

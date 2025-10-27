@@ -43,8 +43,8 @@ public class PostController {
             @RequestParam(required = false) List<String> sorts,
             @RequestParam(defaultValue = "") String keyword,
             @RequestParam(required = false) Long categoryId) {
-        log.info("Request: Get posts with pageNumber={}, pageSize={}, sorts={}, keyword={}", pageNumber, pageSize,
-                sorts, keyword);
+        log.info("Request: Get posts with pageNumber={}, pageSize={}, sorts={}, keyword={}, categoryId= {}", pageNumber, pageSize,
+                sorts, keyword, categoryId);
         PageResponse<List<PostResponse>> response;
         response = service.getAll(pageNumber, pageSize, sorts, keyword, categoryId, false, null);
         String message = messageSource.getMessage("post.get.list.success", null, LocaleContextHolder.getLocale());

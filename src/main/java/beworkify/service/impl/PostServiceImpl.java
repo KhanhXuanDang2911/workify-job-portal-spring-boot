@@ -18,8 +18,13 @@ import beworkify.service.PostService;
 import beworkify.util.AppUtils;
 import beworkify.util.HtmlImageProcessor;
 import beworkify.util.TagUtils;
+import beworkify.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -45,9 +50,11 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final AzureBlobService storageService;
     private final MessageSource messageSource;
+    private final RedisUtils redisUtils;
 
     @Override
     @Transactional
+    @CachePut(value = "posts", key = "#result.id", condition = "#result != null")
     public PostResponse create(PostRequest request, MultipartFile thumbnail) throws Exception {
         Post entity = mapper.toEntity(request);
         CategoryPost category = categoryRepository.findById(request.getCategoryId())
@@ -83,11 +90,15 @@ public class PostServiceImpl implements PostService {
                 .fullName(entity.getAuthor().getFullName())
                 .role(entity.getAuthor().getRole().getRole().getName())
                 .build());
+        evictCacheByPattern("posts:pn:*");
+        evictCacheByPattern("posts:latest:*");
+        evictCacheByPattern("posts:related:" + entity.getId() + ":*");
         return response;
     }
 
     @Override
     @Transactional
+    @CachePut(value = "posts", key = "#result.id", condition = "#result != null")
     public PostResponse update(Long id, PostRequest request, MultipartFile thumbnail) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Post entity = repository.findById(id)
@@ -131,21 +142,29 @@ public class PostServiceImpl implements PostService {
                 .fullName(entity.getAuthor().getFullName())
                 .role(entity.getAuthor().getRole().getRole().getName())
                 .build());
+        evictCacheByPattern("posts:pn:*");
+        evictCacheByPattern("posts:latest:*");
+        evictCacheByPattern("posts:related:" + id + ":*");
         return response;
     }
 
     @Override
     @Transactional
+    @CacheEvict(value = "posts", key = "#id")
     public void delete(Long id) {
         Post entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageSource.getMessage("error.resource.not.found", null, LocaleContextHolder.getLocale())));
         repository.delete(entity);
+        evictCacheByPattern("posts:pn:*");
+        evictCacheByPattern("posts:latest:*");
+        evictCacheByPattern("posts:related:" + id + ":*");
     }
 
     @Override
     @PostAuthorize("hasRole('ADMIN') " +
             "or returnObject.status == T(beworkify.enumeration.StatusPost).PUBLIC")
+    @Cacheable(value = "posts", key = "#id")
     public PostResponse getById(Long id) {
         Post entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -162,6 +181,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "posts", key = "@keyGenerator.buildKeyWithPaginationSortsKeywordForPost(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('createdAt', 'updatedAt'),#categoryId, #isPublic, #authorId)")
     public PageResponse<List<PostResponse>> getAll(int pageNumber, int pageSize, List<String> sorts, String keyword,
             Long categoryId, boolean isPublic, Long authorId) {
         String kw = (keyword == null) ? "" : keyword.toLowerCase();
@@ -194,6 +214,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "posts", key = "'related:' + #postId + ':' + #limit")
     public List<PostResponse> getRelated(Long postId, int limit) {
         Post anchor = repository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException(
@@ -212,6 +233,7 @@ public class PostServiceImpl implements PostService {
             } catch (Exception e) {
                 System.out.println("Full-text search failed: " + e.getMessage());
             }
+
         }
 
         if (related.size() < limit) {
@@ -226,6 +248,7 @@ public class PostServiceImpl implements PostService {
             } catch (Exception e) {
                 System.out.println("Similarity search failed: " + e.getMessage());
             }
+
         }
 
         if (related.size() < limit && anchor.getCategory() != null) {
@@ -281,6 +304,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "posts", key = "'latest:' + #limit")
     public List<PostResponse> getLatestPosts(int limit) {
         Pageable pageable = PageRequest.of(0,
                 Math.min(limit, 50));
@@ -299,6 +323,10 @@ public class PostServiceImpl implements PostService {
                     return response;
                 })
                 .toList();
+    }
+
+    private void evictCacheByPattern(String pattern) {
+        redisUtils.evictCacheByPattern(pattern);
     }
 
 }

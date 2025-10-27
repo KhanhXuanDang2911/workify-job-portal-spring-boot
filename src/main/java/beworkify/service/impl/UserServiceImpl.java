@@ -16,10 +16,14 @@ import beworkify.service.*;
 import beworkify.service.redis.RedisOTPCodeService;
 import beworkify.service.redis.RedisTokenService;
 import beworkify.util.AppUtils;
+import beworkify.util.RedisUtils;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -49,8 +53,10 @@ public class UserServiceImpl implements UserService {
     private final DistrictService districtService;
     private final RedisTokenService redisTokenService;
     private final RedisOTPCodeService redisOTPCodeService;
+    private final RedisUtils redisUtils;
 
     @Override
+    @Cacheable(value = "users", key = "#id")
     public UserResponse getUserById(Long id) {
         User user = findUserById(id);
         UserResponse response = userMapper.toDTO(user);
@@ -65,7 +71,8 @@ public class UserServiceImpl implements UserService {
             List<String> sorts, String keyword) {
         log.info("Fetching users with pagination: pageNumber={}, pageSize={}", pageNumber, pageSize);
 
-        List<String> whiteListFieldSorts = List.of("fullName", "email", "phoneNumber", "birthDate", "gender",  "role", "status", "createdAt", "updatedAt");
+        List<String> whiteListFieldSorts = List.of("fullName", "email", "phoneNumber", "birthDate", "gender", "role",
+                "status", "createdAt", "updatedAt");
         Page<User> userPage = userRepository.searchUsers(keyword.toLowerCase(),
                 AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize));
 
@@ -91,6 +98,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(value = "users", key = "#result.id", condition = "#result != null")
     public UserResponse createUser(UserRequest request, MultipartFile avatar) {
         log.info("Admin creating user with email {}", request.getEmail());
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -131,6 +139,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(value = "users", key = "#result.id", condition = "#result != null")
     public UserResponse updateUser(UserRequest request, MultipartFile avatar, Long id) {
         log.info("Admin updating user with email {}", request.getEmail());
         User user = findUserById(id);
@@ -175,6 +184,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(value = "users", key = "#result.id", condition = "#result != null")
     public UserResponse updateProfile(Long userId, UserRequest request) {
         log.info("User with email {} updating profile", request.getEmail());
         User user = findUserById(userId);
@@ -200,6 +210,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CachePut(value = "users", key = "#result.id", condition = "#result != null")
     public UserResponse updateAvatar(Long userId, MultipartFile avatar) {
         User user = findUserById(userId);
         if (avatar != null && !avatar.isEmpty()) {
@@ -222,6 +233,7 @@ public class UserServiceImpl implements UserService {
         }
         user.setStatus(StatusUser.ACTIVE);
         userRepository.save(user);
+        evictCacheByPattern("users:" + user.getId());
     }
 
     @Override
@@ -234,9 +246,8 @@ public class UserServiceImpl implements UserService {
         user.setStatus(StatusUser.ACTIVE);
         redisOTPCodeService.deleteOTPCode(request.getCode());
         userRepository.save(user);
+        evictCacheByPattern("users:" + user.getId());
     }
-
-
 
     @Override
     public void updatePassword(Long id, UpdatePasswordRequest request) {
@@ -249,13 +260,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public void forgotPassword(ForgotPasswordRequest request, boolean isMobile)
+            throws MessagingException, UnsupportedEncodingException {
         User user = findUserByEmail(request.getEmail());
         if (!user.getStatus().equals(StatusUser.ACTIVE)) {
             throw new AppException(ErrorCode.ACCOUNT_NOT_ACTIVE);
         }
-        if (isMobile){
-            mailService.sendResetLink(user, true, redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 60));
+        if (isMobile) {
+            mailService.sendResetLink(user, true,
+                    redisOTPCodeService.generateAndSaveOTPCode(request.getEmail(), (long) 60));
         } else {
             mailService.sendResetLink(user, false, null);
         }
@@ -308,6 +321,8 @@ public class UserServiceImpl implements UserService {
         UserResponse data = userMapper.toDTO(user);
         data.setRole(user.getRole().getRole());
 
+        evictCacheByPattern("users:" + user.getId());
+
         return TokenResponse.<UserResponse>builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -317,7 +332,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException {
+    public UserResponse signUp(UserRequest request, boolean isMobile)
+            throws MessagingException, UnsupportedEncodingException {
         log.info("Signing up user with email {}", request.getEmail());
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -337,7 +353,8 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         if (isMobile) {
-            mailService.sendConfirmLink(user, true, redisOTPCodeService.generateAndSaveOTPCode(user.getEmail(), (long) 60 * 24));
+            mailService.sendConfirmLink(user, true,
+                    redisOTPCodeService.generateAndSaveOTPCode(user.getEmail(), (long) 60 * 24));
         } else {
             mailService.sendConfirmLink(user, false, null);
         }
@@ -348,6 +365,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#id")
     public void deleteUser(Long id) {
         log.info("Deleting user with ID: {}", id);
 
@@ -380,6 +398,10 @@ public class UserServiceImpl implements UserService {
                             LocaleContextHolder.getLocale());
                     return new ResourceNotFoundException(message);
                 });
+    }
+
+    private void evictCacheByPattern(String pattern) {
+        redisUtils.evictCacheByPattern(pattern);
     }
 
 }
