@@ -106,6 +106,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String extractJwtId(String token, TokenType tokenType) {
+        return extractAllClaims(token, tokenType).getId();
+    }
+
+    @Override
     public String extractAccountType(String token, TokenType tokenType) {
         return extractAllClaims(token, tokenType).get("ACCOUNT_TYPE", String.class);
     }

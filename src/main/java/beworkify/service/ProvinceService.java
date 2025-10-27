@@ -21,5 +21,5 @@ public interface ProvinceService {
 
     Province findProvinceById(Long id);
 
-    java.util.List<ProvinceResponse> getAll();
+    List<ProvinceResponse> getAll();
 }

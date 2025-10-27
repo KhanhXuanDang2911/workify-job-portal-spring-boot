@@ -11,12 +11,14 @@ import beworkify.exception.InvalidTokenException;
 import beworkify.exception.UnAuthorizeException;
 import beworkify.mapper.EmployerMapper;
 import beworkify.mapper.UserMapper;
+import beworkify.repository.redis.RedisTokenRepository;
 import beworkify.repository.UserRepository;
 import beworkify.repository.httpclient.GoogleIdentityClient;
 import beworkify.repository.httpclient.GoogleUserInfoClient;
 import beworkify.repository.httpclient.LinkedInIdentityClient;
 import beworkify.repository.httpclient.LinkedInUserInfoClient;
 import beworkify.service.*;
+import beworkify.service.redis.RedisTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -47,7 +49,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final WhitelistTokenService whitelistTokenService;
     private final GoogleIdentityClient googleIdentityClient;
     private final GoogleUserInfoClient googleUserInfoClient;
     private final LinkedInIdentityClient linkedInIdentityClient;
@@ -58,6 +59,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper userMapper;
     private final EmployerMapper employerMapper;
     private final EmployerService employerService;
+    private final RedisTokenRepository redisTokenRepository;
+    private final RedisTokenService redisTokenService;
 
     @Value("${oauth2.google.client-id}")
     private String GOOGLE_CLIENT_ID;
@@ -87,8 +90,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String accessToken = jwtService.generateAccessToken(user, AccountType.USER);
         String refreshToken = jwtService.generateRefreshToken(user, AccountType.USER);
 
-        whitelistTokenService.createToken(accessToken, TokenType.ACCESS_TOKEN, request.getEmail());
-        whitelistTokenService.createToken(refreshToken, TokenType.REFRESH_TOKEN, request.getEmail());
+        redisTokenService.saveAccessToken(accessToken);
+        redisTokenService.saveRefreshToken(refreshToken);
 
         UserResponse userResponse = userMapper.toDTO(user);
         userResponse.setRole(user.getRole().getRole());
@@ -113,8 +116,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String accessToken = jwtService.generateAccessToken(employer, AccountType.EMPLOYER);
         String refreshToken = jwtService.generateRefreshToken(employer, AccountType.EMPLOYER);
 
-        whitelistTokenService.createToken(accessToken, TokenType.ACCESS_TOKEN, request.getEmail());
-        whitelistTokenService.createToken(refreshToken, TokenType.REFRESH_TOKEN, request.getEmail());
+        redisTokenService.saveAccessToken(accessToken);
+        redisTokenService.saveRefreshToken(refreshToken);
 
         EmployerResponse employerResponse = employerMapper.toDTO(employer);
 
@@ -174,8 +177,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
             String accessToken = jwtService.generateAccessToken(userResponse, AccountType.USER);
             String refreshToken = jwtService.generateRefreshToken(userResponse, AccountType.USER);
-            whitelistTokenService.createToken(accessToken, TokenType.ACCESS_TOKEN, userInfoResponse.getEmail());
-            whitelistTokenService.createToken(refreshToken, TokenType.REFRESH_TOKEN, userInfoResponse.getEmail());
+            redisTokenService.saveAccessToken(accessToken);
+            redisTokenService.saveRefreshToken(refreshToken);
+
             if (userResponse.getStatus().equals(StatusUser.PENDING)) {
                 userResponse.setStatus(StatusUser.ACTIVE);
             }
@@ -201,12 +205,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserDetails user = userService.findUserByEmail(email);
         if (!jwtService.isTokenValid(refreshToken, user, TokenType.REFRESH_TOKEN)
-                || !whitelistTokenService.existsByToken(refreshToken)) {
+                || !redisTokenService.existsByJwtId(refreshToken, TokenType.REFRESH_TOKEN)) {
             throw new InvalidTokenException();
         }
         String newAccessToken = jwtService.generateAccessToken(user, AccountType.USER);
 
-        whitelistTokenService.createToken(newAccessToken, TokenType.ACCESS_TOKEN, email);
+        redisTokenService.saveAccessToken(newAccessToken);
 
         return TokenResponse.<Void>builder()
                 .accessToken(newAccessToken)
@@ -223,12 +227,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         UserDetails user = employerService.findEmployerByEmail(email);
         if (!jwtService.isTokenValid(refreshToken, user, TokenType.REFRESH_TOKEN)
-                || !whitelistTokenService.existsByToken(refreshToken)) {
+                || !redisTokenService.existsByJwtId(refreshToken, TokenType.REFRESH_TOKEN)) {
             throw new InvalidTokenException();
         }
         String newAccessToken = jwtService.generateAccessToken(user, AccountType.EMPLOYER);
 
-        whitelistTokenService.createToken(newAccessToken, TokenType.ACCESS_TOKEN, email);
+        redisTokenService.saveAccessToken(newAccessToken);
 
         return TokenResponse.<Void>builder()
                 .accessToken(newAccessToken)
@@ -238,11 +242,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void signOut(String accessToken, String refreshToken) {
-        if (StringUtils.isNotBlank(accessToken)) {
-            whitelistTokenService.deleteByToken(accessToken);
+        if (StringUtils.isNotBlank(accessToken) && redisTokenService.existsByJwtId(accessToken, TokenType.ACCESS_TOKEN)) {
+            redisTokenService.deleteByJwtId(accessToken, TokenType.ACCESS_TOKEN);
         }
-        if (StringUtils.isNotBlank(refreshToken)) {
-            whitelistTokenService.deleteByToken(refreshToken);
+        if (StringUtils.isNotBlank(refreshToken) && redisTokenService.existsByJwtId(refreshToken, TokenType.REFRESH_TOKEN)) {
+            redisTokenService.deleteByJwtId(refreshToken, TokenType.REFRESH_TOKEN);
         }
     }
 
@@ -296,8 +300,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             }
             String accessToken = jwtService.generateAccessToken(userResponse, AccountType.USER);
             String refreshToken = jwtService.generateRefreshToken(userResponse, AccountType.USER);
-            whitelistTokenService.createToken(accessToken, TokenType.ACCESS_TOKEN, userInfoResponse.getEmail());
-            whitelistTokenService.createToken(refreshToken, TokenType.REFRESH_TOKEN, userInfoResponse.getEmail());
+            redisTokenService.saveAccessToken(accessToken);
+            redisTokenService.saveRefreshToken(refreshToken);
             if (userResponse.getStatus().equals(StatusUser.PENDING)) {
                 userResponse.setStatus(StatusUser.ACTIVE);
             }
@@ -312,4 +316,5 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
         }
     }
+
 }

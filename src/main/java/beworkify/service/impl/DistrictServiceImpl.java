@@ -10,8 +10,13 @@ import beworkify.mapper.DistrictMapper;
 import beworkify.repository.DistrictRepository;
 import beworkify.repository.ProvinceRepository;
 import beworkify.service.DistrictService;
+import beworkify.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
 import beworkify.util.AppUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,9 +33,15 @@ public class DistrictServiceImpl implements DistrictService {
     private final ProvinceRepository provinceRepository;
     private final DistrictMapper mapper;
     private final MessageSource messageSource;
+    private final RedisUtils redisUtils;
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "districts", key = "'all'")
+    }, put = {
+            @CachePut(value = "districts", key = "#result.id")
+    })
     public DistrictResponse create(DistrictRequest request) {
         if (repository.existsByCode(request.getCode())) {
             String message = messageSource.getMessage("district.exists", new Object[] { request.getCode() },
@@ -50,6 +61,11 @@ public class DistrictServiceImpl implements DistrictService {
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "districts", key = "'all'"),
+    }, put = {
+            @CachePut(value = "districts", key = "#id")
+    })
     public DistrictResponse update(Long id, DistrictRequest request) {
         District entity = repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
@@ -74,20 +90,29 @@ public class DistrictServiceImpl implements DistrictService {
         mapper.updateEntityFromRequest(request, entity);
         entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
         repository.save(entity);
+        evictDistrictsByProvincePattern(entity.getProvince().getId());
         return mapper.toDTO(entity);
     }
 
     @Override
     @Transactional
+    @Caching(
+            evict = {
+                    @CacheEvict(value="districts", key="'all'"),
+                    @CacheEvict(value="districts", key="#id")
+            }
+    )
     public void delete(Long id) {
         District entity = repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
             return new ResourceNotFoundException(message);
         });
+        evictDistrictsByProvincePattern(entity.getProvince().getId());
         repository.delete(entity);
     }
 
     @Override
+    @Cacheable(value = "districts", key = "#id")
     public DistrictResponse getById(Long id) {
         District entity = repository.findById(id).orElseThrow(() -> {
             String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
@@ -105,14 +130,22 @@ public class DistrictServiceImpl implements DistrictService {
         });
     }
 
+
     @Override
+    @Cacheable(value = "districts", key = "'all'")
     public List<DistrictResponse> getAll() {
         return repository.findAllByOrderByNameAsc().stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
+    @Cacheable(value = "districts", key = "'p:' + #provinceId")
     @Override
     public List<DistrictResponse> getByProvinceId(Long provinceId) {
         return repository.findAllByProvinceIdOrderByNameAsc(provinceId).stream().map(mapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+
+    private void evictDistrictsByProvincePattern(Long provinceId) {
+        redisUtils.evictCacheByPattern("districts:p:" + provinceId + "*");
     }
 }

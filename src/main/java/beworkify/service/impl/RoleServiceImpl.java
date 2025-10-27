@@ -11,6 +11,8 @@ import beworkify.repository.RoleRepository;
 import beworkify.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class RoleServiceImpl implements RoleService {
     private final MessageSource messageSource;
 
     @Override
+    @CacheEvict(value = "roles", allEntries = true)
     public RoleResponse createRole(RoleRequest request) {
         log.info("Attempting to create new role: {}", request.getRole());
 
@@ -49,6 +52,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @CacheEvict(value = "roles", allEntries = true)
     public RoleResponse updateRole(RoleRequest request, Long id) {
         log.info("Attempting to update role with id = {}", id);
 
@@ -70,6 +74,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "roles", key="'all'")
     public List<RoleResponse> getAllRoles() {
         log.info("Fetching all roles");
 
@@ -90,6 +95,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "roles", key="#roleName")
     public RoleResponse getRoleByRoleName(String roleName) {
         log.info("Fetching role by name: {}", roleName);
 
@@ -107,6 +113,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @CacheEvict(value = "roles", allEntries = true)
     public void deleteRole(Long id) {
         log.info("Attempting to delete role with id = {}", id);
 

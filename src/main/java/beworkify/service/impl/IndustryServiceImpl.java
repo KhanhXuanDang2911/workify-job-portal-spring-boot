@@ -13,14 +13,20 @@ import beworkify.service.CategoryJobService;
 import beworkify.service.IndustryService;
 import beworkify.util.AppUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,9 +37,15 @@ public class IndustryServiceImpl implements IndustryService {
     private final IndustryMapper mapper;
     private final MessageSource messageSource;
     private final CategoryJobService categoryJobService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "industries", key = "'all'")
+    }, put = {
+            @CachePut(value = "industries", key = "#result.id")
+    })
     public IndustryResponse create(IndustryRequest request) {
         CategoryJob categoryJob = categoryJobService.findById(request.getCategoryJobId());
         if (repository.existsByName(request.getName())) {
@@ -49,11 +61,17 @@ public class IndustryServiceImpl implements IndustryService {
         Industry entity = mapper.toEntity(request);
         entity.setCategoryJob(categoryJob);
         repository.save(entity);
+        evictPaginationCache();
         return mapper.toDTO(entity);
     }
 
     @Override
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "industries", key = "'all'")
+    }, put = {
+            @CachePut(value = "industries", key = "#id")
+    })
     public IndustryResponse update(Long id, IndustryRequest request) {
         Industry entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -75,15 +93,16 @@ public class IndustryServiceImpl implements IndustryService {
             throw new ResourceConflictException(message);
         }
 
-
         mapper.updateEntityFromRequest(request, entity);
         entity.setCategoryJob(categoryJob);
         repository.save(entity);
+        evictPaginationCache();
         return mapper.toDTO(entity);
     }
 
     @Override
     @Transactional
+    @CacheEvict(value="industries", allEntries = true)
     public void delete(Long id) {
         Industry entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -95,6 +114,7 @@ public class IndustryServiceImpl implements IndustryService {
     }
 
     @Override
+    @Cacheable(value="industries", key="#id")
     public IndustryResponse getById(Long id) {
         Industry entity = repository.findById(id)
                 .orElseThrow(() -> {
@@ -106,6 +126,7 @@ public class IndustryServiceImpl implements IndustryService {
     }
 
     @Override
+    @Cacheable(value = "industries", key = "@keyGenerator.buildKeyWithPaginationSortsKeyword(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of(\"name\", \"engName\", \"createdAt\", \"updatedAt\"))")
     public PageResponse<List<IndustryResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
             List<String> sorts, String keyword) {
         String kw = (keyword == null) ? "" : keyword.toLowerCase();
@@ -123,8 +144,17 @@ public class IndustryServiceImpl implements IndustryService {
     }
 
     @Override
+    @Cacheable(value="industries", key="'all'")
     public List<IndustryResponse> getAll() {
         List<Industry> list = repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
         return list.stream().map(mapper::toDTO).collect(Collectors.toList());
     }
+
+    private void evictPaginationCache(){
+        Set<String> keys = redisTemplate.keys("industries:pn:*");
+        if (!keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+    }
+
 }
