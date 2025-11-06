@@ -81,4 +81,6 @@ public class Job extends BaseEntity {
     private Employer author;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Application> applications;
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SavedJob> savedJobs;
 }

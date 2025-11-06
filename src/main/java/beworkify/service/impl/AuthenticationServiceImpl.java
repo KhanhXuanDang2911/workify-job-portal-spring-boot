@@ -59,7 +59,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserMapper userMapper;
     private final EmployerMapper employerMapper;
     private final EmployerService employerService;
-    private final RedisTokenRepository redisTokenRepository;
     private final RedisTokenService redisTokenService;
 
     @Value("${oauth2.google.client-id}")

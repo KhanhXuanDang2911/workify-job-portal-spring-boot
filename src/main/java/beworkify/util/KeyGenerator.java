@@ -81,4 +81,13 @@ public class KeyGenerator {
         }
         return resultKeyBuilder.toString();
     }
+
+    public static String buildKeyForSavedJobs(Long userId, int pageNumber, int pageSize) {
+        StringBuilder keyBuilder = new StringBuilder();
+        if (userId != null) {
+            keyBuilder.append("u:").append(userId).append(":");
+        }
+        keyBuilder.append("pn:").append(pageNumber).append(":ps:").append(pageSize);
+        return keyBuilder.toString();
+    }
 }
