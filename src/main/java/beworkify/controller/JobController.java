@@ -7,8 +7,8 @@ import beworkify.search.service.JobSearchService;
 import beworkify.service.JobService;
 import beworkify.util.AppUtils;
 import beworkify.util.ResponseBuilder;
-import beworkify.validation.ValueOfEnum;
-import beworkify.validation.ValueOfEnumList;
+import beworkify.validation.annotation.ValueOfEnum;
+import beworkify.validation.annotation.ValueOfEnumList;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -125,15 +125,16 @@ public class JobController {
 
         @GetMapping("/openings/{employerId}")
         public ResponseEntity<ResponseData<PageResponse<List<JobResponse>>>> getHiringJobs(
-                @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
-                @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}") int pageSize,
-                @RequestParam(required = false) List<String> sorts,
-                @PathVariable @Min(value = 1, message = "{validation.id.min}") Long employerId) {
+                        @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
+                        @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}") int pageSize,
+                        @RequestParam(required = false) List<String> sorts,
+                        @PathVariable @Min(value = 1, message = "{validation.id.min}") Long employerId) {
                 log.info("Request: Get hiring jobs with pageNumber={}, pageSize={}, sorts={}", pageNumber,
-                        pageSize, sorts);
-                PageResponse<List<JobResponse>> response = service.getHiringJobs(employerId, pageNumber, pageSize, sorts);
+                                pageSize, sorts);
+                PageResponse<List<JobResponse>> response = service.getHiringJobs(employerId, pageNumber, pageSize,
+                                sorts);
                 String message = messageSource.getMessage("job.get.hiring.job.success", null,
-                        LocaleContextHolder.getLocale());
+                                LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }
 
@@ -186,6 +187,16 @@ public class JobController {
                 log.info("Request: Get popular industries with limit = {}", limit);
                 List<PopularIndustryResponse> response = service.getPopularIndustries(limit);
                 String message = messageSource.getMessage("job.industries.get.popular.success", null,
+                                LocaleContextHolder.getLocale());
+                return ResponseBuilder.withData(HttpStatus.OK, message, response);
+        }
+
+        @GetMapping("/top-attractive")
+        public ResponseEntity<ResponseData<List<JobResponse>>> getTopAttractive(
+                        @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.limit.min}") Integer limit) {
+                log.info("Request: Get top attractive jobs with limit = {}", limit);
+                List<JobResponse> response = service.getTopAttractiveJobs(limit);
+                String message = messageSource.getMessage("job.get.top.attractive.success", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }

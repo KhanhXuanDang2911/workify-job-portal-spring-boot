@@ -2,11 +2,11 @@ package beworkify.dto.request;
 
 import beworkify.enumeration.StatusUser;
 import beworkify.enumeration.UserRole;
-import beworkify.validation.OnAdmin;
-import beworkify.validation.OnCreate;
+import beworkify.validation.group.OnAdmin;
+import beworkify.validation.group.OnCreate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import beworkify.enumeration.Gender;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.annotation.ValueOfEnum;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;

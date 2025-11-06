@@ -3,7 +3,6 @@ package beworkify.entity;
 import beworkify.dto.db.JobBenefit;
 import beworkify.enumeration.*;
 import jakarta.persistence.*;
-import org.hibernate.annotations.BatchSize;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -32,7 +31,6 @@ public class Job extends BaseEntity {
     @Column(nullable = false, length = 1000)
     private String jobTitle;
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
-    @BatchSize(size = 50)
     @Builder.Default
     private Set<Location> jobLocations = new HashSet<>();
     @Enumerated(EnumType.STRING)
@@ -61,7 +59,6 @@ public class Job extends BaseEntity {
     private JobGender gender;
     private String jobCode;
     @OneToMany(mappedBy = "job", orphanRemoval = true, cascade = CascadeType.ALL)
-    @BatchSize(size = 50)
     @Builder.Default
     private Set<JobIndustry> jobIndustries = new HashSet<>();
     @Enumerated(EnumType.STRING)
@@ -82,4 +79,6 @@ public class Job extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "employer_id", nullable = false)
     private Employer author;
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Application> applications;
 }

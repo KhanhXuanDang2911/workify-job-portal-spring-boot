@@ -1,10 +1,9 @@
 package beworkify.dto.request;
 
-import beworkify.dto.db.JobBenefit;
 import beworkify.enumeration.*;
-import beworkify.validation.ValidAge;
-import beworkify.validation.ValidSalary;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.annotation.ValidAge;
+import beworkify.validation.annotation.ValidSalary;
+import beworkify.validation.annotation.ValueOfEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

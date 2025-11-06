@@ -19,10 +19,12 @@ public enum ErrorCode {
     INVALID_JOB_STATUS_ENUM(410, "error.invalid.job.status.enum"),
     INVALID_JOB_GENDER_ENUM(410, "error.invalid.job.gender.enum"),
     INVALID_JOB_BENEFIT_ENUM(410, "error.invalid.job.benefit.enum"),
+    INVALID_APPLICATION_STATUS_ENUM(410, "error.invalid.application.status.enum"),
     VERIFY_EMAIL_FAILED(411, "user.verify.email.failed"),
     RESET_PASSWORD_FAILED(411, "user.reset.password.failed"),
     PASSWORD_MISMATCH(411, "user.password.mismatch"),
     ACCOUNT_NOT_ACTIVE(411, "user.not.active"),
+    EMPLOYER_READ_APPLICATION(412, "employer.read.application"),
     UPLOAD_FILE_FAILED(501, "error.upload.failed");
 
     private final int code;

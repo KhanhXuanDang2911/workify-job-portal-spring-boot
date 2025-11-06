@@ -1,5 +1,6 @@
-package beworkify.validation;
+package beworkify.validation.annotation;
 
+import beworkify.validation.validator.SalaryValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

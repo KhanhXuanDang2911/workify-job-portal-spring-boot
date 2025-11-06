@@ -58,7 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/roles/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/sign-up/**").permitAll()
                         .requestMatchers("/api/v1/employers/sign-up/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "api/v1/employers/{id}", "api/v1/employers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/employers/{id}", "api/v1/employers", "api/v1/employers/top-hiring").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/provinces/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/districts/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/categories-post/**").permitAll()
@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/industries/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/posts/public/**", "/api/v1/posts/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs/advanced/**",
-                                "/api/v1/jobs/locations/popular/**", "/api/v1/jobs/industries/popular/**", "/api/v1/jobs/openings/**")
+                                "/api/v1/jobs/locations/popular/**", "/api/v1/jobs/industries/popular/**", "/api/v1/jobs/openings/**", "/api/v1/jobs/top-attractive")
                         .permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

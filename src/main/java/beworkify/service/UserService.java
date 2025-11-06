@@ -16,6 +16,8 @@ public interface UserService {
 
     UserResponse getUserById(Long id);
 
+    User findUserById(Long id);
+
     UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
     void deleteUser(Long id);

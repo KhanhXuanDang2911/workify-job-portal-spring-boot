@@ -1,7 +1,8 @@
-package beworkify.validation;
+package beworkify.validation.validator;
 
 import beworkify.dto.request.JobRequest;
 import beworkify.enumeration.SalaryType;
+import beworkify.validation.annotation.ValidSalary;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

@@ -44,11 +44,12 @@ public class IndustryController {
             @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
             @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}") int pageSize,
             @RequestParam(required = false) List<String> sorts,
-            @RequestParam(defaultValue = "") String keyword) {
+            @RequestParam(defaultValue = "") String keyword,
+            @RequestParam(required = false) @Min(value = 1, message = "{validation.id.min}") Long categoryId) {
         log.info("Request: Get industries with pageNumber={}, pageSize={}, sorts={}, keyword={}", pageNumber,
                 pageSize, sorts, keyword);
         PageResponse<List<IndustryResponse>> response = service.getAllWithPaginationAndSort(pageNumber, pageSize,
-                sorts, keyword);
+                sorts, keyword, categoryId);
         String message = messageSource.getMessage("industry.get.list.success", null,
                 LocaleContextHolder.getLocale());
         return ResponseBuilder.withData(HttpStatus.OK, message, response);
