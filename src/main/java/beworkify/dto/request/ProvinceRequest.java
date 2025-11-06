@@ -1,7 +1,7 @@
 package beworkify.dto.request;
 
-import beworkify.validation.OnCreate;
-import beworkify.validation.OnUpdate;
+import beworkify.validation.group.OnCreate;
+import beworkify.validation.group.OnUpdate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

@@ -10,6 +10,7 @@ import beworkify.enumeration.BenefitType;
 import beworkify.enumeration.SalaryUnit;
 import org.mapstruct.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,6 +27,8 @@ public interface JobMapper {
 
     @Mapping(target = "author", ignore = true)
     JobResponse toDTO(Job entity);
+
+    List<JobResponse> toDTOs(List<Job> entities);
 
     @Mapping(target = "jobLocations", ignore = true)
     @Mapping(target = "contactLocation", ignore = true)

@@ -1,5 +1,6 @@
-package beworkify.validation;
+package beworkify.validation.validator;
 
+import beworkify.validation.annotation.ValidImageFile;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;

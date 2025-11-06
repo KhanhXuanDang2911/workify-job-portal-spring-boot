@@ -3,6 +3,7 @@ package beworkify.service;
 import beworkify.dto.request.IndustryRequest;
 import beworkify.dto.response.IndustryResponse;
 import beworkify.dto.response.PageResponse;
+import beworkify.entity.Industry;
 
 import java.util.List;
 
@@ -16,7 +17,10 @@ public interface IndustryService {
     IndustryResponse getById(Long id);
 
     PageResponse<List<IndustryResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
-            List<String> sorts, String keyword);
+            List<String> sorts, String keyword, Long categoryId);
 
     List<IndustryResponse> getAll();
+
+    Industry findIndustryById(Long id);
+
 }

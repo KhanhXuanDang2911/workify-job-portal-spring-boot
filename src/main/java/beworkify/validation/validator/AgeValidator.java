@@ -1,7 +1,8 @@
-package beworkify.validation;
+package beworkify.validation.validator;
 
 import beworkify.dto.request.JobRequest;
 import beworkify.enumeration.AgeType;
+import beworkify.validation.annotation.ValidAge;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

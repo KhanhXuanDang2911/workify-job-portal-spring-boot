@@ -47,8 +47,12 @@ public class CacheConfig {
                                 cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
                 cacheConfigs.put("jobs",
                                 cacheConfiguration(redisSerializer).entryTtl(Duration.ofDays(2)));
+                cacheConfigs.put("jobs_top_attractive",
+                        cacheConfiguration(redisSerializer).entryTtl(Duration.ofSeconds(30)));
                 cacheConfigs.put("employers",
-                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
+                                cacheConfiguration(redisSerializer).entryTtl(Duration.ofSeconds(30)));
+                cacheConfigs.put("employers_top_hiring",
+                        cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
                 cacheConfigs.put("users",
                                 cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
 

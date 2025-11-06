@@ -35,6 +35,16 @@ public class KeyGenerator {
         return keyBuilder.toString();
     }
 
+    public static String buildKeyWithPaginationSortsKeywordForIndustries(int pageNumber, int pageSize,
+                                                                   List<String> sorts, String keyword, List<String> whiteListFields, Long categoryId) {
+        String firstResult = buildKeyWithPaginationSortsKeyword(pageNumber, pageSize, sorts, keyword, whiteListFields);
+        StringBuilder resultKeyBuilder = new StringBuilder(firstResult);
+        if(categoryId != null){
+            resultKeyBuilder.append(":c:").append(categoryId);
+        }
+        return resultKeyBuilder.toString();
+    }
+
     public static String buildKeyWithPaginationSortsKeywordForPost(int pageNumber, int pageSize,
                                                           List<String> sorts, String keyword, List<String> whiteListFields, Long categoryId, boolean isPublic, Long authorId) {
         String firstResult = buildKeyWithPaginationSortsKeyword(pageNumber, pageSize, sorts, keyword, whiteListFields);

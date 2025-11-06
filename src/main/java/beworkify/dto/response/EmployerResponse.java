@@ -35,4 +35,5 @@ public class EmployerResponse extends BaseResponse {
     private ProvinceResponse province;
     private DistrictResponse district;
     private String detailAddress;
+    private Integer numberOfHiringJobs;
 }

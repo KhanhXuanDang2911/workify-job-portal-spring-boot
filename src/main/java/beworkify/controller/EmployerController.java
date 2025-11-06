@@ -11,10 +11,10 @@ import beworkify.enumeration.UserRole;
 import beworkify.service.EmployerService;
 import beworkify.util.AppUtils;
 import beworkify.util.ResponseBuilder;
-import beworkify.validation.OnAdmin;
-import beworkify.validation.OnCreate;
-import beworkify.validation.ValidImageFile;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.group.OnAdmin;
+import beworkify.validation.group.OnCreate;
+import beworkify.validation.annotation.ValidImageFile;
+import beworkify.validation.annotation.ValueOfEnum;
 
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -66,6 +66,15 @@ public class EmployerController {
                                                 levelCompanySize, provinceId, isAdmin);
 
                 String message = messageSource.getMessage("employer.get.many.successfully", null,
+                                LocaleContextHolder.getLocale());
+                return ResponseBuilder.withData(HttpStatus.OK, message, response);
+        }
+
+        @GetMapping("/top-hiring")
+        public ResponseEntity<ResponseData<List<EmployerResponse>>> getTopHiringEmployers(
+                        @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.limit.min}") Integer limit) {
+                List<EmployerResponse> response = employerService.getTopHiringEmployers(limit);
+                String message = messageSource.getMessage("employer.get.top.hiring.success", null,
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.OK, message, response);
         }

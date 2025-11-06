@@ -11,6 +11,5 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
-      hibernate.default_batch_fetch_size: 50
+#        format_sql: true
 #    show-sql: true

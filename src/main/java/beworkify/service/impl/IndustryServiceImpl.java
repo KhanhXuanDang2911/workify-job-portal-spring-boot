@@ -73,12 +73,7 @@ public class IndustryServiceImpl implements IndustryService {
             @CachePut(value = "industries", key = "#id")
     })
     public IndustryResponse update(Long id, IndustryRequest request) {
-        Industry entity = repository.findById(id)
-                .orElseThrow(() -> {
-                    String message = messageSource.getMessage("industry.notFound", null,
-                            LocaleContextHolder.getLocale());
-                    return new ResourceNotFoundException(message);
-                });
+        Industry entity = findIndustryById(id);
 
         CategoryJob categoryJob = categoryJobService.findById(request.getCategoryJobId());
 
@@ -104,35 +99,35 @@ public class IndustryServiceImpl implements IndustryService {
     @Transactional
     @CacheEvict(value="industries", allEntries = true)
     public void delete(Long id) {
-        Industry entity = repository.findById(id)
+        Industry entity = findIndustryById(id);
+        repository.delete(entity);
+    }
+
+    @Override
+    public Industry findIndustryById(Long id) {
+        return repository.findById(id)
                 .orElseThrow(() -> {
                     String message = messageSource.getMessage("industry.notFound", null,
                             LocaleContextHolder.getLocale());
                     return new ResourceNotFoundException(message);
                 });
-        repository.delete(entity);
     }
 
     @Override
     @Cacheable(value="industries", key="#id")
     public IndustryResponse getById(Long id) {
-        Industry entity = repository.findById(id)
-                .orElseThrow(() -> {
-                    String message = messageSource.getMessage("industry.notFound", null,
-                            LocaleContextHolder.getLocale());
-                    return new ResourceNotFoundException(message);
-                });
+        Industry entity = findIndustryById(id);
         return mapper.toDTO(entity);
     }
 
     @Override
-    @Cacheable(value = "industries", key = "@keyGenerator.buildKeyWithPaginationSortsKeyword(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of(\"name\", \"engName\", \"createdAt\", \"updatedAt\"))")
+    @Cacheable(value = "industries", key = "@keyGenerator.buildKeyWithPaginationSortsKeywordForIndustries(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of(\"name\", \"engName\", \"createdAt\", \"updatedAt\"), #categoryId)")
     public PageResponse<List<IndustryResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
-            List<String> sorts, String keyword) {
+            List<String> sorts, String keyword, Long categoryId) {
         String kw = (keyword == null) ? "" : keyword.toLowerCase();
         org.springframework.data.domain.Pageable pageable = AppUtils.generatePageableWithSort(sorts,
                 List.of("name", "engName", "createdAt", "updatedAt"), pageNumber, pageSize);
-        Page<Industry> page = repository.searchIndustries(kw, pageable);
+        Page<Industry> page = repository.searchIndustries(kw, categoryId, pageable);
         List<IndustryResponse> items = page.getContent().stream().map(mapper::toDTO).collect(Collectors.toList());
         return PageResponse.<List<IndustryResponse>>builder()
                 .pageNumber(pageNumber)

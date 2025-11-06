@@ -1,7 +1,7 @@
 package beworkify.dto.request;
 
 import beworkify.enumeration.UserRole;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.annotation.ValueOfEnum;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 

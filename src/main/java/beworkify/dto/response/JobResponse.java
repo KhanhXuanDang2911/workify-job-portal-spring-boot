@@ -48,4 +48,5 @@ public class JobResponse extends BaseResponse {
     private LocalDate expirationDate;
     private JobStatus status;
     private EmployerSummaryResponse author;
+    private Integer numberOfApplications;
 }

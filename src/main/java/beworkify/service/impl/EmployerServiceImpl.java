@@ -36,9 +36,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -58,6 +61,7 @@ public class EmployerServiceImpl implements EmployerService {
     private final RedisTokenService redisTokenService;
     private final RedisOTPCodeService redisOTPCodeService;
     private final RedisUtils redisUtils;
+    private final beworkify.repository.JobRepository jobRepository;
 
     @Override
     public PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber,
@@ -70,7 +74,18 @@ public class EmployerServiceImpl implements EmployerService {
                 isAdmin,
                 pageable);
 
-        List<EmployerResponse> items = page.getContent().stream().map(employerMapper::toDTO).toList();
+        List<Employer> employers = page.getContent();
+        List<Long> employerIds = employers.stream().map(Employer::getId).toList();
+        Map<Long, Long> hiringCountMap = employerIds.isEmpty() ? Map.of()
+                : jobRepository.countHiringJobsByEmployerIds(employerIds).stream()
+                        .collect(Collectors.toMap(r -> (Long) r[0], r -> (Long) r[1]));
+
+        List<EmployerResponse> items = employers.stream().map(e -> {
+            EmployerResponse dto = employerMapper.toDTO(e);
+            int count = hiringCountMap.getOrDefault(e.getId(), 0L).intValue();
+            dto.setNumberOfHiringJobs(count);
+            return dto;
+        }).toList();
         return PageResponse.<List<EmployerResponse>>builder()
                 .pageNumber(pageNumber)
                 .pageSize(pageSize)
@@ -108,7 +123,9 @@ public class EmployerServiceImpl implements EmployerService {
         } else {
             mailService.sendConfirmLink(employer, false, null);
         }
-        return employerMapper.toDTO(employer);
+        EmployerResponse response = employerMapper.toDTO(employer);
+        response.setNumberOfHiringJobs(0);
+        return response;
     }
 
     @Override
@@ -142,7 +159,10 @@ public class EmployerServiceImpl implements EmployerService {
     @Cacheable(value = "employers", key = "#id")
     public EmployerResponse getEmployerById(Long id) {
         Employer employer = findEmployerById(id);
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     @Override
@@ -168,7 +188,9 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setBackgroundUrl(backgroundUrl);
         }
         employerRepository.save(employer);
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        dto.setNumberOfHiringJobs(0);
+        return dto;
     }
 
     @Override
@@ -202,7 +224,10 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setBackgroundUrl(backgroundUrl);
         }
         employerRepository.save(employer);
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     @Override
@@ -217,7 +242,10 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setDistrict(district);
         employer.setEmployerSlug(AppUtils.toSlug(employer.getCompanyName()));
         employerRepository.save(employer);
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     @Override
@@ -229,7 +257,10 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setAvatarUrl(avatarUrl);
             employerRepository.save(employer);
         }
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     @Override
@@ -241,7 +272,10 @@ public class EmployerServiceImpl implements EmployerService {
             employer.setBackgroundUrl(backgroundUrl);
             employerRepository.save(employer);
         }
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     @Override
@@ -344,11 +378,33 @@ public class EmployerServiceImpl implements EmployerService {
         employer.setGoogleUrl(request.getGoogleUrl());
         employer.setYoutubeUrl(request.getYoutubeUrl());
         employerRepository.save(employer);
-        return employerMapper.toDTO(employer);
+        EmployerResponse dto = employerMapper.toDTO(employer);
+        long hiringCount = jobRepository.countHiringJobsByEmployerId(employer.getId());
+        dto.setNumberOfHiringJobs((int) hiringCount);
+        return dto;
     }
 
     private void evictCacheByPattern(String pattern) {
         redisUtils.evictCacheByPattern(pattern);
     }
 
+    @Override
+    @Cacheable(value = "employers_top_hiring", key = "'limit:' + #limit")
+    public List<EmployerResponse> getTopHiringEmployers(int limit) {
+        var rows = jobRepository.findTopEmployerIdsByHiringJobs(PageRequest.of(0, Math.max(1, limit)));
+        List<Long> orderedIds = rows.stream().map(r -> (Long) r[0]).toList();
+        var countMap = rows.stream().collect(Collectors.toMap(r -> (Long) r[0], r -> (Long) r[1]));
+        if (orderedIds.isEmpty())
+            return List.of();
+        var employers = employerRepository.findAllById(orderedIds);
+        var byId = employers.stream().collect(Collectors.toMap(Employer::getId, e -> e));
+        return orderedIds.stream()
+                .map(id -> byId.get(id))
+                .filter(e -> e != null)
+                .map(e -> {
+                    EmployerResponse dto = employerMapper.toDTO(e);
+                    dto.setNumberOfHiringJobs(countMap.getOrDefault(e.getId(), 0L).intValue());
+                    return dto;
+                }).toList();
+    }
 }

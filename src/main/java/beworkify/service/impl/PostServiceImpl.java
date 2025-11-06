@@ -24,13 +24,11 @@ import org.jsoup.Jsoup;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -183,7 +181,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Cacheable(value = "posts", key = "@keyGenerator.buildKeyWithPaginationSortsKeywordForPost(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('createdAt', 'updatedAt'),#categoryId, #isPublic, #authorId)")
     public PageResponse<List<PostResponse>> getAll(int pageNumber, int pageSize, List<String> sorts, String keyword,
-            Long categoryId, boolean isPublic, Long authorId) {
+                                                   Long categoryId, boolean isPublic, Long authorId) {
         String kw = (keyword == null) ? "" : keyword.toLowerCase();
         List<String> whiteListFieldSorts = List.of("createdAt", "updatedAt");
         Pageable pageable = AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
 import java.text.Normalizer;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -35,26 +36,22 @@ public class ProvinceDistrictInitializer implements CommandLineRunner {
     public void run(String... args) {
         try {
             if (provinceRepository.count() > 0) {
-                log.info("Provinces already initialized, skipping API call.");
+                log.info("Provinces already initialized, skipping load from file.");
                 return;
             }
 
-            log.info("=== Initializing provinces and districts from open-api.vn ===");
-
-            String url = "https://provinces.open-api.vn/api/v1/?depth=2";
-            RestTemplate restTemplate = new RestTemplate();
-
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            if (!response.getStatusCode().is2xxSuccessful()) {
-                log.error("Failed to fetch provinces: {}", response.getStatusCode());
-                return;
-            }
+            log.info("=== Initializing provinces and districts from local JSON ===");
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-            List<ProvinceInput> provinces = mapper.readValue(response.getBody(), new TypeReference<>() {
-            });
+            InputStream inputStream = getClass().getResourceAsStream("/data/provinces.json");
+            if (inputStream == null) {
+                log.error("Cannot find provinces.json in resources/data");
+                return;
+            }
+
+            List<ProvinceInput> provinces = mapper.readValue(inputStream, new TypeReference<>() {});
 
             for (ProvinceInput p : provinces) {
                 if (p.code == null)
@@ -94,6 +91,7 @@ public class ProvinceDistrictInitializer implements CommandLineRunner {
             log.error("Failed to initialize provinces/districts: {}", ex.getMessage(), ex);
         }
     }
+
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class ProvinceInput {

@@ -10,17 +10,19 @@ import beworkify.mapper.IndustryMapper;
 import beworkify.mapper.JobMapper;
 import beworkify.mapper.ProvinceMapper;
 import beworkify.repository.*;
+import beworkify.service.DistrictService;
+import beworkify.service.IndustryService;
 import beworkify.service.JobService;
+import beworkify.service.ProvinceService;
 import beworkify.util.AppUtils;
 import beworkify.search.service.JobSearchService;
 import beworkify.util.RedisUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -39,9 +41,9 @@ public class JobServiceImpl implements JobService {
 
         private final JobRepository jobRepository;
         private final LocationRepository locationRepository;
-        private final IndustryRepository industryRepository;
-        private final ProvinceRepository provinceRepository;
-        private final DistrictRepository districtRepository;
+        private final IndustryService industryService;
+        private final ProvinceService provinceService;
+        private final DistrictService districtService;
         private final JobMapper mapper;
         private final MessageSource messageSource;
         private final EmployerRepository employerRepository;
@@ -49,6 +51,7 @@ public class JobServiceImpl implements JobService {
         private final IndustryMapper industryMapper;
         private final JobSearchService jobSearchService;
         private final RedisUtils redisUtils;
+        private final ApplicationRepository applicationRepository;
 
         @Override
         @Transactional
@@ -82,12 +85,7 @@ public class JobServiceImpl implements JobService {
         @Override
         @Transactional
         public JobResponse update(Long id, JobRequest request) {
-                Job entity = jobRepository.findById(id)
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("job.notFound", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+                Job entity = findJobById(id);
                 checkAuthorJob(entity);
 
                 mapper.updateEntityFromRequest(request, entity);
@@ -126,12 +124,7 @@ public class JobServiceImpl implements JobService {
         @Override
         @Transactional
         public void delete(Long id) {
-                Job entity = jobRepository.findById(id)
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("job.notFound", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+                Job entity = findJobById(id);
                 checkAuthorJob(entity);
                 jobRepository.delete(entity);
 
@@ -144,12 +137,7 @@ public class JobServiceImpl implements JobService {
         @Transactional(readOnly = true)
         @PostAuthorize("returnObject.status == T(beworkify.enumeration.JobStatus).APPROVED or hasRole('ADMIN') or hasRole('EMPLOYER') and returnObject.author.email == authentication.principal.username")
         public JobResponse getById(Long id) {
-                Job entity = jobRepository.findById(id)
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("job.notFound", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+                Job entity = findJobById(id);
                 return mapper.toDTO(entity);
         }
 
@@ -163,9 +151,15 @@ public class JobServiceImpl implements JobService {
                                 "expirationDate", "status");
                 keyword = keyword == null ? "" : keyword.trim();
                 Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
-                Page<Job> page = jobRepository.findMyJobs(provinceId, industryId, keyword.toLowerCase(), email,
+                Page<Long> page = jobRepository.findIdsMyJobs(provinceId, industryId, keyword.toLowerCase(), email,
                                 pageable);
-                return toPageResponse(page);
+                // Fetch jobs and preserve the original sorted id order
+                List<Long> orderedIds = page.getContent();
+                List<Job> fetchedJobs = jobRepository.fetchJobsByIds(orderedIds);
+                Map<Long, Job> jobById = fetchedJobs.stream().collect(Collectors.toMap(Job::getId, j -> j));
+                List<Job> jobsOrdered = orderedIds.stream().map(jobById::get).filter(Objects::nonNull).toList();
+                List<JobResponse> items = mapWithApplicationCounts(jobsOrdered, orderedIds);
+                return toPageResponse(page, items);
         }
 
         @Override
@@ -175,8 +169,13 @@ public class JobServiceImpl implements JobService {
 
                 List<String> WHITE_LIST_SORTS = Arrays.asList("createdAt", "updatedAt", "expirationDate");
                 Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
-                Page<Job> page = jobRepository.findHiringJobs(employerId, pageable);
-                return toPageResponse(page);
+                Page<Long> page = jobRepository.findIdsHiringJobs(employerId, pageable);
+                List<Long> orderedIds = page.getContent();
+                List<Job> fetchedJobs = jobRepository.fetchJobsByIds(orderedIds);
+                Map<Long, Job> jobById = fetchedJobs.stream().collect(Collectors.toMap(Job::getId, j -> j));
+                List<Job> jobsOrdered = orderedIds.stream().map(jobById::get).filter(Objects::nonNull).toList();
+                List<JobResponse> items = mapWithApplicationCounts(jobsOrdered, orderedIds);
+                return toPageResponse(page, items);
         }
 
         @Override
@@ -187,9 +186,14 @@ public class JobServiceImpl implements JobService {
                                 "expirationDate", "status");
                 keyword = keyword == null ? "" : keyword.trim();
                 Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
-                Page<Job> page = jobRepository.findAllJobs(provinceId, industryId, keyword.toLowerCase(),
+                Page<Long> page = jobRepository.findIdsAllJobs(provinceId, industryId, keyword.toLowerCase(),
                                 pageable);
-                return toPageResponse(page);
+                List<Long> orderedIds = page.getContent();
+                List<Job> fetchedJobs = jobRepository.fetchJobsByIds(orderedIds);
+                Map<Long, Job> jobById = fetchedJobs.stream().collect(Collectors.toMap(Job::getId, j -> j));
+                List<Job> jobsOrdered = orderedIds.stream().map(jobById::get).filter(Objects::nonNull).toList();
+                List<JobResponse> items = mapWithApplicationCounts(jobsOrdered, orderedIds);
+                return toPageResponse(page, items);
         }
 
         @Override
@@ -241,12 +245,7 @@ public class JobServiceImpl implements JobService {
 
         @Override
         public void closeJob(Long id) {
-                Job entity = jobRepository.findById(id)
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("job.notFound", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+                Job entity = findJobById(id);
                 checkAuthorJob(entity);
                 entity.setStatus(JobStatus.CLOSED);
                 jobRepository.save(entity);
@@ -257,12 +256,7 @@ public class JobServiceImpl implements JobService {
 
         @Override
         public void updateStatus(Long id, JobStatus jobStatus) {
-                Job entity = jobRepository.findById(id)
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("job.notFound", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+                Job entity = findJobById(id);
                 entity.setStatus(jobStatus);
                 jobRepository.save(entity);
                 jobSearchService.index(entity);
@@ -270,20 +264,20 @@ public class JobServiceImpl implements JobService {
                 evictCacheByPattern("jobs:popular:*");
         }
 
-        private Location createLocationFromRequest(LocationRequest request) {
-                Province province = provinceRepository.findById(request.getProvinceId())
+        @Override
+        public Job findJobById(Long id) {
+                return jobRepository.findById(id)
                                 .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("province.not.found", null,
+                                        String message = messageSource.getMessage("job.notFound", null,
                                                         LocaleContextHolder.getLocale());
                                         return new ResourceNotFoundException(message);
                                 });
+        }
 
-                District district = districtRepository.findById(request.getDistrictId())
-                                .orElseThrow(() -> {
-                                        String message = messageSource.getMessage("district.not.found", null,
-                                                        LocaleContextHolder.getLocale());
-                                        return new ResourceNotFoundException(message);
-                                });
+        private Location createLocationFromRequest(LocationRequest request) {
+                Province province = provinceService.findProvinceById(request.getProvinceId());
+
+                District district = districtService.findDistrictById(request.getDistrictId());
 
                 return Location.builder()
                                 .province(province)
@@ -294,22 +288,12 @@ public class JobServiceImpl implements JobService {
 
         private void updateLocationFromRequest(LocationRequest request, Location location) {
                 if (request.getProvinceId() != null) {
-                        Province province = provinceRepository.findById(request.getProvinceId())
-                                        .orElseThrow(() -> {
-                                                String message = messageSource.getMessage("province.not.found", null,
-                                                                LocaleContextHolder.getLocale());
-                                                return new ResourceNotFoundException(message);
-                                        });
+                        Province province = provinceService.findProvinceById(request.getProvinceId());
                         location.setProvince(province);
                 }
 
                 if (request.getDistrictId() != null) {
-                        District district = districtRepository.findById(request.getDistrictId())
-                                        .orElseThrow(() -> {
-                                                String message = messageSource.getMessage("district.not.found", null,
-                                                                LocaleContextHolder.getLocale());
-                                                return new ResourceNotFoundException(message);
-                                        });
+                        District district = districtService.findDistrictById(request.getDistrictId());
                         location.setDistrict(district);
                 }
 
@@ -324,19 +308,9 @@ public class JobServiceImpl implements JobService {
                         Job job) {
                 List<Location> locations = new ArrayList<>();
                 for (LocationRequest request : requests) {
-                        Province province = provinceRepository.findById(request.getProvinceId())
-                                        .orElseThrow(() -> {
-                                                String message = messageSource.getMessage("province.not.found", null,
-                                                                LocaleContextHolder.getLocale());
-                                                return new ResourceNotFoundException(message);
-                                        });
+                        Province province = provinceService.findProvinceById(request.getProvinceId());
 
-                        District district = districtRepository.findById(request.getDistrictId())
-                                        .orElseThrow(() -> {
-                                                String message = messageSource.getMessage("district.not.found", null,
-                                                                LocaleContextHolder.getLocale());
-                                                return new ResourceNotFoundException(message);
-                                        });
+                        District district = districtService.findDistrictById(request.getDistrictId());
 
                         Location location = Location.builder()
                                         .province(province)
@@ -353,12 +327,7 @@ public class JobServiceImpl implements JobService {
         private List<JobIndustry> createJobIndustriesFromRequest(List<Long> industryIds, Job job) {
                 List<JobIndustry> jobIndustries = new ArrayList<>();
                 for (Long industryId : industryIds) {
-                        Industry industry = industryRepository.findById(industryId)
-                                        .orElseThrow(() -> {
-                                                String message = messageSource.getMessage("industry.notFound", null,
-                                                                LocaleContextHolder.getLocale());
-                                                return new ResourceNotFoundException(message);
-                                        });
+                        Industry industry = industryService.findIndustryById(industryId);
 
                         JobIndustry jobIndustry = JobIndustry.builder()
                                         .job(job)
@@ -380,10 +349,7 @@ public class JobServiceImpl implements JobService {
 
         }
 
-        private PageResponse<List<JobResponse>> toPageResponse(Page<Job> page) {
-                List<JobResponse> items = page.getContent().stream()
-                                .map(mapper::toDTO)
-                                .collect(Collectors.toList());
+        private PageResponse<List<JobResponse>> toPageResponse(Page<Long> page, List<JobResponse> items) {
 
                 return PageResponse.<List<JobResponse>>builder()
                                 .pageNumber(page.getNumber() + 1)
@@ -396,5 +362,34 @@ public class JobServiceImpl implements JobService {
 
         private void evictCacheByPattern(String pattern) {
                 redisUtils.evictCacheByPattern(pattern);
+        }
+
+        private List<JobResponse> mapWithApplicationCounts(List<Job> jobsOrdered, List<Long> orderedIds) {
+                List<JobResponse> items = mapper.toDTOs(jobsOrdered);
+                if (orderedIds == null || orderedIds.isEmpty())
+                        return items;
+                var rows = applicationRepository.countByJobIds(orderedIds);
+                Map<Long, Long> countMap = rows.stream()
+                                .collect(Collectors.toMap(r -> (Long) r[0], r -> (Long) r[1]));
+                items.forEach(dto -> dto.setNumberOfApplications(countMap.getOrDefault(dto.getId(), 0L).intValue()));
+                return items;
+        }
+
+        @Override
+        @Cacheable(value = "jobs_top_attractive", key = "'limit:' + #limit")
+        public List<JobResponse> getTopAttractiveJobs(Integer limit) {
+                int size = (limit == null || limit < 1) ? 10 : limit;
+                var rows = jobRepository.findTopAttractiveJobIds(PageRequest.of(0, size));
+                List<Long> orderedIds = rows.stream().map(r -> (Long) r[0]).toList();
+                if (orderedIds.isEmpty())
+                        return List.of();
+                Map<Long, Long> countMap = rows.stream()
+                                .collect(Collectors.toMap(r -> (Long) r[0], r -> (Long) r[1]));
+                List<Job> fetched = jobRepository.fetchJobsByIds(orderedIds);
+                Map<Long, Job> byId = fetched.stream().collect(Collectors.toMap(Job::getId, j -> j));
+                List<Job> jobsOrdered = orderedIds.stream().map(byId::get).filter(Objects::nonNull).toList();
+                List<JobResponse> items = mapper.toDTOs(jobsOrdered);
+                items.forEach(dto -> dto.setNumberOfApplications(countMap.getOrDefault(dto.getId(), 0L).intValue()));
+                return items;
         }
 }

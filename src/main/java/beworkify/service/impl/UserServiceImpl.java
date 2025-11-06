@@ -388,7 +388,8 @@ public class UserServiceImpl implements UserService {
                 });
     }
 
-    private User findUserById(Long id) {
+    @Override
+    public User findUserById(Long id) {
         log.debug("Looking up user by ID: {}", id);
 
         return userRepository.findById(id)

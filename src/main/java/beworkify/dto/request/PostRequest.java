@@ -1,10 +1,10 @@
 package beworkify.dto.request;
 
 import beworkify.enumeration.StatusPost;
-import beworkify.validation.OnCreate;
-import beworkify.validation.OnUpdate;
-import beworkify.validation.OnUserCreate;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.group.OnCreate;
+import beworkify.validation.group.OnUpdate;
+import beworkify.validation.group.OnUserCreate;
+import beworkify.validation.annotation.ValueOfEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

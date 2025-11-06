@@ -2,9 +2,9 @@ package beworkify.dto.request;
 
 import beworkify.enumeration.LevelCompanySize;
 import beworkify.enumeration.StatusUser;
-import beworkify.validation.OnAdmin;
-import beworkify.validation.OnCreate;
-import beworkify.validation.ValueOfEnum;
+import beworkify.validation.group.OnAdmin;
+import beworkify.validation.group.OnCreate;
+import beworkify.validation.annotation.ValueOfEnum;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
