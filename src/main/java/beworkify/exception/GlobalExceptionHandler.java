@@ -39,14 +39,6 @@ public class GlobalExceptionHandler {
 
     private final MessageSource messageSource;
 
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException ex, WebRequest request) {
-        String message = messageSource.getMessage("error.endpoint.not.found",
-                null,
-                LocaleContextHolder.getLocale());
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, message, request, null);
-    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationBody(MethodArgumentNotValidException e, WebRequest request) {
         String message = messageSource.getMessage("error.validation.body.invalid", null,
@@ -195,6 +187,13 @@ public class GlobalExceptionHandler {
         String message = messageSource.getMessage("error.insufficientAuthentication", null,
                 LocaleContextHolder.getLocale());
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, message, request, null);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(NoHandlerFoundException ex, WebRequest request) {
+        String message = messageSource.getMessage("error.endpoint.notfound", null,
+                LocaleContextHolder.getLocale());
+        return buildErrorResponse(HttpStatus.NOT_FOUND, message, request, null);
     }
 
     @ExceptionHandler(Exception.class)
