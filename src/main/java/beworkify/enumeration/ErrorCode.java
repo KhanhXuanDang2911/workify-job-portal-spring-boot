@@ -25,6 +25,7 @@ public enum ErrorCode {
     PASSWORD_MISMATCH(411, "user.password.mismatch"),
     ACCOUNT_NOT_ACTIVE(411, "user.not.active"),
     EMPLOYER_READ_APPLICATION(412, "employer.read.application"),
+    ERROR_USER_AGENT_MOBILE_REQUIRED(412, "error.useragent.mobile.required"),
     UPLOAD_FILE_FAILED(501, "error.upload.failed");
 
     private final int code;
