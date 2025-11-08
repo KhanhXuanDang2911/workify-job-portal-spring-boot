@@ -121,18 +121,6 @@ public class ApplicationController {
                 return ResponseBuilder.withData(HttpStatus.OK, message, dto);
         }
 
-        @GetMapping("/current-job/{jobId}")
-        @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
-        public ResponseEntity<ResponseData<ApplicationResponse>> getCurrentApplicationByJob(
-                        @PathVariable("jobId") @Min(value = 1, message = "{validation.id.min}") Long jobId) {
-                Long userId = AppUtils.getUserIdFromSecurityContext();
-                log.info("Request: Get application by job id = {} and user id= {}", jobId, userId);
-                ApplicationResponse dto = service.getByUserAndJob(userId, jobId);
-                String message = messageSource.getMessage("application.get.success", null,
-                                LocaleContextHolder.getLocale());
-                return ResponseBuilder.withData(HttpStatus.OK, message, dto);
-        }
-
         @GetMapping("/latest/{jobId}")
         @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
         public ResponseEntity<ResponseData<ApplicationResponse>> getLatestByJob(
@@ -158,7 +146,6 @@ public class ApplicationController {
                                 LocaleContextHolder.getLocale());
                 return ResponseBuilder.withData(HttpStatus.OK, message, dto);
         }
-
 
         @DeleteMapping(value = "/{id}")
         @PreAuthorize("hasRole('ADMIN')")

@@ -13,8 +13,6 @@ public interface ApplicationService {
 
     ApplicationResponse getById(Long id);
 
-    ApplicationResponse getByUserAndJob(Long userId, Long jobId);
-
     ApplicationResponse getLatestByJob(Long jobId);
 
     void deleteById(Long id);

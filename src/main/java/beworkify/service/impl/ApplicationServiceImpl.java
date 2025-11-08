@@ -9,6 +9,7 @@ import beworkify.entity.Job;
 import beworkify.entity.User;
 import beworkify.enumeration.ApplicationStatus;
 import beworkify.enumeration.JobStatus;
+import beworkify.enumeration.UserRole;
 import beworkify.exception.ResourceConflictException;
 import beworkify.exception.ResourceNotFoundException;
 import beworkify.mapper.ApplicationMapper;
@@ -23,6 +24,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
@@ -79,15 +82,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void deleteById(Long id) {
         existsById(id);
         repository.deleteById(id);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public ApplicationResponse getByUserAndJob(Long userId, Long jobId) {
-        User user = userService.findUserById(userId);
-        Job job = jobService.findJobById(jobId);
-        Application application = getByUserAndJob(user, job);
-        return mapper.toDTO(application);
     }
 
     @Override
@@ -229,9 +223,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private void checkOwnershipWithEmployer(Application application) {
-        Long employerId = AppUtils.getEmployerIdFromSecurityContext();
-        if (!application.getJob().getAuthor().getId().equals(employerId)) {
-            throw new AccessDeniedException("Access is denied");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (AppUtils.hasRole(authentication, UserRole.ADMIN.getName()) || AppUtils.hasRole(authentication, UserRole.JOB_SEEKER.getName())){
+            Long userId = AppUtils.getUserIdFromSecurityContext();
+            if (!application.getUser().getId().equals(userId)) {
+                throw new AccessDeniedException("Access is denied");
+            }
+        } else {
+            Long employerId = AppUtils.getEmployerIdFromSecurityContext();
+            if (!application.getJob().getAuthor().getId().equals(employerId)) {
+                throw new AccessDeniedException("Access is denied");
+            }
         }
     }
 
