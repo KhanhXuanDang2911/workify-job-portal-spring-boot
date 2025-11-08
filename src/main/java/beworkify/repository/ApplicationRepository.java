@@ -38,6 +38,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 	Page<Application> findByJobId(@Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
 			@Param("thresholdDateTime") LocalDateTime thresholdDateTime, Pageable pageable);
 
+	long countByJobId(Long jobId);
+
 	@Query("""
 			SELECT a.job.id AS jobId, COUNT(a) AS cnt
 			FROM Application a

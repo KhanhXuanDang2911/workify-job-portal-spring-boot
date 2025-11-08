@@ -48,7 +48,7 @@ public class SecurityConfig {
 	@Qualifier("employerDetailsService")
 	private UserDetailsService employerDetailsService;
 
-	private final String[] WHITE_LIST = {"/api/v1/auth/**"};
+	private final String[] WHITE_LIST = {"/api/v1/auth/**", "/ws/**"};
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

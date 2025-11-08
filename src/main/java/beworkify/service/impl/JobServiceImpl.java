@@ -136,7 +136,10 @@ public class JobServiceImpl implements JobService {
 	@PostAuthorize("returnObject.status == T(beworkify.enumeration.JobStatus).APPROVED or hasRole('ADMIN') or hasRole('EMPLOYER') and returnObject.author.email == authentication.principal.username")
 	public JobResponse getById(Long id) {
 		Job entity = findJobById(id);
-		return mapper.toDTO(entity);
+		JobResponse response = mapper.toDTO(entity);
+		Long count = applicationRepository.countByJobId(entity.getId());
+		response.setNumberOfApplications(count != null ? count.intValue() : 0);
+		return response;
 	}
 
 	@Override
@@ -149,7 +152,6 @@ public class JobServiceImpl implements JobService {
 		keyword = keyword == null ? "" : keyword.trim();
 		Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
 		Page<Long> page = jobRepository.findIdsMyJobs(provinceId, industryId, keyword.toLowerCase(), email, pageable);
-		// Fetch jobs and preserve the original sorted id order
 		List<Long> orderedIds = page.getContent();
 		List<Job> fetchedJobs = jobRepository.fetchJobsByIds(orderedIds);
 		Map<Long, Job> jobById = fetchedJobs.stream().collect(Collectors.toMap(Job::getId, j -> j));
