@@ -1,3 +1,4 @@
+
 package beworkify.service;
 
 import beworkify.dto.request.*;
@@ -6,49 +7,48 @@ import beworkify.dto.response.PageResponse;
 import beworkify.entity.Employer;
 import beworkify.enumeration.LevelCompanySize;
 import jakarta.mail.MessagingException;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface EmployerService {
 
-    PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
-            List<String> sorts, String keyword, LevelCompanySize companySize, Long provinceId, boolean isAdmin);
+	PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
+			List<String> sorts, String keyword, LevelCompanySize companySize, Long provinceId, boolean isAdmin);
 
-    EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
-            throws MessagingException, UnsupportedEncodingException;
+	EmployerResponse signUpEmployer(EmployerRequest request, boolean isMobile)
+			throws MessagingException, UnsupportedEncodingException;
 
-    void verifyEmailEmployer(String confirmToken);
+	void verifyEmailEmployer(String confirmToken);
 
-    EmployerResponse getEmployerById(Long id);
+	EmployerResponse getEmployerById(Long id);
 
-    EmployerResponse updateEmployer(Long id, EmployerRequest request, MultipartFile avatar, MultipartFile background);
+	EmployerResponse updateEmployer(Long id, EmployerRequest request, MultipartFile avatar, MultipartFile background);
 
-    EmployerResponse createEmployer(EmployerRequest request, MultipartFile avatar, MultipartFile background);
+	EmployerResponse createEmployer(EmployerRequest request, MultipartFile avatar, MultipartFile background);
 
-    void deleteEmployer(Long id);
+	void deleteEmployer(Long id);
 
-    EmployerResponse updateProfileEmployer(Long id, EmployerRequest request);
+	EmployerResponse updateProfileEmployer(Long id, EmployerRequest request);
 
-    EmployerResponse uploadAvatar(Long id, MultipartFile avatar);
+	EmployerResponse uploadAvatar(Long id, MultipartFile avatar);
 
-    EmployerResponse uploadBackground(Long id, MultipartFile background);
+	EmployerResponse uploadBackground(Long id, MultipartFile background);
 
-    Employer findEmployerByEmail(String email);
+	Employer findEmployerByEmail(String email);
 
-    void forgotPassword(ForgotPasswordRequest request, boolean isMobile)
-            throws MessagingException, UnsupportedEncodingException;
+	void forgotPassword(ForgotPasswordRequest request, boolean isMobile)
+			throws MessagingException, UnsupportedEncodingException;
 
-    void resetPassword(String token, ResetPasswordRequest request);
+	void resetPassword(String token, ResetPasswordRequest request);
 
-    void updatePassword(Long employerId, UpdatePasswordRequest request);
+	void updatePassword(Long employerId, UpdatePasswordRequest request);
 
-    EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request);
+	EmployerResponse updateWebsiteUrls(Long employerId, EmployerWebsiteUpdateRequest request);
 
-    void verifyEmailEmployerMobile(VerifyEmailMobileRequest request);
+	void verifyEmailEmployerMobile(VerifyEmailMobileRequest request);
 
-    void resetPasswordEmployerMobile(ResetPasswordMobileRequest request);
+	void resetPasswordEmployerMobile(ResetPasswordMobileRequest request);
 
-    List<EmployerResponse> getTopHiringEmployers(int limit);
+	List<EmployerResponse> getTopHiringEmployers(int limit);
 }

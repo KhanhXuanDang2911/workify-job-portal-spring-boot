@@ -1,3 +1,4 @@
+
 package beworkify;
 
 import org.springframework.boot.SpringApplication;
@@ -13,5 +14,4 @@ public class BeWorkifyApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BeWorkifyApplication.class, args);
 	}
-
 }

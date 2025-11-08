@@ -1,3 +1,4 @@
+
 package beworkify.entity;
 
 import beworkify.enumeration.StatusPost;
@@ -12,40 +13,38 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "posts", indexes = {
-        @Index(name = "idx_posts_title", columnList = "title"),
-        @Index(name = "idx_posts_tags", columnList = "tags"),
-})
+@Table(name = "posts", indexes = {@Index(name = "idx_posts_title", columnList = "title"),
+		@Index(name = "idx_posts_tags", columnList = "tags"),})
 public class Post extends BaseEntity {
-    @Column(nullable = false)
-    private String title;
+	@Column(nullable = false)
+	private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String excerpt;
+	@Column(columnDefinition = "TEXT")
+	private String excerpt;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+	@Column(columnDefinition = "TEXT")
+	private String content;
 
-    @Column(columnDefinition = "TEXT")
-    private String contentText;
+	@Column(columnDefinition = "TEXT")
+	private String contentText;
 
-    @Enumerated(EnumType.STRING)
-    private StatusPost status;
+	@Enumerated(EnumType.STRING)
+	private StatusPost status;
 
-    private String thumbnailUrl;
+	private String thumbnailUrl;
 
-    @Column(columnDefinition = "TEXT")
-    private String tags;
+	@Column(columnDefinition = "TEXT")
+	private String tags;
 
-    private String slug;
+	private String slug;
 
-    private Integer readingTimeMinutes;
+	private Integer readingTimeMinutes;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private CategoryPost category;
+	@ManyToOne
+	@JoinColumn(name = "category_id", nullable = false)
+	private CategoryPost category;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+	@ManyToOne
+	@JoinColumn(name = "author_id", nullable = false)
+	private User author;
 }

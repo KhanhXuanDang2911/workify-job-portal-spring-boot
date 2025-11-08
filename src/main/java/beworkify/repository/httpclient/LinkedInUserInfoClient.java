@@ -1,3 +1,4 @@
+
 package beworkify.repository.httpclient;
 
 import beworkify.dto.response.LinkedInUserInfoResponse;
@@ -7,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "linkedin-userinfo-client", url = "https://api.linkedin.com")
 public interface LinkedInUserInfoClient {
-    @GetMapping("/v2/userinfo")
-    LinkedInUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorization);
+	@GetMapping("/v2/userinfo")
+	LinkedInUserInfoResponse getUserInfo(@RequestHeader("Authorization") String authorization);
 }

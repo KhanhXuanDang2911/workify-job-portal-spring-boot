@@ -1,3 +1,4 @@
+
 package beworkify.repository;
 
 import beworkify.entity.CategoryPost;
@@ -10,12 +11,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryPostRepository extends JpaRepository<CategoryPost, Long> {
-    boolean existsByTitle(String title);
+	boolean existsByTitle(String title);
 
-    boolean existsByTitleAndIdNot(String title, Long id);
+	boolean existsByTitleAndIdNot(String title, Long id);
 
-    boolean existsBySlug(String slug);
+	boolean existsBySlug(String slug);
 
-    @Query("select c from CategoryPost c where lower(c.title) like %:keyword% OR lower(c.description) like %:keyword%")
-    Page<CategoryPost> searchCategories(@Param("keyword") String keyword, Pageable pageable);
+	@Query("select c from CategoryPost c where lower(c.title) like %:keyword% OR lower(c.description) like %:keyword%")
+	Page<CategoryPost> searchCategories(@Param("keyword") String keyword, Pageable pageable);
 }

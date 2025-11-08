@@ -1,3 +1,4 @@
+
 package beworkify.service;
 
 import beworkify.dto.request.*;
@@ -6,47 +7,47 @@ import beworkify.dto.response.TokenResponse;
 import beworkify.dto.response.UserResponse;
 import beworkify.entity.User;
 import jakarta.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
 public interface UserService {
 
-    UserResponse getUserById(Long id);
+	UserResponse getUserById(Long id);
 
-    User findUserById(Long id);
+	User findUserById(Long id);
 
-    UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
+	UserResponse signUp(UserRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
 
-    void deleteUser(Long id);
+	void deleteUser(Long id);
 
-    User findUserByEmail(String email);
+	User findUserByEmail(String email);
 
-    @Transactional(readOnly = true)
-    PageResponse<List<UserResponse>> getUsersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
-            List<String> sorts, String keyword);
+	@Transactional(readOnly = true)
+	PageResponse<List<UserResponse>> getUsersWithPaginationAndKeywordAndSorts(int pageNumber, int pageSize,
+			List<String> sorts, String keyword);
 
-    UserResponse createUser(UserRequest request, MultipartFile avatar);
+	UserResponse createUser(UserRequest request, MultipartFile avatar);
 
-    UserResponse updateUser(UserRequest request, MultipartFile avatar, Long id);
+	UserResponse updateUser(UserRequest request, MultipartFile avatar, Long id);
 
-    UserResponse updateProfile(Long userId, UserRequest request);
+	UserResponse updateProfile(Long userId, UserRequest request);
 
-    UserResponse updateAvatar(Long userId, MultipartFile avatar);
+	UserResponse updateAvatar(Long userId, MultipartFile avatar);
 
-    void verifyEmailUser(String confirmToken);
+	void verifyEmailUser(String confirmToken);
 
-    void updatePassword(Long userId, UpdatePasswordRequest request);
+	void updatePassword(Long userId, UpdatePasswordRequest request);
 
-    void forgotPassword(ForgotPasswordRequest request, boolean isMobile) throws MessagingException, UnsupportedEncodingException;
+	void forgotPassword(ForgotPasswordRequest request, boolean isMobile)
+			throws MessagingException, UnsupportedEncodingException;
 
-    void resetPassword(String token, ResetPasswordRequest request);
+	void resetPassword(String token, ResetPasswordRequest request);
 
-    TokenResponse<UserResponse> createPassword(String token, UserCreationPasswordRequest request);
+	TokenResponse<UserResponse> createPassword(String token, UserCreationPasswordRequest request);
 
-    void verifyEmailUserMobile(VerifyEmailMobileRequest request);
+	void verifyEmailUserMobile(VerifyEmailMobileRequest request);
 
-    void resetPasswordUserMobile(ResetPasswordMobileRequest request);
+	void resetPasswordUserMobile(ResetPasswordMobileRequest request);
 }

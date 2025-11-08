@@ -1,3 +1,4 @@
+
 package beworkify.entity;
 
 import jakarta.persistence.Entity;
@@ -17,11 +18,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "districts")
 public class District extends BaseEntity {
-    private String code;
-    private String name;
-    private String districtSlug;
+	private String code;
+	private String name;
+	private String districtSlug;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "province_id")
-    private Province province;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "province_id")
+	private Province province;
 }

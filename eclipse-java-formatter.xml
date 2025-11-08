@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<profiles version="12">
+    <profile kind="CodeFormatterProfile" name="SpringBootFormatter" version="12">
+
+        <!-- Line width -->
+        <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="120"/>
+
+        <!-- Indent size -->
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.use_tabs" value="false"/>
+
+        <!-- Wrap annotations if long -->
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_annotation_in_parameter" value="64"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_annotation_on_field" value="64"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_annotation_on_method" value="64"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_annotation_on_type" value="64"/>
+
+        <!-- Wrap method parameters if long -->
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_parameters_in_method_declaration" value="16"/>
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_arguments_in_method_invocation" value="16"/>
+
+        <!-- Group imports -->
+        <setting id="org.eclipse.jdt.core.importOrder" value="java,jakarta,org,com,beworkify"/>
+        <setting id="org.eclipse.jdt.core.importGroups" value="true"/>
+
+        <!-- Blank lines -->
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_package" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_after_package" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_imports" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_between_import_groups" value="1"/>
+        <setting id="org.eclipse.jdt.core.formatter.blank_lines_before_member" value="1"/>
+
+    </profile>
+</profiles>

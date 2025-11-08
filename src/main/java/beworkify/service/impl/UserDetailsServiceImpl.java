@@ -1,3 +1,4 @@
+
 package beworkify.service.impl;
 
 import beworkify.repository.UserRepository;
@@ -15,17 +16,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final MessageSource messageSource;
+	private final UserRepository userRepository;
+	private final MessageSource messageSource;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmailWithRole(email)
-                .orElseThrow(() -> {
-                    log.error("User with email {} not found", email);
-                    String message = messageSource.getMessage("user.not.found.by.email", new Object[] { email },
-                            LocaleContextHolder.getLocale());
-                    return new UsernameNotFoundException(message);
-                });
-    }
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		return userRepository.findByEmailWithRole(email).orElseThrow(() -> {
+			log.error("User with email {} not found", email);
+			String message = messageSource.getMessage("user.not.found.by.email", new Object[]{email},
+					LocaleContextHolder.getLocale());
+			return new UsernameNotFoundException(message);
+		});
+	}
 }

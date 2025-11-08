@@ -1,3 +1,4 @@
+
 package beworkify.entity.redis;
 
 import lombok.*;
@@ -12,9 +13,9 @@ import org.springframework.data.redis.core.TimeToLive;
 @Builder
 @RedisHash("token")
 public class RedisToken {
-    @Id
-    private String jwtId;
+	@Id
+	private String jwtId;
 
-    @TimeToLive
-    private Long expiredTime;
+	@TimeToLive
+	private Long expiredTime;
 }

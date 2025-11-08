@@ -1,3 +1,4 @@
+
 package beworkify.mapper;
 
 import beworkify.dto.request.RoleRequest;
@@ -7,12 +8,12 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
-    @Mapping(target = "role", ignore = true)
-    Role toEntity(RoleRequest request);
+	@Mapping(target = "role", ignore = true)
+	Role toEntity(RoleRequest request);
 
-    RoleResponse toDTO(Role entity);
+	RoleResponse toDTO(Role entity);
 
-    @Mapping(target = "role", ignore = true)
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateEntityFromDTO(RoleRequest request, @MappingTarget Role role);
+	@Mapping(target = "role", ignore = true)
+	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+	void updateEntityFromDTO(RoleRequest request, @MappingTarget Role role);
 }

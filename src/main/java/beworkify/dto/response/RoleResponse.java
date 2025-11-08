@@ -1,7 +1,8 @@
+
 package beworkify.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import beworkify.enumeration.UserRole;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleResponse extends BaseResponse {
-    private UserRole role;
-    private String description;
+	private UserRole role;
+	private String description;
 }

@@ -1,3 +1,4 @@
+
 package beworkify.repository;
 
 import beworkify.entity.Location;

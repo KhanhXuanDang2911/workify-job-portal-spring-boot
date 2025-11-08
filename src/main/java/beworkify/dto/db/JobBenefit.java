@@ -1,3 +1,4 @@
+
 package beworkify.dto.db;
 
 import beworkify.enumeration.BenefitType;
@@ -9,6 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class JobBenefit {
-    private BenefitType type;
-    private String description;
+	private BenefitType type;
+	private String description;
 }

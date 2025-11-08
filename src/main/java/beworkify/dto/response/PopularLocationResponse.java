@@ -1,5 +1,5 @@
-package beworkify.dto.response;
 
+package beworkify.dto.response;
 
 import lombok.*;
 
@@ -8,11 +8,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PopularLocationResponse  {
-    private Long id;
-    private String code;
-    private String name;
-    private String engName;
-    private String provinceSlug;
-    private Long jobCount;
+public class PopularLocationResponse {
+	private Long id;
+	private String code;
+	private String name;
+	private String engName;
+	private String provinceSlug;
+	private Long jobCount;
 }

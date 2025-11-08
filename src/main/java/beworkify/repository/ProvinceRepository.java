@@ -1,3 +1,4 @@
+
 package beworkify.repository;
 
 import beworkify.entity.Province;
@@ -10,12 +11,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProvinceRepository extends JpaRepository<Province, Long> {
-    boolean existsByCode(String code);
+	boolean existsByCode(String code);
 
-    boolean existsByCodeAndIdNot(String code, Long id);
+	boolean existsByCodeAndIdNot(String code, Long id);
 
-    @Query("select p from Province p where lower(p.name) like %:keyword% OR lower(p.engName) like %:keyword% OR lower(p.code) like %:keyword%")
-    Page<Province> searchProvinces(@Param("keyword") String keyword, Pageable pageable);
+	@Query("select p from Province p where lower(p.name) like %:keyword% OR lower(p.engName) like %:keyword% OR lower(p.code) like %:keyword%")
+	Page<Province> searchProvinces(@Param("keyword") String keyword, Pageable pageable);
 
-    java.util.List<Province> findAllByOrderByNameAsc();
+	java.util.List<Province> findAllByOrderByNameAsc();
 }

@@ -1,13 +1,13 @@
+
 package beworkify.entity;
 
 import beworkify.enumeration.UserRole;
 import jakarta.persistence.*;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -16,12 +16,12 @@ import java.util.List;
 @Entity
 @Table(name = "roles")
 public class Role extends BaseEntity {
-    @Column(nullable = false, unique = true)
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
-    private String description;
+	@Column(nullable = false, unique = true)
+	@Enumerated(EnumType.STRING)
+	private UserRole role;
 
-    @OneToMany(mappedBy = "role")
-    private List<User> users;
+	private String description;
 
+	@OneToMany(mappedBy = "role")
+	private List<User> users;
 }

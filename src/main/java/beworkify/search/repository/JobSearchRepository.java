@@ -1,3 +1,4 @@
+
 package beworkify.search.repository;
 
 import beworkify.search.document.JobDocument;

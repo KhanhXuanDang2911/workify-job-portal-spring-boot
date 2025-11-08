@@ -1,3 +1,4 @@
+
 package beworkify;
 
 import org.junit.jupiter.api.Test;
@@ -9,5 +10,4 @@ class BeWorkifyApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
