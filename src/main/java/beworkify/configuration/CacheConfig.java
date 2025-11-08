@@ -40,7 +40,7 @@ public class CacheConfig {
 		cacheConfigs.put("jobs_top_attractive", cacheConfiguration(redisSerializer).entryTtl(Duration.ofSeconds(30)));
 		cacheConfigs.put("saved_jobs", cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(30)));
 		cacheConfigs.put("employers", cacheConfiguration(redisSerializer).entryTtl(Duration.ofSeconds(30)));
-		cacheConfigs.put("employers_top_hiring", cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
+		cacheConfigs.put("employers_top_hiring", cacheConfiguration(redisSerializer).entryTtl(Duration.ofSeconds(10)));
 		cacheConfigs.put("users", cacheConfiguration(redisSerializer).entryTtl(Duration.ofMinutes(10)));
 
 		return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(cacheConfiguration(redisSerializer))

@@ -377,14 +377,15 @@ public class EmployerServiceImpl implements EmployerService {
 	@Override
 	@Cacheable(value = "employers_top_hiring", key = "'limit:' + #limit")
 	public List<EmployerResponse> getTopHiringEmployers(int limit) {
-		var rows = jobRepository.findTopEmployerIdsByHiringJobs(PageRequest.of(0, Math.max(1, limit)));
+		int queryLimit = Math.max(1, limit * 2);
+		var rows = jobRepository.findTopEmployerIdsByHiringJobs(PageRequest.of(0, queryLimit));
 		List<Long> orderedIds = rows.stream().map(r -> (Long) r[0]).toList();
 		var countMap = rows.stream().collect(Collectors.toMap(r -> (Long) r[0], r -> (Long) r[1]));
 		if (orderedIds.isEmpty())
 			return List.of();
 		var employers = employerRepository.findAllById(orderedIds);
 		var byId = employers.stream().collect(Collectors.toMap(Employer::getId, e -> e));
-		return orderedIds.stream().map(id -> byId.get(id)).filter(e -> e != null).map(e -> {
+		return orderedIds.stream().map(id -> byId.get(id)).filter(e -> e != null).limit(limit).map(e -> {
 			EmployerResponse dto = employerMapper.toDTO(e);
 			dto.setNumberOfHiringJobs(countMap.getOrDefault(e.getId(), 0L).intValue());
 			return dto;

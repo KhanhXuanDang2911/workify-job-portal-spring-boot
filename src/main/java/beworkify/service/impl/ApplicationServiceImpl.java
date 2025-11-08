@@ -20,10 +20,12 @@ import beworkify.service.ApplicationService;
 import beworkify.service.AzureBlobService;
 import beworkify.service.JobService;
 import beworkify.service.UserService;
+import beworkify.service.NotificationService;
 import beworkify.util.AppUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
@@ -38,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ApplicationServiceImpl implements ApplicationService {
 
 	private static final int MAX_APPLY_PER_JOB = 3;
@@ -48,6 +51,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private final AzureBlobService azureBlobService;
 	private final UserService userService;
 	private final MessageSource messageSource;
+	private final NotificationService notificationService;
 
 	@Override
 	@Transactional
@@ -76,6 +80,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		String uploadedUrl = uploadCv(cv);
 		entity.setCvUrl(uploadedUrl);
 		Application saved = repository.save(entity);
+		// Notify employer about new application
+		notifyEmployerNewApplication(saved);
 		return mapper.toDTO(saved);
 	}
 
@@ -181,6 +187,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		entity.setStatus(ApplicationStatus.UNREAD);
 		entity.setCvUrl(request.getCvUrl());
 		Application saved = repository.save(entity);
+		// Notify employer about new application
+		notifyEmployerNewApplication(saved);
 		return mapper.toDTO(saved);
 	}
 
@@ -191,6 +199,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 		checkOwnershipWithEmployer(application);
 		application.setStatus(status);
 		Application saved = repository.save(application);
+		// Notify user about status update
+		notifyUserStatusChange(saved);
 		ApplicationResponse response = mapper.toDTO(saved);
 		return mapJobSummary(response, saved.getJob());
 	}
@@ -240,4 +250,43 @@ public class ApplicationServiceImpl implements ApplicationService {
 			throw new ResourceNotFoundException(message);
 		}
 	}
+
+	private void notifyEmployerNewApplication(Application application) {
+		try {
+			String title = "Ứng viên mới ứng tuyển";
+			String content = String.format("Ứng viên %s đã ứng tuyển vào công việc %s", application.getFullName(),
+					application.getJob().getJobTitle());
+			notificationService.notifyEmployer(application.getJob().getAuthor(), title, content, "NEW_APPLICATION",
+					"/jobs/" + application.getJob().getId() + "/applications", application.getJob().getId(),
+					application.getId());
+		} catch (Exception ignored) {
+		}
+	}
+
+	private void notifyUserStatusChange(Application application) {
+		try {
+			String content;
+			String companyName = application.getJob().getCompanyName();
+			switch (application.getStatus()) {
+				case VIEWED -> content = String.format("Nhà tuyển dụng %s đã xem CV của bạn.", companyName);
+				case EMAILED -> content = String.format("Nhà tuyển dụng %s đã gửi email cho bạn.", companyName);
+				case SCREENING ->
+					content = String.format("Đơn của bạn đang được nhà tuyển dụng %s sàng lọc.", companyName);
+				case OFFERED ->
+					content = String.format("Chúc mừng! Nhà tuyển dụng %s đã gửi offer cho bạn.", companyName);
+				case REJECTED ->
+					content = String.format("Rất tiếc, nhà tuyển dụng %s chưa chấp nhận đơn của bạn.", companyName);
+				default -> content = null;
+			}
+
+			if (content != null) {
+				String title = "Cập nhật trạng thái đơn ứng tuyển";
+				notificationService.notifyUser(application.getUser(), title, content, "APPLICATION_STATUS_UPDATE",
+						"/applications/" + application.getId(), application.getJob().getId(), application.getId());
+			}
+		} catch (Exception e) {
+			log.error("Lỗi khi notify user: ", e);
+		}
+	}
+
 }

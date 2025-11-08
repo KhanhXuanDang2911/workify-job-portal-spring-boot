@@ -15,12 +15,14 @@ import beworkify.search.service.JobSearchService;
 import beworkify.service.DistrictService;
 import beworkify.service.IndustryService;
 import beworkify.service.JobService;
+import beworkify.service.NotificationService;
 import beworkify.service.ProvinceService;
 import beworkify.util.AppUtils;
 import beworkify.util.RedisUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -37,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JobServiceImpl implements JobService {
 
 	private final JobRepository jobRepository;
@@ -52,6 +55,7 @@ public class JobServiceImpl implements JobService {
 	private final JobSearchService jobSearchService;
 	private final RedisUtils redisUtils;
 	private final ApplicationRepository applicationRepository;
+	private final NotificationService notificationService;
 
 	@Override
 	@Transactional
@@ -136,7 +140,10 @@ public class JobServiceImpl implements JobService {
 	@PostAuthorize("returnObject.status == T(beworkify.enumeration.JobStatus).APPROVED or hasRole('ADMIN') or hasRole('EMPLOYER') and returnObject.author.email == authentication.principal.username")
 	public JobResponse getById(Long id) {
 		Job entity = findJobById(id);
-		return mapper.toDTO(entity);
+		JobResponse response = mapper.toDTO(entity);
+		Long count = applicationRepository.countByJobId(entity.getId());
+		response.setNumberOfApplications(count != null ? count.intValue() : 0);
+		return response;
 	}
 
 	@Override
@@ -149,7 +156,6 @@ public class JobServiceImpl implements JobService {
 		keyword = keyword == null ? "" : keyword.trim();
 		Pageable pageable = AppUtils.generatePageableWithSort(sorts, WHITE_LIST_SORTS, pageNumber, pageSize);
 		Page<Long> page = jobRepository.findIdsMyJobs(provinceId, industryId, keyword.toLowerCase(), email, pageable);
-		// Fetch jobs and preserve the original sorted id order
 		List<Long> orderedIds = page.getContent();
 		List<Job> fetchedJobs = jobRepository.fetchJobsByIds(orderedIds);
 		Map<Long, Job> jobById = fetchedJobs.stream().collect(Collectors.toMap(Job::getId, j -> j));
@@ -246,6 +252,34 @@ public class JobServiceImpl implements JobService {
 		jobSearchService.index(entity);
 		evictCacheByPattern("jobs:pn:*");
 		evictCacheByPattern("jobs:popular:*");
+
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (AppUtils.hasRole(authentication, "ADMIN")) {
+				Employer author = entity.getAuthor();
+				if (author != null) {
+					String title = "Cập nhật trạng thái công việc";
+					String content;
+					switch (jobStatus) {
+						case APPROVED ->
+							content = String.format("Công việc %s đã được Admin phê duyệt.", entity.getJobTitle());
+						case REJECTED -> content = String.format("Công việc %s đã bị Admin từ chối phê duyệt.",
+								entity.getJobTitle());
+						case CLOSED -> content = String.format("Admin đã đóng công việc %s.", entity.getJobTitle());
+						default ->
+							content = String.format("Trạng thái công việc %s đã được cập nhật.", entity.getJobTitle());
+					}
+					String link = "/jobs/" + entity.getId();
+					try {
+						notificationService.notifyEmployer(author, title, content, "JOB_STATUS_UPDATE", link,
+								entity.getId(), null);
+					} catch (Exception ignored) {
+					}
+				}
+			}
+		} catch (Exception e) {
+			log.error("Error while notifying employer about job status change", e);
+		}
 	}
 
 	@Override

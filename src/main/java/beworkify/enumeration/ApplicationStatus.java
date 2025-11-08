@@ -6,15 +6,13 @@ import lombok.Getter;
 
 @Getter
 public enum ApplicationStatus {
-	UNREAD("UNREAD"), // 📭 Chưa đọc
-	VIEWED("VIEWED"), // 👀 Đã xem
-	EMAILED("EMAILED"), // 📧 Đã gửi email
-	SCREENING("SCREENING"), // 🔍 Kiểm tra hồ sơ
-	SCREENING_PENDING("SCREENING_PENDING"), // ⏳ Kiểm tra hồ sơ - Chưa quyết định
-	INTERVIEW_SCHEDULING("INTERVIEW_SCHEDULING"), // 📅 Sắp xếp phỏng vấn
-	INTERVIEWED_PENDING("INTERVIEWED_PENDING"), // 💬 Đã phỏng vấn - Chưa quyết định
-	OFFERED("OFFERED"), // 📝 Đã mời nhận việc
-	REJECTED("REJECTED"); // ❌ Từ chối
+	UNREAD("UNREAD"), VIEWED("VIEWED"), EMAILED("EMAILED"), SCREENING("SCREENING"), SCREENING_PENDING(
+			"SCREENING_PENDING"), INTERVIEW_SCHEDULING(
+					"INTERVIEW_SCHEDULING"), INTERVIEWED_PENDING("INTERVIEWED_PENDING"), OFFERED("OFFERED"), // 📝 Đã
+																												// mời
+																												// nhận
+																												// việc
+	REJECTED("REJECTED");
 
 	private final String value;
 

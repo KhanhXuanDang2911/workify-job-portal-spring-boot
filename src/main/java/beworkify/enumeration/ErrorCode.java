@@ -42,7 +42,15 @@ public enum ErrorCode {
 																																											412,
 																																											"error.useragent.mobile.required"), UPLOAD_FILE_FAILED(
 																																													501,
-																																													"error.upload.failed");
+																																													"error.upload.failed"),
+	// Chat/Message related errors (codes for internal use in JSON response, HTTP
+	// status is 500)
+	BAD_REQUEST(400, "error.bad.request"), CONVERSATION_NOT_FOUND(404,
+			"error.conversation.not.found"), MESSAGE_NOT_FOUND(404,
+					"error.message.not.found"), NOT_CONVERSATION_PARTICIPANT(403,
+							"error.not.conversation.participant"), APPLICANT_CANNOT_INITIATE(403,
+									"error.applicant.cannot.initiate.conversation"), APPLICANT_MUST_WAIT_RECRUITER(403,
+											"error.applicant.must.wait.recruiter");
 
 	private final int code;
 	private final String message;

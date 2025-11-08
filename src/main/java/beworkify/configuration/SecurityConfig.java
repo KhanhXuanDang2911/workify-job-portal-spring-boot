@@ -48,7 +48,7 @@ public class SecurityConfig {
 	@Qualifier("employerDetailsService")
 	private UserDetailsService employerDetailsService;
 
-	private final String[] WHITE_LIST = {"/api/v1/auth/**"};
+	private final String[] WHITE_LIST = {"/api/v1/auth/**", "/ws/**"};
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -65,7 +65,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/v1/categories-job/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/industries/**").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/v1/posts/public/**", "/api/v1/posts/{id}").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/v1/jobs/advanced/**",
+						.requestMatchers(HttpMethod.GET, "/api/v1/jobs/advanced/**", "/api/v1/jobs/{id}",
 								"/api/v1/jobs/locations/popular/**", "/api/v1/jobs/industries/popular/**",
 								"/api/v1/jobs/openings/**", "/api/v1/jobs/top-attractive")
 						.permitAll().anyRequest().authenticated())
