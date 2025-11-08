@@ -1,6 +1,7 @@
 package beworkify.dto.response;
 
 import beworkify.enumeration.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -10,8 +11,7 @@ import lombok.*;
 @Builder
 public class JobSummaryResponse {
     private Long id;
-    private String companyName;
-    private LevelCompanySize companySize;
     private String jobTitle;
     private JobStatus status;
+    private EmployerSummaryResponse employer;
 }

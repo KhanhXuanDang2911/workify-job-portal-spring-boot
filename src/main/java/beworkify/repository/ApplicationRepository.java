@@ -22,13 +22,13 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
         long countByUserIdAndJobId(Long userId, Long jobId);
 
-        @EntityGraph(attributePaths = { "job" })
+        @EntityGraph(attributePaths = { "job", "job.author" })
         Optional<Application> findTopByUserIdAndJobIdOrderByCreatedAtDesc(Long userId, Long jobId);
 
-        @EntityGraph(attributePaths = { "job" })
+        @EntityGraph(attributePaths = { "job", "job.author"})
         Page<Application> findAllByUser(User user, Pageable pageable);
 
-        @EntityGraph(attributePaths = { "job" })
+        @EntityGraph(attributePaths = { "job", "job.author" })
         @Query("""
                         SELECT a FROM Application a
                         WHERE a.job.id = :jobId

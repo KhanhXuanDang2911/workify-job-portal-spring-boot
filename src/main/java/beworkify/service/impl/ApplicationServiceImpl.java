@@ -2,6 +2,7 @@ package beworkify.service.impl;
 
 import beworkify.dto.request.ApplicationRequest;
 import beworkify.dto.response.ApplicationResponse;
+import beworkify.dto.response.EmployerSummaryResponse;
 import beworkify.dto.response.JobSummaryResponse;
 import beworkify.dto.response.PageResponse;
 import beworkify.entity.Application;
@@ -15,21 +16,21 @@ import beworkify.exception.ResourceNotFoundException;
 import beworkify.mapper.ApplicationMapper;
 import beworkify.repository.ApplicationRepository;
 import beworkify.service.ApplicationService;
-import beworkify.service.JobService;
 import beworkify.service.AzureBlobService;
+import beworkify.service.JobService;
 import beworkify.service.UserService;
 import beworkify.util.AppUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -134,7 +135,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional(readOnly = true)
     public PageResponse<List<ApplicationResponse>> getApplicationsByJobId(int pageNumber, int pageSize, Long jobId,
-            Integer receivedWithin, ApplicationStatus status) {
+                                                                          Integer receivedWithin, ApplicationStatus status) {
         Long employerId = AppUtils.getEmployerIdFromSecurityContext();
         Job job = jobService.findJobById(jobId);
         if (!job.getAuthor().getId().equals(employerId)) {
@@ -215,16 +216,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 });
     }
 
-    private Application getByUserAndJob(User user, Job job) {
-        return repository.findTopByUserIdAndJobIdOrderByCreatedAtDesc(user.getId(), job.getId()).orElseThrow(() -> {
-            String message = messageSource.getMessage("application.notFound", null, LocaleContextHolder.getLocale());
-            return new ResourceConflictException(message);
-        });
-    }
-
     private void checkOwnershipWithEmployer(Application application) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (AppUtils.hasRole(authentication, UserRole.ADMIN.getName()) || AppUtils.hasRole(authentication, UserRole.JOB_SEEKER.getName())){
+        if (AppUtils.hasRole(authentication, UserRole.ADMIN.getName()) || AppUtils.hasRole(authentication, UserRole.JOB_SEEKER.getName())) {
             Long userId = AppUtils.getUserIdFromSecurityContext();
             if (!application.getUser().getId().equals(userId)) {
                 throw new AccessDeniedException("Access is denied");
@@ -246,9 +240,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private ApplicationResponse mapJobSummary(ApplicationResponse response, Job job) {
         response.setJob(JobSummaryResponse.builder()
-                .companyName(job.getCompanyName())
-                .companySize(job.getCompanySize())
                 .jobTitle(job.getJobTitle())
+                .employer(EmployerSummaryResponse.builder()
+                        .email(job.getAuthor().getEmail())
+                        .employerSlug(job.getAuthor().getEmployerSlug())
+                        .avatarUrl(job.getAuthor().getAvatarUrl())
+                        .backgroundUrl(job.getAuthor().getBackgroundUrl())
+                        .companyName(job.getCompanyName())
+                        .build())
                 .status(job.getStatus())
                 .id(job.getId())
                 .build());
