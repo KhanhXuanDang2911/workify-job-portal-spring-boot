@@ -1,0 +1,105 @@
+spring:
+  application:
+    name: workify-spring-boot-test
+
+  # Database configuration for testing
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+
+  # Disable Redis for tests
+  redis:
+    host: localhost
+    port: 6379
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  # Disable Elasticsearch for tests
+  elasticsearch:
+    uris: http://localhost:9200
+
+  # Mail configuration for tests
+  mail:
+    host: localhost
+    port: 25
+    username: test
+    password: test
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  # Disable WebSocket for tests
+  websocket:
+    enabled: false
+
+  # File upload settings for tests
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# JWT settings for tests
+jwt:
+  secret-key: test-secret-key-for-access-token-must-be-long-enough-to-meet-security-requirements
+  refresh-key: test-secret-key-for-refresh-token-must-be-long-enough-to-meet-security-requirements
+  reset-key: test-secret-key-for-reset-token-must-be-long-enough-to-meet-security-requirements
+  confirm-key: test-secret-key-for-confirm-token-must-be-long-enough-to-meet-security-requirements
+  create-password-key: test-secret-key-for-create-password-token-must-be-long-enough
+  expiry-hour: 1
+  expiry-day: 7
+  expiry-minute: 30
+
+# Logging for tests
+logging:
+  level:
+    root: INFO
+    beworkify: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+
+# Disable security for tests (can be overridden in individual tests)
+security:
+  enabled: true
+
+# OAuth2 settings for tests (mock values)
+oauth2:
+  google:
+    client-id: test-google-client-id
+    client-secret: test-google-client-secret
+    redirect-uri: http://localhost:8080/test/callback
+  linkedin:
+    client-id: test-linkedin-client-id
+    client-secret: test-linkedin-client-secret
+    redirect-uri: http://localhost:8080/test/callback
+
+# File storage for tests
+file:
+  upload:
+    dir: ${java.io.tmpdir}/workify-test-uploads
+
+# Azure Storage mock for tests
+AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=https;AccountName=test;AccountKey=test;EndpointSuffix=core.windows.net"
+azure:
+  storage:
+    container-name: test-container

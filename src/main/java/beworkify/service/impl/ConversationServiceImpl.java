@@ -110,6 +110,57 @@ public class ConversationServiceImpl implements ConversationService {
 		return false;
 	}
 
+	/**
+	 * Get conversation by application ID. This method allows both USER (job seeker)
+	 * and EMPLOYER to retrieve the conversation associated with a specific
+	 * application.
+	 * 
+	 * @param applicationId
+	 *            The ID of the application
+	 * @return ConversationResponse containing conversation details
+	 * @throws AppException
+	 *             if user is not authorized or conversation not found
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ConversationResponse getConversationByApplicationId(Long applicationId) {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		Long userId;
+		String userType;
+
+		if (principal instanceof User) {
+			userId = ((User) principal).getId();
+			userType = "USER";
+		} else if (principal instanceof Employer) {
+			userId = ((Employer) principal).getId();
+			userType = "EMPLOYER";
+		} else {
+			throw new AppException(ErrorCode.BAD_REQUEST);
+		}
+
+		Application application = applicationRepository.findById(applicationId)
+				.orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+
+		// USER can only access their own applications, EMPLOYER can only access their
+		// job applications
+		if ("USER".equals(userType)) {
+			if (!application.getUser().getId().equals(userId)) {
+				throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
+			}
+		} else if ("EMPLOYER".equals(userType)) {
+			if (!application.getJob().getAuthor().getId().equals(userId)) {
+				throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
+			}
+		}
+
+		Conversation conversation = conversationRepository
+				.findByJobIdAndApplicationId(application.getJob().getId(), applicationId)
+				.orElseThrow(() -> new AppException(ErrorCode.CONVERSATION_NOT_FOUND));
+
+		return mapToResponse(conversation);
+	}
+
 	private ConversationResponse mapToResponse(Conversation conv) {
 		return ConversationResponse.builder().id(conv.getId()).jobId(conv.getJob().getId())
 				.jobTitle(conv.getJob().getJobTitle()).applicationId(conv.getApplication().getId())
