@@ -38,7 +38,6 @@ public class MessageServiceImpl implements MessageService {
 		String senderName;
 		String senderAvatar;
 
-		// Xác định sender
 		if (principal instanceof User) {
 			User user = (User) principal;
 			senderId = user.getId();
@@ -55,67 +54,53 @@ public class MessageServiceImpl implements MessageService {
 			throw new AppException(ErrorCode.BAD_REQUEST);
 		}
 
-		Conversation conversation;
+		Conversation conversation = conversationService.getConversationById(request.getConversationId());
 
-		// Xử lý conversation
-		if (request.getConversationId() != null) {
-			conversation = conversationService.getConversationById(request.getConversationId());
-
-			// Kiểm tra user có thuộc conversation này không
-			if (!conversationService.isUserInConversation(conversation.getId(), senderId, senderType)) {
-				throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
-			}
-
-			// Kiểm tra quyền gửi tin nhắn của JOB_SEEKER
-			if ("USER".equals(senderType) && !conversation.getHasEmployerMessage()) {
-				throw new AppException(ErrorCode.APPLICANT_MUST_WAIT_RECRUITER);
-			}
-
-		} else {
-			// Tạo conversation mới (chỉ EMPLOYER được phép)
-			if (!"EMPLOYER".equals(senderType)) {
-				throw new AppException(ErrorCode.APPLICANT_CANNOT_INITIATE);
-			}
-
-			if (request.getJobId() == null || request.getApplicationId() == null) {
-				throw new AppException(ErrorCode.BAD_REQUEST);
-			}
-
-			conversation = conversationService.createOrGetConversation(request.getJobId(), request.getApplicationId(),
-					senderId);
+		if (!conversationService.isUserInConversation(conversation.getId(), senderId, senderType)) {
+			throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
 		}
 
-		// Tạo message
+		// USER can only send message after EMPLOYER has sent the first message
+		if ("USER".equals(senderType) && !conversation.getHasEmployerMessage()) {
+			throw new AppException(ErrorCode.APPLICANT_MUST_WAIT_RECRUITER);
+		}
+
 		Message message = Message.builder().conversation(conversation).senderId(senderId).senderType(senderType)
 				.content(request.getContent()).seen(false).build();
 
 		message = messageRepository.save(message);
-
-		// Cập nhật last message của conversation
 		conversationService.updateLastMessage(conversation.getId(), request.getContent(), senderId, senderType);
 
-		// Đánh dấu conversation đã có tin nhắn từ employer
+		// Mark conversation to allow USER to send messages after employer initiates
 		if ("EMPLOYER".equals(senderType)) {
 			conversationService.markHasEmployerMessage(conversation.getId());
 		}
 
-		// Map to response
 		MessageResponse messageResponse = MessageResponse.builder().id(message.getId())
 				.conversationId(conversation.getId()).senderId(senderId).senderType(senderType).senderName(senderName)
 				.senderAvatar(senderAvatar).content(message.getContent()).seen(message.getSeen())
 				.createdAt(message.getCreatedAt()).build();
 
-		// Gửi tin nhắn qua WebSocket đến receiver
-		String receiverIdStr;
+		// Determine receiver and sender principal (format: "USER:email" or
+		// "EMPLOYER:email")
+		String receiverPrincipal;
+		String senderPrincipal;
+
 		if ("USER".equals(senderType)) {
-			receiverIdStr = conversation.getEmployer().getId().toString();
+			senderPrincipal = "USER:" + conversation.getJobSeeker().getEmail();
+			receiverPrincipal = "EMPLOYER:" + conversation.getEmployer().getEmail();
 		} else {
-			receiverIdStr = conversation.getJobSeeker().getId().toString();
+			senderPrincipal = "EMPLOYER:" + conversation.getEmployer().getEmail();
+			receiverPrincipal = "USER:" + conversation.getJobSeeker().getEmail();
 		}
 
-		messagingTemplate.convertAndSendToUser(receiverIdStr, "/queue/messages", messageResponse);
+		// Broadcast message via WebSocket to both receiver and sender (for multi-device
+		// sync)
+		messagingTemplate.convertAndSendToUser(receiverPrincipal, "/queue/messages", messageResponse);
+		messagingTemplate.convertAndSendToUser(senderPrincipal, "/queue/messages", messageResponse);
 
-		log.info("Message sent from {} (type: {}) in conversation {}", senderId, senderType, conversation.getId());
+		log.info("Message sent from {} (type: {}) in conversation {} - Broadcasted to {} and {}", senderId, senderType,
+				conversation.getId(), receiverPrincipal, senderPrincipal);
 
 		return messageResponse;
 	}
@@ -138,14 +123,12 @@ public class MessageServiceImpl implements MessageService {
 			throw new AppException(ErrorCode.BAD_REQUEST);
 		}
 
-		// Kiểm tra quyền xem conversation
 		if (!conversationService.isUserInConversation(conversationId, userId, userType)) {
 			throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
 		}
 
 		List<Message> messages = messageRepository.findByConversationIdOrderByCreatedAtAsc(conversationId);
 
-		// Lấy thông tin conversation để map sender name và avatar
 		Conversation conversation = conversationService.getConversationById(conversationId);
 
 		return messages.stream().map(msg -> mapToResponse(msg, conversation)).collect(Collectors.toList());
@@ -171,7 +154,6 @@ public class MessageServiceImpl implements MessageService {
 			throw new AppException(ErrorCode.BAD_REQUEST);
 		}
 
-		// Kiểm tra quyền
 		if (!conversationService.isUserInConversation(conversationId, userId, userType)) {
 			throw new AppException(ErrorCode.NOT_CONVERSATION_PARTICIPANT);
 		}

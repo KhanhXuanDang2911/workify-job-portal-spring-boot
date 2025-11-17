@@ -27,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Message", description = "Chat and messaging APIs")
+@RequestMapping("/api/v1")
 public class MessageController {
 
 	private final MessageService messageService;
@@ -44,7 +45,7 @@ public class MessageController {
 	/**
 	 * REST API để gửi tin nhắn
 	 */
-	@PostMapping("/api/messages")
+	@PostMapping("/messages")
 	@Operation(summary = "Send a message", security = @SecurityRequirement(name = "bearerAuth"))
 	public ResponseEntity<ResponseData<MessageResponse>> sendMessage(@Valid @RequestBody SendMessageRequest request) {
 
@@ -57,7 +58,7 @@ public class MessageController {
 	/**
 	 * Lấy danh sách conversations của user hiện tại
 	 */
-	@GetMapping("/api/conversations")
+	@GetMapping("/conversations")
 	@Operation(summary = "Get user's conversations", security = @SecurityRequirement(name = "bearerAuth"))
 	public ResponseEntity<ResponseData<List<ConversationResponse>>> getConversations() {
 
@@ -70,7 +71,7 @@ public class MessageController {
 	/**
 	 * Lấy lịch sử tin nhắn của một conversation
 	 */
-	@GetMapping("/api/messages/{conversationId}")
+	@GetMapping("/messages/{conversationId}")
 	@Operation(summary = "Get messages by conversation", security = @SecurityRequirement(name = "bearerAuth"))
 	public ResponseEntity<ResponseData<List<MessageResponse>>> getMessages(@PathVariable Long conversationId) {
 
@@ -83,7 +84,7 @@ public class MessageController {
 	/**
 	 * Đánh dấu tin nhắn đã đọc
 	 */
-	@PutMapping("/api/messages/{conversationId}/seen")
+	@PutMapping("/messages/{conversationId}/seen")
 	@Operation(summary = "Mark messages as seen", security = @SecurityRequirement(name = "bearerAuth"))
 	public ResponseEntity<ResponseData<Void>> markMessagesAsSeen(@PathVariable Long conversationId) {
 
@@ -91,5 +92,24 @@ public class MessageController {
 		String msg = "Messages marked as seen";
 
 		return ResponseBuilder.noData(HttpStatus.OK, msg);
+	}
+
+	/**
+	 * Get conversation by application ID. Allows both job seeker and employer to
+	 * retrieve the conversation associated with a specific job application.
+	 * 
+	 * @param applicationId
+	 *            The ID of the application
+	 * @return ConversationResponse with conversation details
+	 */
+	@GetMapping("/conversations/application/{applicationId}")
+	@Operation(summary = "Get conversation by application ID", security = @SecurityRequirement(name = "bearerAuth"))
+	public ResponseEntity<ResponseData<ConversationResponse>> getConversationByApplicationId(
+			@PathVariable Long applicationId) {
+
+		ConversationResponse conversation = conversationService.getConversationByApplicationId(applicationId);
+		String msg = "Conversation retrieved successfully";
+
+		return ResponseBuilder.withData(HttpStatus.OK, msg, conversation);
 	}
 }

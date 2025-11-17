@@ -32,8 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 .env
+.cursor/
 
 # Project docs (ignore generated/spec files)
 /API_DOCS.md
-
-.cursor/
+/CHAT_DOCS.md
+/TEST_README.md

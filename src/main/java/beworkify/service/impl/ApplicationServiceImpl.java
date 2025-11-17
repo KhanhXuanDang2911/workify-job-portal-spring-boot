@@ -21,6 +21,7 @@ import beworkify.service.AzureBlobService;
 import beworkify.service.JobService;
 import beworkify.service.UserService;
 import beworkify.service.NotificationService;
+import beworkify.service.ConversationService;
 import beworkify.util.AppUtils;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,6 +53,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 	private final UserService userService;
 	private final MessageSource messageSource;
 	private final NotificationService notificationService;
+	private final ConversationService conversationService;
 
 	@Override
 	@Transactional
@@ -80,7 +82,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 		String uploadedUrl = uploadCv(cv);
 		entity.setCvUrl(uploadedUrl);
 		Application saved = repository.save(entity);
-		// Notify employer about new application
+
+		// Automatically create conversation (1 application = 1 conversation)
+		conversationService.createOrGetConversation(job.getId(), saved.getId(), job.getAuthor().getId());
+
 		notifyEmployerNewApplication(saved);
 		return mapper.toDTO(saved);
 	}
@@ -187,7 +192,10 @@ public class ApplicationServiceImpl implements ApplicationService {
 		entity.setStatus(ApplicationStatus.UNREAD);
 		entity.setCvUrl(request.getCvUrl());
 		Application saved = repository.save(entity);
-		// Notify employer about new application
+
+		// Automatically create conversation (1 application = 1 conversation)
+		conversationService.createOrGetConversation(job.getId(), saved.getId(), job.getAuthor().getId());
+
 		notifyEmployerNewApplication(saved);
 		return mapper.toDTO(saved);
 	}

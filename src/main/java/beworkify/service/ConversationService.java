@@ -70,4 +70,14 @@ public interface ConversationService {
 	 * @return true nếu user thuộc conversation
 	 */
 	boolean isUserInConversation(Long conversationId, Long userId, String userType);
+
+	/**
+	 * Get conversation by application ID. Allows both job seeker and employer to
+	 * retrieve the conversation associated with a specific job application.
+	 *
+	 * @param applicationId
+	 *            The ID of the application
+	 * @return ConversationResponse containing conversation details
+	 */
+	ConversationResponse getConversationByApplicationId(Long applicationId);
 }

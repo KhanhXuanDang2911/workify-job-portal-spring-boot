@@ -5,6 +5,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+/**
+ * Request DTO for sending a message in a conversation. Conversation is
+ * automatically created when user applies for a job.
+ * 
+ * @param conversationId
+ *            The ID of the conversation (required)
+ * @param content
+ *            The message content (required, not blank)
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,15 +21,9 @@ import lombok.*;
 @Builder
 public class SendMessageRequest {
 
-	@NotNull(message = "Receiver ID is required")
-	private Long receiverId;
+	@NotNull(message = "Conversation ID is required")
+	private Long conversationId;
 
 	@NotBlank(message = "Content is required")
 	private String content;
-
-	private Long conversationId;
-
-	private Long jobId;
-
-	private Long applicationId;
 }
