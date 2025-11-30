@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.SavedJob;
@@ -13,15 +12,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SavedJobRepository extends JpaRepository<SavedJob, Long> {
 
-	boolean existsByUser_IdAndJob_Id(Long userId, Long jobId);
+  boolean existsByUser_IdAndJob_Id(Long userId, Long jobId);
 
-	Optional<SavedJob> findByUser_IdAndJob_Id(Long userId, Long jobId);
+  Optional<SavedJob> findByUser_IdAndJob_Id(Long userId, Long jobId);
 
-	@Query("""
+  @Query(
+      """
 			SELECT j.id FROM SavedJob sj
 			JOIN sj.job j
 			WHERE sj.user.id = :userId
 			ORDER BY sj.createdAt DESC
 			""")
-	Page<Long> findJobIdsByUserId(@Param("userId") Long userId, Pageable pageable);
+  Page<Long> findJobIdsByUserId(@Param("userId") Long userId, Pageable pageable);
 }

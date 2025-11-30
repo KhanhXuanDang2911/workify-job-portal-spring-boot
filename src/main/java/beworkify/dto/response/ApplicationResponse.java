@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import beworkify.enumeration.ApplicationStatus;
@@ -14,12 +13,12 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class ApplicationResponse extends BaseResponse {
-	private String fullName;
-	private String email;
-	private String phoneNumber;
-	private String coverLetter;
-	private String cvUrl;
-	private Integer applyCount;
-	private ApplicationStatus status;
-	private JobSummaryResponse job;
+  private String fullName;
+  private String email;
+  private String phoneNumber;
+  private String coverLetter;
+  private String cvUrl;
+  private Integer applyCount;
+  private ApplicationStatus status;
+  private JobSummaryResponse job;
 }

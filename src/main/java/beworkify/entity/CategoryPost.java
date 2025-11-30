@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import jakarta.persistence.Column;
@@ -18,15 +17,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "categories_post")
 public class CategoryPost extends BaseEntity {
-	@Column(nullable = false)
-	private String title;
+  @Column(nullable = false)
+  private String title;
 
-	@Column(columnDefinition = "TEXT")
-	private String description;
+  @Column(columnDefinition = "TEXT")
+  private String description;
 
-	@Column(unique = true)
-	private String slug;
+  @Column(unique = true)
+  private String slug;
 
-	@OneToMany(mappedBy = "category")
-	private List<Post> posts;
+  @OneToMany(mappedBy = "category")
+  private List<Post> posts;
 }

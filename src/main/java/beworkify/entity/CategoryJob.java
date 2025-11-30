@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import jakarta.persistence.*;
@@ -14,15 +13,15 @@ import lombok.*;
 @Entity
 @Table(name = "categories_job")
 public class CategoryJob extends BaseEntity {
-	@Column(nullable = false)
-	private String name;
+  @Column(nullable = false)
+  private String name;
 
-	private String description;
+  private String description;
 
-	@Column(nullable = false)
-	private String engName;
+  @Column(nullable = false)
+  private String engName;
 
-	@Builder.Default
-	@OneToMany(mappedBy = "categoryJob", orphanRemoval = true, cascade = CascadeType.REMOVE)
-	private Set<Industry> industries = new HashSet<>();
+  @Builder.Default
+  @OneToMany(mappedBy = "categoryJob", orphanRemoval = true, cascade = CascadeType.REMOVE)
+  private Set<Industry> industries = new HashSet<>();
 }

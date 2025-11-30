@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.AgeValidator;
@@ -11,9 +10,9 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidAge {
-	String message() default "Invalid age configuration for the selected age type";
+  String message() default "Invalid age configuration for the selected age type";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 }

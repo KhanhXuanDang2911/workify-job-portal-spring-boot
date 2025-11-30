@@ -1,4 +1,3 @@
-
 package beworkify.dto.request;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -12,9 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ExchangeTokenGoogleRequest {
-	String code;
-	String clientId;
-	String clientSecret;
-	String redirectUri;
-	String grantType;
+  String code;
+  String clientId;
+  String clientSecret;
+  String redirectUri;
+  String grantType;
 }

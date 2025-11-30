@@ -1,4 +1,3 @@
-
 package beworkify.dto.request;
 
 import beworkify.validation.group.OnCreate;
@@ -15,14 +14,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProvinceRequest {
-	@NotBlank(message = "{validation.province.code.notBlank}")
-	@Size(max = 50, message = "{validation.province.code.size}")
-	private String code;
+  @NotBlank(message = "{validation.province.code.notBlank}")
+  @Size(max = 50, message = "{validation.province.code.size}")
+  private String code;
 
-	@NotBlank(message = "{validation.province.name.notBlank}", groups = {OnCreate.class, OnUpdate.class})
-	@Size(max = 255, message = "{validation.province.name.size}")
-	private String name;
+  @NotBlank(
+      message = "{validation.province.name.notBlank}",
+      groups = {OnCreate.class, OnUpdate.class})
+  @Size(max = 255, message = "{validation.province.name.size}")
+  private String name;
 
-	@Size(max = 255, message = "{validation.province.engName.size}")
-	private String engName;
+  @Size(max = 255, message = "{validation.province.engName.size}")
+  private String engName;
 }

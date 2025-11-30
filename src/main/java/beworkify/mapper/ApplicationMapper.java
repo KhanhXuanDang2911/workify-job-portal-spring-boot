@@ -1,4 +1,3 @@
-
 package beworkify.mapper;
 
 import beworkify.dto.request.ApplicationRequest;
@@ -7,13 +6,15 @@ import beworkify.entity.Application;
 import beworkify.util.AppUtils;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", imports = {AppUtils.class})
+@Mapper(
+    componentModel = "spring",
+    imports = {AppUtils.class})
 public interface ApplicationMapper {
 
-	ApplicationResponse toDTO(Application application);
+  ApplicationResponse toDTO(Application application);
 
-	Application toEntity(ApplicationRequest request);
+  Application toEntity(ApplicationRequest request);
 
-	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-	void updateEntity(ApplicationRequest request, @MappingTarget Application application);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateEntity(ApplicationRequest request, @MappingTarget Application application);
 }

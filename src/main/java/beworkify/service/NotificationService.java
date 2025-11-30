@@ -1,23 +1,35 @@
-
 package beworkify.service;
 
 import beworkify.dto.response.NotificationResponse;
+import beworkify.dto.response.PageResponse;
 import beworkify.entity.Employer;
 import beworkify.entity.User;
-import beworkify.dto.response.PageResponse;
 import java.util.List;
 
 public interface NotificationService {
-	void notifyUser(User user, String title, String content, String type, String link, Long jobId, Long applicationId);
+  void notifyUser(
+      User user,
+      String title,
+      String content,
+      String type,
+      String link,
+      Long jobId,
+      Long applicationId);
 
-	void notifyEmployer(Employer employer, String title, String content, String type, String link, Long jobId,
-			Long applicationId);
+  void notifyEmployer(
+      Employer employer,
+      String title,
+      String content,
+      String type,
+      String link,
+      Long jobId,
+      Long applicationId);
 
-	PageResponse<List<NotificationResponse>> getMyNotifications(int pageNumber, int pageSize);
+  PageResponse<List<NotificationResponse>> getMyNotifications(int pageNumber, int pageSize);
 
-	void markAsRead(Long id);
+  void markAsRead(Long id);
 
-	void markAllAsRead();
+  void markAllAsRead();
 
-	long countUnread();
+  long countUnread();
 }

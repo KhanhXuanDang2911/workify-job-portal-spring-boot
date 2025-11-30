@@ -1,4 +1,3 @@
-
 package beworkify.service;
 
 import beworkify.dto.request.CategoryJobRequest;
@@ -8,20 +7,20 @@ import beworkify.entity.CategoryJob;
 import java.util.List;
 
 public interface CategoryJobService {
-	CategoryJobResponse create(CategoryJobRequest request);
+  CategoryJobResponse create(CategoryJobRequest request);
 
-	CategoryJobResponse update(Long id, CategoryJobRequest request);
+  CategoryJobResponse update(Long id, CategoryJobRequest request);
 
-	void delete(Long id);
+  void delete(Long id);
 
-	CategoryJobResponse getById(Long id);
+  CategoryJobResponse getById(Long id);
 
-	PageResponse<List<CategoryJobResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize,
-			List<String> sorts, String keyword);
+  PageResponse<List<CategoryJobResponse>> getAllWithPaginationAndSort(
+      int pageNumber, int pageSize, List<String> sorts, String keyword);
 
-	List<CategoryJobResponse> getAll();
+  List<CategoryJobResponse> getAll();
 
-	CategoryJob findById(Long id);
+  CategoryJob findById(Long id);
 
-	List<CategoryJobResponse> getCategoriesJobWithCountJobIndustry();
+  List<CategoryJobResponse> getCategoriesJobWithCountJobIndustry();
 }

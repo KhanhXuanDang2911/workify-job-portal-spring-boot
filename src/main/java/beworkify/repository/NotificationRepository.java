@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.Employer;
@@ -9,11 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-	Page<Notification> findByRecipientUserOrderByCreatedAtDesc(User user, Pageable pageable);
+  Page<Notification> findByRecipientUserOrderByCreatedAtDesc(User user, Pageable pageable);
 
-	Page<Notification> findByRecipientEmployerOrderByCreatedAtDesc(Employer employer, Pageable pageable);
+  Page<Notification> findByRecipientEmployerOrderByCreatedAtDesc(
+      Employer employer, Pageable pageable);
 
-	long countByRecipientUserAndReadFlagIsFalse(User user);
+  long countByRecipientUserAndReadFlagIsFalse(User user);
 
-	long countByRecipientEmployerAndReadFlagIsFalse(Employer employer);
+  long countByRecipientEmployerAndReadFlagIsFalse(Employer employer);
 }

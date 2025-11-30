@@ -1,4 +1,3 @@
-
 package beworkify.mapper;
 
 import beworkify.dto.request.DistrictRequest;
@@ -11,10 +10,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface DistrictMapper {
-	District toEntity(DistrictRequest request);
+  District toEntity(DistrictRequest request);
 
-	DistrictResponse toDTO(District entity);
+  DistrictResponse toDTO(District entity);
 
-	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-	void updateEntityFromRequest(DistrictRequest request, @MappingTarget District entity);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateEntityFromRequest(DistrictRequest request, @MappingTarget District entity);
 }

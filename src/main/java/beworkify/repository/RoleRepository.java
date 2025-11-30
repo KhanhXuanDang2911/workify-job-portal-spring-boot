@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.Role;
@@ -12,14 +11,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-	@Query("select distinct r from Role r")
-	List<Role> findAllRoles();
+  @Query("select distinct r from Role r")
+  List<Role> findAllRoles();
 
-	@Query("select distinct r from Role r where r.role = :role")
-	Optional<Role> findByRole(@Param("role") UserRole role);
+  @Query("select distinct r from Role r where r.role = :role")
+  Optional<Role> findByRole(@Param("role") UserRole role);
 
-	boolean existsByRole(UserRole role);
+  boolean existsByRole(UserRole role);
 
-	@Query("select case when count(r) > 0 then true else false end from Role r where r.role = :role and r.id != :id")
-	boolean existsByRoleExceptForId(@Param("role") UserRole role, @Param("id") Long id);
+  @Query(
+      "select case when count(r) > 0 then true else false end from Role r where r.role = :role and r.id != :id")
+  boolean existsByRoleExceptForId(@Param("role") UserRole role, @Param("id") Long id);
 }

@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.ValueOfEnumListValidator;
@@ -12,11 +11,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface ValueOfEnumList {
 
-	Class<? extends Enum<?>> enumClass();
+  Class<? extends Enum<?>> enumClass();
 
-	String message() default "contains invalid value. Must be one of the enum constants";
+  String message() default "contains invalid value. Must be one of the enum constants";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 }

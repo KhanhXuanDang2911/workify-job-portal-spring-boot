@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -19,16 +18,16 @@ import lombok.Setter;
 @Entity
 @Table(name = "provinces")
 public class Province extends BaseEntity {
-	private String code;
-	private String name;
-	private String engName;
-	private String provinceSlug;
+  private String code;
+  private String name;
+  private String engName;
+  private String provinceSlug;
 
-	@OneToMany(mappedBy = "province", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonIgnore
-	private List<District> district;
+  @OneToMany(mappedBy = "province", cascade = CascadeType.ALL, orphanRemoval = true)
+  @JsonIgnore
+  private List<District> district;
 
-	@OneToMany(mappedBy = "province")
-	@JsonIgnore
-	private List<Location> locations;
+  @OneToMany(mappedBy = "province")
+  @JsonIgnore
+  private List<Location> locations;
 }

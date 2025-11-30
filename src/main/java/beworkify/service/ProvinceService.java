@@ -1,4 +1,3 @@
-
 package beworkify.service;
 
 import beworkify.dto.request.ProvinceRequest;
@@ -8,18 +7,18 @@ import beworkify.entity.Province;
 import java.util.List;
 
 public interface ProvinceService {
-	ProvinceResponse create(ProvinceRequest request);
+  ProvinceResponse create(ProvinceRequest request);
 
-	ProvinceResponse update(Long id, ProvinceRequest request);
+  ProvinceResponse update(Long id, ProvinceRequest request);
 
-	void delete(Long id);
+  void delete(Long id);
 
-	ProvinceResponse getById(Long id);
+  ProvinceResponse getById(Long id);
 
-	PageResponse<List<ProvinceResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize, List<String> sorts,
-			String keyword);
+  PageResponse<List<ProvinceResponse>> getAllWithPaginationAndSort(
+      int pageNumber, int pageSize, List<String> sorts, String keyword);
 
-	Province findProvinceById(Long id);
+  Province findProvinceById(Long id);
 
-	List<ProvinceResponse> getAll();
+  List<ProvinceResponse> getAll();
 }

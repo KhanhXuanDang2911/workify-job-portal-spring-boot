@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public abstract class BaseResponse {
-	private Long id;
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+  private Long id;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

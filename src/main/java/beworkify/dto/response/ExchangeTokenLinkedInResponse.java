@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -12,9 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ExchangeTokenLinkedInResponse {
-	private String accessToken;
-	private Long expiresIn;
-	private String refreshToken;
-	private String refreshTokenExpiresIn;
-	private String scope;
+  private String accessToken;
+  private Long expiresIn;
+  private String refreshToken;
+  private String refreshTokenExpiresIn;
+  private String scope;
 }

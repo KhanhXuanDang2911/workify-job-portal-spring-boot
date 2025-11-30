@@ -36,5 +36,3 @@ build/
 
 # Project docs (ignore generated/spec files)
 /API_DOCS.md
-/CHAT_DOCS.md
-/TEST_README.md

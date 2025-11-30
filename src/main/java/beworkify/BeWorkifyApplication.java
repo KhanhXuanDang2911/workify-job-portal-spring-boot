@@ -1,4 +1,3 @@
-
 package beworkify;
 
 import org.springframework.boot.SpringApplication;
@@ -11,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 public class BeWorkifyApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BeWorkifyApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(BeWorkifyApplication.class, args);
+  }
 }

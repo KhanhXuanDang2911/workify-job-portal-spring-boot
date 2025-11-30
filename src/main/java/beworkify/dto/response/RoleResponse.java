@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import beworkify.enumeration.UserRole;
@@ -16,6 +15,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RoleResponse extends BaseResponse {
-	private UserRole role;
-	private String description;
+  private UserRole role;
+  private String description;
 }

@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import jakarta.persistence.*;
@@ -12,14 +11,13 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Setter
 @MappedSuperclass
 public abstract class BaseEntity {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@CreationTimestamp
-	@Column(updatable = false)
-	private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(updatable = false)
+  private LocalDateTime createdAt;
 
-	@UpdateTimestamp
-	private LocalDateTime updatedAt;
+  @UpdateTimestamp private LocalDateTime updatedAt;
 }

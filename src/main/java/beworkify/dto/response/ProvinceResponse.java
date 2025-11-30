@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import lombok.AllArgsConstructor;
@@ -13,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class ProvinceResponse extends BaseResponse {
-	private String code;
-	private String name;
-	private String engName;
-	private String provinceSlug;
+  private String code;
+  private String name;
+  private String engName;
+  private String provinceSlug;
 }

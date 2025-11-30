@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.SalaryValidator;
@@ -11,9 +10,9 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidSalary {
-	String message() default "Invalid salary configuration for the selected salary type";
+  String message() default "Invalid salary configuration for the selected salary type";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 }

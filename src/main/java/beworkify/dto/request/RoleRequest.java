@@ -1,4 +1,3 @@
-
 package beworkify.dto.request;
 
 import beworkify.enumeration.UserRole;
@@ -12,9 +11,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RoleRequest {
-	@ValueOfEnum(enumClass = UserRole.class, message = "Role must be one of: USER, EMPLOYER, ADMIN")
-	private String role;
+  @ValueOfEnum(enumClass = UserRole.class, message = "Role must be one of: USER, EMPLOYER, ADMIN")
+  private String role;
 
-	@Size(max = 255, message = "Description must not exceed 255 characters")
-	private String description;
+  @Size(max = 255, message = "Description must not exceed 255 characters")
+  private String description;
 }

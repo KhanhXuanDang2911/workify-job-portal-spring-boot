@@ -1,4 +1,3 @@
-
 package beworkify.configuration;
 
 import java.util.Locale;
@@ -10,11 +9,11 @@ import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 @Configuration
 public class LocaleConfig {
 
-	@Bean
-	public LocaleResolver localeResolver() {
-		// Header: Accept-Language: vi ; Accept-Language: en
-		AcceptHeaderLocaleResolver slr = new AcceptHeaderLocaleResolver();
-		slr.setDefaultLocale(new Locale("vi", "VN"));
-		return slr;
-	}
+  @Bean
+  public LocaleResolver localeResolver() {
+    // Header: Accept-Language: vi ; Accept-Language: en
+    AcceptHeaderLocaleResolver slr = new AcceptHeaderLocaleResolver();
+    slr.setDefaultLocale(new Locale("vi", "VN"));
+    return slr;
+  }
 }

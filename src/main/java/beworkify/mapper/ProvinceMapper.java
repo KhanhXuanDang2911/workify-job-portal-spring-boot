@@ -1,4 +1,3 @@
-
 package beworkify.mapper;
 
 import beworkify.dto.request.ProvinceRequest;
@@ -12,12 +11,12 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring")
 public interface ProvinceMapper {
-	Province toEntity(ProvinceRequest request);
+  Province toEntity(ProvinceRequest request);
 
-	ProvinceResponse toDTO(Province entity);
+  ProvinceResponse toDTO(Province entity);
 
-	List<ProvinceResponse> toDTOs(List<Province> entity);
+  List<ProvinceResponse> toDTOs(List<Province> entity);
 
-	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-	void updateEntityFromRequest(ProvinceRequest request, @MappingTarget Province entity);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  void updateEntityFromRequest(ProvinceRequest request, @MappingTarget Province entity);
 }

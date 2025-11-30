@@ -1,4 +1,3 @@
-
 package beworkify.controller;
 
 import beworkify.dto.response.NotificationResponse;
@@ -23,42 +22,50 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 public class NotificationController {
 
-	private final NotificationService notificationService;
-	private final MessageSource messageSource;
+  private final NotificationService notificationService;
+  private final MessageSource messageSource;
 
-	@GetMapping
-	@PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
-	public ResponseEntity<ResponseData<PageResponse<List<NotificationResponse>>>> getMyNotifications(
-			@RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}") int pageNumber,
-			@RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}") int pageSize) {
-		PageResponse<List<NotificationResponse>> response = notificationService.getMyNotifications(pageNumber,
-				pageSize);
-		String message = messageSource.getMessage("notification.get.success", null, LocaleContextHolder.getLocale());
-		return ResponseBuilder.withData(HttpStatus.OK, message, response);
-	}
+  @GetMapping
+  @PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
+  public ResponseEntity<ResponseData<PageResponse<List<NotificationResponse>>>> getMyNotifications(
+      @RequestParam(defaultValue = "1") @Min(value = 1, message = "{validation.page.number.min}")
+          int pageNumber,
+      @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}")
+          int pageSize) {
+    PageResponse<List<NotificationResponse>> response =
+        notificationService.getMyNotifications(pageNumber, pageSize);
+    String message =
+        messageSource.getMessage("notification.get.success", null, LocaleContextHolder.getLocale());
+    return ResponseBuilder.withData(HttpStatus.OK, message, response);
+  }
 
-	@PostMapping("/read-all")
-	@PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
-	public ResponseEntity<ResponseData<Void>> markAllAsRead() {
-		notificationService.markAllAsRead();
-		String message = messageSource.getMessage("notification.read.all.success", null,
-				LocaleContextHolder.getLocale());
-		return ResponseBuilder.noData(HttpStatus.OK, message);
-	}
+  @PostMapping("/read-all")
+  @PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
+  public ResponseEntity<ResponseData<Void>> markAllAsRead() {
+    notificationService.markAllAsRead();
+    String message =
+        messageSource.getMessage(
+            "notification.read.all.success", null, LocaleContextHolder.getLocale());
+    return ResponseBuilder.noData(HttpStatus.OK, message);
+  }
 
-	@PostMapping("/{id}/read")
-	@PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
-	public ResponseEntity<ResponseData<Void>> markAsRead(@PathVariable("id") Long id) {
-		notificationService.markAsRead(id);
-		String message = messageSource.getMessage("notification.read.success", null, LocaleContextHolder.getLocale());
-		return ResponseBuilder.noData(HttpStatus.OK, message);
-	}
+  @PostMapping("/{id}/read")
+  @PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
+  public ResponseEntity<ResponseData<Void>> markAsRead(@PathVariable("id") Long id) {
+    notificationService.markAsRead(id);
+    String message =
+        messageSource.getMessage(
+            "notification.read.success", null, LocaleContextHolder.getLocale());
+    return ResponseBuilder.noData(HttpStatus.OK, message);
+  }
 
-	@GetMapping("/unread-count")
-	@PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
-	public ResponseEntity<ResponseData<Long>> countUnread() {
-		long count = notificationService.countUnread();
-		String message = messageSource.getMessage("notification.count.success", null, LocaleContextHolder.getLocale());
-		return ResponseBuilder.withData(HttpStatus.OK, message, count);
-	}
+  @GetMapping("/unread-count")
+  @PreAuthorize("hasAnyRole('JOB_SEEKER','EMPLOYER','ADMIN')")
+  public ResponseEntity<ResponseData<Long>> countUnread() {
+    long count = notificationService.countUnread();
+    String message =
+        messageSource.getMessage(
+            "notification.count.success", null, LocaleContextHolder.getLocale());
+    return ResponseBuilder.withData(HttpStatus.OK, message, count);
+  }
 }

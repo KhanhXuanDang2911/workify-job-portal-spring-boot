@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import jakarta.persistence.*;
@@ -16,11 +15,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "saved_jobs")
 public class SavedJob extends BaseEntity {
-	@ManyToOne
-	@JoinColumn(nullable = false, name = "user_id")
-	private User user;
+  @ManyToOne
+  @JoinColumn(nullable = false, name = "user_id")
+  private User user;
 
-	@ManyToOne
-	@JoinColumn(nullable = false, name = "job_id")
-	private Job job;
+  @ManyToOne
+  @JoinColumn(nullable = false, name = "job_id")
+  private Job job;
 }

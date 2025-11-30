@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.District;
@@ -7,11 +6,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DistrictRepository extends JpaRepository<District, Long> {
-	boolean existsByCode(String code);
+  boolean existsByCode(String code);
 
-	boolean existsByCodeAndIdNot(String code, Long id);
+  boolean existsByCodeAndIdNot(String code, Long id);
 
-	java.util.List<District> findAllByOrderByNameAsc();
+  java.util.List<District> findAllByOrderByNameAsc();
 
-	java.util.List<District> findAllByProvinceIdOrderByNameAsc(Long provinceId);
+  java.util.List<District> findAllByProvinceIdOrderByNameAsc(Long provinceId);
 }

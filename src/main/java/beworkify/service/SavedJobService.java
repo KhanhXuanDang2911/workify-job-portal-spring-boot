@@ -1,4 +1,3 @@
-
 package beworkify.service;
 
 import beworkify.dto.response.JobResponse;
@@ -7,9 +6,9 @@ import java.util.List;
 
 public interface SavedJobService {
 
-	void toggle(Long jobId);
+  void toggle(Long jobId);
 
-	boolean isSaved(Long jobId);
+  boolean isSaved(Long jobId);
 
-	PageResponse<List<JobResponse>> getSavedJobs(int pageNumber, int pageSize);
+  PageResponse<List<JobResponse>> getSavedJobs(int pageNumber, int pageSize);
 }
