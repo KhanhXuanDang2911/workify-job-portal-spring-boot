@@ -1,4 +1,3 @@
-
 package beworkify.configuration.initializer;
 
 import beworkify.entity.District;
@@ -27,91 +26,90 @@ import org.springframework.stereotype.Component;
 @Order(200)
 public class ProvinceDistrictInitializer implements CommandLineRunner {
 
-	private final ProvinceRepository provinceRepository;
-	private final DistrictRepository districtRepository;
+  private final ProvinceRepository provinceRepository;
+  private final DistrictRepository districtRepository;
 
-	@Override
-	public void run(String... args) {
-		try {
-			if (provinceRepository.count() > 0) {
-				log.info("Provinces already initialized, skipping load from file.");
-				return;
-			}
+  @Override
+  public void run(String... args) {
+    try {
+      if (provinceRepository.count() > 0) {
+        log.info("Provinces already initialized, skipping load from file.");
+        return;
+      }
 
-			log.info("=== Initializing provinces and districts from local JSON ===");
+      log.info("=== Initializing provinces and districts from local JSON ===");
 
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-			InputStream inputStream = getClass().getResourceAsStream("/data/provinces.json");
-			if (inputStream == null) {
-				log.error("Cannot find provinces.json in resources/data");
-				return;
-			}
+      InputStream inputStream = getClass().getResourceAsStream("/data/provinces.json");
+      if (inputStream == null) {
+        log.error("Cannot find provinces.json in resources/data");
+        return;
+      }
 
-			List<ProvinceInput> provinces = mapper.readValue(inputStream, new TypeReference<>() {
-			});
+      List<ProvinceInput> provinces = mapper.readValue(inputStream, new TypeReference<>() {});
 
-			for (ProvinceInput p : provinces) {
-				if (p.code == null)
-					continue;
+      for (ProvinceInput p : provinces) {
+        if (p.code == null) continue;
 
-				String cleanName = p.name.replaceAll("(?i)^(Tỉnh|Thành phố)\\s+", "").trim();
+        String cleanName = p.name.replaceAll("(?i)^(Tỉnh|Thành phố)\\s+", "").trim();
 
-				Province province = new Province();
-				province.setCode(String.valueOf(p.code));
-				province.setName(cleanName);
-				province.setEngName(toEnglishName(cleanName));
-				province.setProvinceSlug(AppUtils.toSlug(cleanName));
-				province = provinceRepository.save(province);
+        Province province = new Province();
+        province.setCode(String.valueOf(p.code));
+        province.setName(cleanName);
+        province.setEngName(toEnglishName(cleanName));
+        province.setProvinceSlug(AppUtils.toSlug(cleanName));
+        province = provinceRepository.save(province);
 
-				if (p.districts != null) {
-					for (DistrictInput d : p.districts) {
-						if (d.code == null)
-							continue;
+        if (p.districts != null) {
+          for (DistrictInput d : p.districts) {
+            if (d.code == null) continue;
 
-						District district = new District();
-						district.setCode(String.valueOf(d.code));
-						district.setName(d.name);
-						district.setDistrictSlug(AppUtils.toSlug(d.name));
-						district.setProvince(province);
-						districtRepository.save(district);
-					}
-				}
+            District district = new District();
+            district.setCode(String.valueOf(d.code));
+            district.setName(d.name);
+            district.setDistrictSlug(AppUtils.toSlug(d.name));
+            district.setProvince(province);
+            districtRepository.save(district);
+          }
+        }
 
-				log.info("Inserted province {} (engName={}) with {} districts", province.getName(),
-						province.getEngName(), (p.districts != null ? p.districts.size() : 0));
-			}
+        log.info(
+            "Inserted province {} (engName={}) with {} districts",
+            province.getName(),
+            province.getEngName(),
+            (p.districts != null ? p.districts.size() : 0));
+      }
 
-			log.info("=== Province and District initialization completed ===");
+      log.info("=== Province and District initialization completed ===");
 
-		} catch (Exception ex) {
-			log.error("Failed to initialize provinces/districts: {}", ex.getMessage(), ex);
-		}
-	}
+    } catch (Exception ex) {
+      log.error("Failed to initialize provinces/districts: {}", ex.getMessage(), ex);
+    }
+  }
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	private static class ProvinceInput {
-		public String name;
-		public Integer code;
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class ProvinceInput {
+    public String name;
+    public Integer code;
 
-		@JsonProperty("districts")
-		public List<DistrictInput> districts;
-	}
+    @JsonProperty("districts")
+    public List<DistrictInput> districts;
+  }
 
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	private static class DistrictInput {
-		public String name;
-		public Integer code;
-	}
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  private static class DistrictInput {
+    public String name;
+    public Integer code;
+  }
 
-	private static String toEnglishName(String vietnamese) {
-		if (vietnamese == null)
-			return null;
-		String normalized = Normalizer.normalize(vietnamese, Normalizer.Form.NFD);
-		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-		String withoutAccent = pattern.matcher(normalized).replaceAll("");
-		withoutAccent = withoutAccent.replace('đ', 'd').replace('Đ', 'D');
-		return withoutAccent.trim();
-	}
+  private static String toEnglishName(String vietnamese) {
+    if (vietnamese == null) return null;
+    String normalized = Normalizer.normalize(vietnamese, Normalizer.Form.NFD);
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    String withoutAccent = pattern.matcher(normalized).replaceAll("");
+    withoutAccent = withoutAccent.replace('đ', 'd').replace('Đ', 'D');
+    return withoutAccent.trim();
+  }
 }

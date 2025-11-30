@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.ValueOfEnumValidator;
@@ -11,13 +10,13 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = ValueOfEnumValidator.class)
 @Documented
 public @interface ValueOfEnum {
-	Class<? extends Enum<?>> enumClass();
+  Class<? extends Enum<?>> enumClass();
 
-	boolean required() default true;
+  boolean required() default true;
 
-	String message() default "Invalid data enum";
+  String message() default "Invalid data enum";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 }

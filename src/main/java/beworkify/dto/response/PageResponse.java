@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import lombok.AllArgsConstructor;
@@ -13,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class PageResponse<T> {
-	private Integer pageNumber;
-	private Integer pageSize;
-	private Integer totalPages;
-	private Integer numberOfElements;
-	private T items;
+  private Integer pageNumber;
+  private Integer pageSize;
+  private Integer totalPages;
+  private Integer numberOfElements;
+  private T items;
 }

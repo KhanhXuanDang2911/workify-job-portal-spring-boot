@@ -1,5 +1,3 @@
-
 package beworkify.validation.group;
 
-public interface OnUserCreate {
-}
+public interface OnUserCreate {}

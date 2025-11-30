@@ -1,4 +1,3 @@
-
 package beworkify.service.redis.impl;
 
 import beworkify.entity.redis.RedisOTPCode;
@@ -12,23 +11,24 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisOTPCodeServiceImpl implements RedisOTPCodeService {
 
-	private final RedisOTPCodeRepository redisOTPCodeRepository;
+  private final RedisOTPCodeRepository redisOTPCodeRepository;
 
-	@Override
-	public String generateAndSaveOTPCode(String email, long minutes) {
-		String code = AppUtils.generateOtp(8);
-		redisOTPCodeRepository.save(RedisOTPCode.builder().code(code).email(email).expiredTime(minutes * 60).build());
-		return code;
-	}
+  @Override
+  public String generateAndSaveOTPCode(String email, long minutes) {
+    String code = AppUtils.generateOtp(8);
+    redisOTPCodeRepository.save(
+        RedisOTPCode.builder().code(code).email(email).expiredTime(minutes * 60).build());
+    return code;
+  }
 
-	@Override
-	public boolean isValidCode(String code, String email) {
-		RedisOTPCode otpCode = redisOTPCodeRepository.findById(code).orElse(null);
-		return otpCode != null && otpCode.getEmail().equals(email);
-	}
+  @Override
+  public boolean isValidCode(String code, String email) {
+    RedisOTPCode otpCode = redisOTPCodeRepository.findById(code).orElse(null);
+    return otpCode != null && otpCode.getEmail().equals(email);
+  }
 
-	@Override
-	public void deleteOTPCode(String code) {
-		redisOTPCodeRepository.deleteById(code);
-	}
+  @Override
+  public void deleteOTPCode(String code) {
+    redisOTPCodeRepository.deleteById(code);
+  }
 }

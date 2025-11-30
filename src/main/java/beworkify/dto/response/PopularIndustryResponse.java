@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import lombok.*;
@@ -9,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PopularIndustryResponse {
-	private Long id;
-	private String name;
-	private String engName;
-	private String description;
-	private Long jobCount;
+  private Long id;
+  private String name;
+  private String engName;
+  private String description;
+  private Long jobCount;
 }

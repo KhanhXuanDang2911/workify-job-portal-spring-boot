@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.ImageFileValidator;
@@ -11,11 +10,11 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidImageFile {
-	String message() default "Invalid image file";
+  String message() default "Invalid image file";
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-	boolean required() default true;
+  boolean required() default true;
 }

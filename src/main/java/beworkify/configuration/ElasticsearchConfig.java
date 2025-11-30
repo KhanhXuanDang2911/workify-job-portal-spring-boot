@@ -1,4 +1,3 @@
-
 package beworkify.configuration;
 
 import beworkify.search.document.JobDocument;
@@ -20,22 +19,21 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class ElasticsearchConfig {
 
-	private final ElasticsearchOperations operations;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ElasticsearchOperations operations;
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
-	@PostConstruct
-	public void initIndex() throws IOException {
-		ClassPathResource settingsRes = new ClassPathResource("elasticsearch/jobs-settings.json");
-		Map<String, Object> settings;
-		try (InputStream is = settingsRes.getInputStream()) {
-			settings = objectMapper.readValue(is, new TypeReference<>() {
-			});
-		}
+  @PostConstruct
+  public void initIndex() throws IOException {
+    ClassPathResource settingsRes = new ClassPathResource("elasticsearch/jobs-settings.json");
+    Map<String, Object> settings;
+    try (InputStream is = settingsRes.getInputStream()) {
+      settings = objectMapper.readValue(is, new TypeReference<>() {});
+    }
 
-		IndexOperations indexOps = operations.indexOps(JobDocument.class);
-		if (!indexOps.exists()) {
-			indexOps.create(settings);
-			indexOps.putMapping(indexOps.createMapping());
-		}
-	}
+    IndexOperations indexOps = operations.indexOps(JobDocument.class);
+    if (!indexOps.exists()) {
+      indexOps.create(settings);
+      indexOps.putMapping(indexOps.createMapping());
+    }
+  }
 }

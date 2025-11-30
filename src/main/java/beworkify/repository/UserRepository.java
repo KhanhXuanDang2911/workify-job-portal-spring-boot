@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.User;
@@ -12,15 +11,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-	@Query("select distinct u from User u join fetch u.role r where u.email = :email")
-	Optional<User> findByEmailWithRole(@Param("email") String email);
+  @Query("select distinct u from User u join fetch u.role r where u.email = :email")
+  Optional<User> findByEmailWithRole(@Param("email") String email);
 
-	Optional<User> findByEmail(String email);
+  Optional<User> findByEmail(String email);
 
-	boolean existsByEmail(String email);
+  boolean existsByEmail(String email);
 
-	boolean existsByEmailAndIdNot(String email, Long id);
+  boolean existsByEmailAndIdNot(String email, Long id);
 
-	@Query("select u from User u where lower(u.fullName) like %:keyword% OR lower(u.email) like %:keyword%")
-	Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
+  @Query(
+      "select u from User u where lower(u.fullName) like %:keyword% OR lower(u.email) like %:keyword%")
+  Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
 }

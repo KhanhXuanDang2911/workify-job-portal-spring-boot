@@ -1,4 +1,3 @@
-
 package beworkify.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,29 +14,30 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class RedisConfig {
 
-	@Value("${spring.data.redis.host}")
-	private String redisHost;
+  @Value("${spring.data.redis.host}")
+  private String redisHost;
 
-	@Value("${spring.data.redis.port}")
-	private int redisPort;
+  @Value("${spring.data.redis.port}")
+  private int redisPort;
 
-	@Bean
-	public RedisConnectionFactory redisConnectionFactory() {
-		return new LettuceConnectionFactory(redisHost, redisPort);
-	}
+  @Bean
+  public RedisConnectionFactory redisConnectionFactory() {
+    return new LettuceConnectionFactory(redisHost, redisPort);
+  }
 
-	@Bean
-	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory,
-			GenericJackson2JsonRedisSerializer redisSerializer) {
-		RedisTemplate<String, Object> template = new RedisTemplate<>();
-		template.setConnectionFactory(connectionFactory);
+  @Bean
+  public RedisTemplate<String, Object> redisTemplate(
+      RedisConnectionFactory connectionFactory,
+      GenericJackson2JsonRedisSerializer redisSerializer) {
+    RedisTemplate<String, Object> template = new RedisTemplate<>();
+    template.setConnectionFactory(connectionFactory);
 
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setHashKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(redisSerializer);
-		template.setHashValueSerializer(redisSerializer);
+    template.setKeySerializer(new StringRedisSerializer());
+    template.setHashKeySerializer(new StringRedisSerializer());
+    template.setValueSerializer(redisSerializer);
+    template.setHashValueSerializer(redisSerializer);
 
-		template.afterPropertiesSet();
-		return template;
-	}
+    template.afterPropertiesSet();
+    return template;
+  }
 }

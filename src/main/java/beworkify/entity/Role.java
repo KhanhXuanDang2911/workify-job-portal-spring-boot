@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import beworkify.enumeration.UserRole;
@@ -16,12 +15,12 @@ import lombok.Setter;
 @Entity
 @Table(name = "roles")
 public class Role extends BaseEntity {
-	@Column(nullable = false, unique = true)
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
+  @Column(nullable = false, unique = true)
+  @Enumerated(EnumType.STRING)
+  private UserRole role;
 
-	private String description;
+  private String description;
 
-	@OneToMany(mappedBy = "role")
-	private List<User> users;
+  @OneToMany(mappedBy = "role")
+  private List<User> users;
 }

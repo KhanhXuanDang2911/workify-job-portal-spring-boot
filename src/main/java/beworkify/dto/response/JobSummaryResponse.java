@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import beworkify.enumeration.*;
@@ -10,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class JobSummaryResponse {
-	private Long id;
-	private String jobTitle;
-	private JobStatus status;
-	private EmployerSummaryResponse employer;
+  private Long id;
+  private String jobTitle;
+  private JobStatus status;
+  private EmployerSummaryResponse employer;
 }

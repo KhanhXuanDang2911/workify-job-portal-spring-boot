@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.Application;
@@ -18,34 +17,41 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-	Optional<Application> findByUserAndJob(User user, Job job);
+  Optional<Application> findByUserAndJob(User user, Job job);
 
-	long countByUserIdAndJobId(Long userId, Long jobId);
+  long countByUserIdAndJobId(Long userId, Long jobId);
 
-	@EntityGraph(attributePaths = {"job", "job.author"})
-	Optional<Application> findTopByUserIdAndJobIdOrderByCreatedAtDesc(Long userId, Long jobId);
+  @EntityGraph(attributePaths = {"job", "job.author"})
+  Optional<Application> findTopByUserIdAndJobIdOrderByCreatedAtDesc(Long userId, Long jobId);
 
-	@EntityGraph(attributePaths = {"job", "job.author"})
-	Page<Application> findAllByUser(User user, Pageable pageable);
+  @EntityGraph(attributePaths = {"job", "job.author"})
+  Page<Application> findAllByUser(User user, Pageable pageable);
 
-	@Query(value = """
+  @Query(
+      value =
+          """
 			SELECT a.* FROM applications a
 			INNER JOIN jobs j ON j.id = a.job_id
 			LEFT JOIN employers e ON e.id = j.employer_id
 			WHERE a.job_id = CAST(:jobId AS bigint)
 			                    AND a.created_at >= COALESCE(CAST(:thresholdDateTime AS timestamp), '1970-01-01 00:00:00'::timestamp)
 			                    AND (CAST(:status AS varchar) IS NULL OR a.status = CAST(:status AS varchar))
-			""", nativeQuery = true)
-	Page<Application> findByJobId(@Param("jobId") Long jobId, @Param("status") ApplicationStatus status,
-			@Param("thresholdDateTime") LocalDateTime thresholdDateTime, Pageable pageable);
+			""",
+      nativeQuery = true)
+  Page<Application> findByJobId(
+      @Param("jobId") Long jobId,
+      @Param("status") ApplicationStatus status,
+      @Param("thresholdDateTime") LocalDateTime thresholdDateTime,
+      Pageable pageable);
 
-	long countByJobId(Long jobId);
+  long countByJobId(Long jobId);
 
-	@Query("""
+  @Query(
+      """
 			SELECT a.job.id AS jobId, COUNT(a) AS cnt
 			FROM Application a
 			WHERE a.job.id IN :jobIds
 			GROUP BY a.job.id
 			""")
-	List<Object[]> countByJobIds(@Param("jobIds") List<Long> jobIds);
+  List<Object[]> countByJobIds(@Param("jobIds") List<Long> jobIds);
 }

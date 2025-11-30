@@ -1,4 +1,3 @@
-
 package beworkify.entity.redis;
 
 import lombok.*;
@@ -13,11 +12,9 @@ import org.springframework.data.redis.core.TimeToLive;
 @Builder
 @RedisHash("otp_code")
 public class RedisOTPCode {
-	@Id
-	private String code;
+  @Id private String code;
 
-	private String email;
+  private String email;
 
-	@TimeToLive
-	private Long expiredTime;
+  @TimeToLive private Long expiredTime;
 }

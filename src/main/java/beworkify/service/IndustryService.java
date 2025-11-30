@@ -1,4 +1,3 @@
-
 package beworkify.service;
 
 import beworkify.dto.request.IndustryRequest;
@@ -8,18 +7,18 @@ import beworkify.entity.Industry;
 import java.util.List;
 
 public interface IndustryService {
-	IndustryResponse create(IndustryRequest request);
+  IndustryResponse create(IndustryRequest request);
 
-	IndustryResponse update(Long id, IndustryRequest request);
+  IndustryResponse update(Long id, IndustryRequest request);
 
-	void delete(Long id);
+  void delete(Long id);
 
-	IndustryResponse getById(Long id);
+  IndustryResponse getById(Long id);
 
-	PageResponse<List<IndustryResponse>> getAllWithPaginationAndSort(int pageNumber, int pageSize, List<String> sorts,
-			String keyword, Long categoryId);
+  PageResponse<List<IndustryResponse>> getAllWithPaginationAndSort(
+      int pageNumber, int pageSize, List<String> sorts, String keyword, Long categoryId);
 
-	List<IndustryResponse> getAll();
+  List<IndustryResponse> getAll();
 
-	Industry findIndustryById(Long id);
+  Industry findIndustryById(Long id);
 }

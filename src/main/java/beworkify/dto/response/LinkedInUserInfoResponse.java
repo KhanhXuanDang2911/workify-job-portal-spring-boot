@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import lombok.*;
@@ -10,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 public class LinkedInUserInfoResponse {
-	private String name;
-	private String email;
-	private String picture;
+  private String name;
+  private String email;
+  private String picture;
 }

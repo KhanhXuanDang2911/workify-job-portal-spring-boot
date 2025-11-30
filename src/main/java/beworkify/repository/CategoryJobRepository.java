@@ -1,4 +1,3 @@
-
 package beworkify.repository;
 
 import beworkify.entity.CategoryJob;
@@ -12,13 +11,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CategoryJobRepository extends JpaRepository<CategoryJob, Long>, CategoryJobRepositoryCustom {
-	boolean existsByName(String name);
+public interface CategoryJobRepository
+    extends JpaRepository<CategoryJob, Long>, CategoryJobRepositoryCustom {
+  boolean existsByName(String name);
 
-	boolean existsByNameAndIdNot(String name, Long id);
+  boolean existsByNameAndIdNot(String name, Long id);
 
-	@Query("select c from CategoryJob c where lower(c.name) like %:keyword% OR lower(c.description) like %:keyword% or lower(c.engName) like %:keyword%")
-	Page<CategoryJob> searchJobCategories(@Param("keyword") String keyword, Pageable pageable);
+  @Query(
+      "select c from CategoryJob c where lower(c.name) like %:keyword% OR lower(c.description) like %:keyword% or lower(c.engName) like %:keyword%")
+  Page<CategoryJob> searchJobCategories(@Param("keyword") String keyword, Pageable pageable);
 
-	Optional<CategoryJob> findByName(String name);
+  Optional<CategoryJob> findByName(String name);
 }

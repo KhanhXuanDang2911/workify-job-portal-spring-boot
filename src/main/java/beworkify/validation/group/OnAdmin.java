@@ -1,5 +1,3 @@
-
 package beworkify.validation.group;
 
-public interface OnAdmin {
-}
+public interface OnAdmin {}

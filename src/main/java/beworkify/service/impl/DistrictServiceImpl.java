@@ -1,4 +1,3 @@
-
 package beworkify.service.impl;
 
 import beworkify.dto.request.DistrictRequest;
@@ -29,108 +28,156 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DistrictServiceImpl implements DistrictService {
 
-	private final DistrictRepository repository;
-	private final ProvinceRepository provinceRepository;
-	private final DistrictMapper mapper;
-	private final MessageSource messageSource;
-	private final RedisUtils redisUtils;
+  private final DistrictRepository repository;
+  private final ProvinceRepository provinceRepository;
+  private final DistrictMapper mapper;
+  private final MessageSource messageSource;
+  private final RedisUtils redisUtils;
 
-	@Override
-	@Transactional
-	@Caching(evict = {@CacheEvict(value = "districts", key = "'all'")}, put = {
-			@CachePut(value = "districts", key = "#result.id")})
-	public DistrictResponse create(DistrictRequest request) {
-		if (repository.existsByCode(request.getCode())) {
-			String message = messageSource.getMessage("district.exists", new Object[]{request.getCode()},
-					LocaleContextHolder.getLocale());
-			throw new ResourceConflictException(message);
-		}
-		Province province = provinceRepository.findById(request.getProvinceId()).orElseThrow(() -> {
-			String message = messageSource.getMessage("province.notFound", null, LocaleContextHolder.getLocale());
-			return new ResourceNotFoundException(message);
-		});
-		District entity = mapper.toEntity(request);
-		entity.setProvince(province);
-		entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
-		repository.save(entity);
-		return mapper.toDTO(entity);
-	}
+  @Override
+  @Transactional
+  @Caching(
+      evict = {@CacheEvict(value = "districts", key = "'all'")},
+      put = {@CachePut(value = "districts", key = "#result.id")})
+  public DistrictResponse create(DistrictRequest request) {
+    if (repository.existsByCode(request.getCode())) {
+      String message =
+          messageSource.getMessage(
+              "district.exists", new Object[] {request.getCode()}, LocaleContextHolder.getLocale());
+      throw new ResourceConflictException(message);
+    }
+    Province province =
+        provinceRepository
+            .findById(request.getProvinceId())
+            .orElseThrow(
+                () -> {
+                  String message =
+                      messageSource.getMessage(
+                          "province.notFound", null, LocaleContextHolder.getLocale());
+                  return new ResourceNotFoundException(message);
+                });
+    District entity = mapper.toEntity(request);
+    entity.setProvince(province);
+    entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
+    repository.save(entity);
+    return mapper.toDTO(entity);
+  }
 
-	@Override
-	@Transactional
-	@Caching(evict = {@CacheEvict(value = "districts", key = "'all'"),}, put = {
-			@CachePut(value = "districts", key = "#id")})
-	public DistrictResponse update(Long id, DistrictRequest request) {
-		District entity = repository.findById(id).orElseThrow(() -> {
-			String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
-			return new ResourceNotFoundException(message);
-		});
+  @Override
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "districts", key = "'all'"),
+      },
+      put = {@CachePut(value = "districts", key = "#id")})
+  public DistrictResponse update(Long id, DistrictRequest request) {
+    District entity =
+        repository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  String message =
+                      messageSource.getMessage(
+                          "district.notFound", null, LocaleContextHolder.getLocale());
+                  return new ResourceNotFoundException(message);
+                });
 
-		if (request.getCode() != null && repository.existsByCodeAndIdNot(request.getCode(), id)) {
-			String message = messageSource.getMessage("district.exists", new Object[]{request.getCode()},
-					LocaleContextHolder.getLocale());
-			throw new ResourceConflictException(message);
-		}
+    if (request.getCode() != null && repository.existsByCodeAndIdNot(request.getCode(), id)) {
+      String message =
+          messageSource.getMessage(
+              "district.exists", new Object[] {request.getCode()}, LocaleContextHolder.getLocale());
+      throw new ResourceConflictException(message);
+    }
 
-		if (request.getProvinceId() != null) {
-			Province province = provinceRepository.findById(request.getProvinceId()).orElseThrow(() -> {
-				String message = messageSource.getMessage("province.notFound", null, LocaleContextHolder.getLocale());
-				return new ResourceNotFoundException(message);
-			});
-			entity.setProvince(province);
-		}
+    if (request.getProvinceId() != null) {
+      Province province =
+          provinceRepository
+              .findById(request.getProvinceId())
+              .orElseThrow(
+                  () -> {
+                    String message =
+                        messageSource.getMessage(
+                            "province.notFound", null, LocaleContextHolder.getLocale());
+                    return new ResourceNotFoundException(message);
+                  });
+      entity.setProvince(province);
+    }
 
-		mapper.updateEntityFromRequest(request, entity);
-		entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
-		repository.save(entity);
-		evictDistrictsByProvincePattern(entity.getProvince().getId());
-		return mapper.toDTO(entity);
-	}
+    mapper.updateEntityFromRequest(request, entity);
+    entity.setDistrictSlug(AppUtils.toSlug(entity.getName()));
+    repository.save(entity);
+    evictDistrictsByProvincePattern(entity.getProvince().getId());
+    return mapper.toDTO(entity);
+  }
 
-	@Override
-	@Transactional
-	@Caching(evict = {@CacheEvict(value = "districts", key = "'all'"), @CacheEvict(value = "districts", key = "#id")})
-	public void delete(Long id) {
-		District entity = repository.findById(id).orElseThrow(() -> {
-			String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
-			return new ResourceNotFoundException(message);
-		});
-		evictDistrictsByProvincePattern(entity.getProvince().getId());
-		repository.delete(entity);
-	}
+  @Override
+  @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "districts", key = "'all'"),
+        @CacheEvict(value = "districts", key = "#id")
+      })
+  public void delete(Long id) {
+    District entity =
+        repository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  String message =
+                      messageSource.getMessage(
+                          "district.notFound", null, LocaleContextHolder.getLocale());
+                  return new ResourceNotFoundException(message);
+                });
+    evictDistrictsByProvincePattern(entity.getProvince().getId());
+    repository.delete(entity);
+  }
 
-	@Override
-	@Cacheable(value = "districts", key = "#id")
-	public DistrictResponse getById(Long id) {
-		District entity = repository.findById(id).orElseThrow(() -> {
-			String message = messageSource.getMessage("district.notFound", null, LocaleContextHolder.getLocale());
-			return new ResourceNotFoundException(message);
-		});
-		return mapper.toDTO(entity);
-	}
+  @Override
+  @Cacheable(value = "districts", key = "#id")
+  public DistrictResponse getById(Long id) {
+    District entity =
+        repository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  String message =
+                      messageSource.getMessage(
+                          "district.notFound", null, LocaleContextHolder.getLocale());
+                  return new ResourceNotFoundException(message);
+                });
+    return mapper.toDTO(entity);
+  }
 
-	@Override
-	public District findDistrictById(Long id) {
-		return repository.findById(id).orElseThrow(() -> {
-			String message = messageSource.getMessage("district.not.found", null, LocaleContextHolder.getLocale());
-			return new ResourceNotFoundException(message);
-		});
-	}
+  @Override
+  public District findDistrictById(Long id) {
+    return repository
+        .findById(id)
+        .orElseThrow(
+            () -> {
+              String message =
+                  messageSource.getMessage(
+                      "district.not.found", null, LocaleContextHolder.getLocale());
+              return new ResourceNotFoundException(message);
+            });
+  }
 
-	@Override
-	@Cacheable(value = "districts", key = "'all'")
-	public List<DistrictResponse> getAll() {
-		return repository.findAllByOrderByNameAsc().stream().map(mapper::toDTO).collect(Collectors.toList());
-	}
+  @Override
+  @Cacheable(value = "districts", key = "'all'")
+  public List<DistrictResponse> getAll() {
+    return repository.findAllByOrderByNameAsc().stream()
+        .map(mapper::toDTO)
+        .collect(Collectors.toList());
+  }
 
-	@Cacheable(value = "districts", key = "'p:' + #provinceId")
-	@Override
-	public List<DistrictResponse> getByProvinceId(Long provinceId) {
-		return repository.findAllByProvinceIdOrderByNameAsc(provinceId).stream().map(mapper::toDTO)
-				.collect(Collectors.toList());
-	}
+  @Cacheable(value = "districts", key = "'p:' + #provinceId")
+  @Override
+  public List<DistrictResponse> getByProvinceId(Long provinceId) {
+    return repository.findAllByProvinceIdOrderByNameAsc(provinceId).stream()
+        .map(mapper::toDTO)
+        .collect(Collectors.toList());
+  }
 
-	private void evictDistrictsByProvincePattern(Long provinceId) {
-		redisUtils.evictCacheByPattern("districts:p:" + provinceId + "*");
-	}
+  private void evictDistrictsByProvincePattern(Long provinceId) {
+    redisUtils.evictCacheByPattern("districts:p:" + provinceId + "*");
+  }
 }

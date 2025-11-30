@@ -1,4 +1,3 @@
-
 package beworkify.dto.request;
 
 import beworkify.validation.group.OnCreate;
@@ -16,10 +15,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CategoryPostRequest {
 
-	@NotBlank(message = "{validation.categoryPost.title.notBlank}", groups = {OnCreate.class, OnUpdate.class})
-	@Size(max = 255, message = "{validation.categoryPost.title.size}", groups = {OnCreate.class, OnUpdate.class})
-	private String title;
+  @NotBlank(
+      message = "{validation.categoryPost.title.notBlank}",
+      groups = {OnCreate.class, OnUpdate.class})
+  @Size(
+      max = 255,
+      message = "{validation.categoryPost.title.size}",
+      groups = {OnCreate.class, OnUpdate.class})
+  private String title;
 
-	@Size(max = 1000, message = "{validation.categoryPost.description.size}", groups = {OnCreate.class, OnUpdate.class})
-	private String description;
+  @Size(
+      max = 1000,
+      message = "{validation.categoryPost.description.size}",
+      groups = {OnCreate.class, OnUpdate.class})
+  private String description;
 }

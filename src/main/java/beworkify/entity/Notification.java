@@ -1,4 +1,3 @@
-
 package beworkify.entity;
 
 import jakarta.persistence.*;
@@ -13,28 +12,28 @@ import lombok.*;
 @Table(name = "notifications")
 public class Notification extends BaseEntity {
 
-	@Column(nullable = false)
-	private String title;
+  @Column(nullable = false)
+  private String title;
 
-	@Column(columnDefinition = "TEXT")
-	private String content;
+  @Column(columnDefinition = "TEXT")
+  private String content;
 
-	private String link;
+  private String link;
 
-	@Column(nullable = false)
-	private Boolean readFlag = false;
+  @Column(nullable = false)
+  private Boolean readFlag = false;
 
-	@ManyToOne
-	@JoinColumn(name = "recipient_user_id")
-	private User recipientUser;
+  @ManyToOne
+  @JoinColumn(name = "recipient_user_id")
+  private User recipientUser;
 
-	@ManyToOne
-	@JoinColumn(name = "recipient_employer_id")
-	private Employer recipientEmployer;
+  @ManyToOne
+  @JoinColumn(name = "recipient_employer_id")
+  private Employer recipientEmployer;
 
-	private Long jobId;
-	private Long applicationId;
+  private Long jobId;
+  private Long applicationId;
 
-	@Column(nullable = false)
-	private String type;
+  @Column(nullable = false)
+  private String type;
 }

@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import beworkify.enumeration.Gender;
@@ -17,16 +16,17 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class UserResponse extends BaseResponse {
-	private String fullName;
-	private String email;
-	private String phoneNumber;
-	private LocalDate birthDate;
-	private Gender gender;
-	private ProvinceResponse province;
-	private DistrictResponse district;
-	private String detailAddress;
-	private String avatarUrl;
-	private Boolean noPassword;
-	private UserRole role;
-	private StatusUser status;
+  private String fullName;
+  private String email;
+  private String phoneNumber;
+  private LocalDate birthDate;
+  private Gender gender;
+  private ProvinceResponse province;
+  private DistrictResponse district;
+  private IndustryResponse industry;
+  private String detailAddress;
+  private String avatarUrl;
+  private Boolean noPassword;
+  private UserRole role;
+  private StatusUser status;
 }

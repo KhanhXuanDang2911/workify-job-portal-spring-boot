@@ -1,4 +1,3 @@
-
 package beworkify.validation.annotation;
 
 import beworkify.validation.validator.DocFileValidator;
@@ -12,11 +11,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidDocFile {
 
-	String message() default "Invalid file. Only .doc or .docx files are allowed.";
+  String message() default "Invalid file. Only .doc or .docx files are allowed.";
 
-	boolean required() default true;
+  boolean required() default true;
 
-	Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-	Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 }

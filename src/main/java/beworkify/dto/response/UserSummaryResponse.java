@@ -1,4 +1,3 @@
-
 package beworkify.dto.response;
 
 import lombok.*;
@@ -9,9 +8,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class UserSummaryResponse {
-	private Long id;
-	private String email;
-	private String fullName;
-	private String avatarUrl;
-	private String role;
+  private Long id;
+  private String email;
+  private String fullName;
+  private String avatarUrl;
+  private String role;
 }

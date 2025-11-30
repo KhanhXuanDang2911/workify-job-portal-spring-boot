@@ -1,4 +1,3 @@
-
 package beworkify.dto.request;
 
 import beworkify.validation.group.OnCreate;
@@ -15,12 +14,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationRequest {
-	@NotNull(message = "{validation.location.provinceId.notNull}", groups = {OnCreate.class, OnUpdate.class})
-	private Long provinceId;
+  @NotNull(
+      message = "{validation.location.provinceId.notNull}",
+      groups = {OnCreate.class, OnUpdate.class})
+  private Long provinceId;
 
-	@NotNull(message = "{validation.location.districtId.notNull}", groups = {OnCreate.class, OnUpdate.class})
-	private Long districtId;
+  @NotNull(
+      message = "{validation.location.districtId.notNull}",
+      groups = {OnCreate.class, OnUpdate.class})
+  private Long districtId;
 
-	@Size(max = 1000, message = "{validation.location.detailAddress.size}", groups = {OnCreate.class, OnUpdate.class})
-	private String detailAddress;
+  @Size(
+      max = 1000,
+      message = "{validation.location.detailAddress.size}",
+      groups = {OnCreate.class, OnUpdate.class})
+  private String detailAddress;
 }
