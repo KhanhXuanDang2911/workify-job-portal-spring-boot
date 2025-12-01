@@ -8,6 +8,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 import org.springframework.data.elasticsearch.core.suggest.Completion;
 
+/**
+ * Elasticsearch document representing a Job. Mapped to the "jobs" index in Elasticsearch.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @Builder

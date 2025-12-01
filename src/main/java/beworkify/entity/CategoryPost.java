@@ -10,6 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity class representing a post category. Contains details about the category title,
+ * description, slug, and associated posts.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -10,6 +10,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Entity class representing a district. Contains details about the district code, name, and
+ * associated province.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

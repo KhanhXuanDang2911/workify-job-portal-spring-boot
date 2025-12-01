@@ -10,14 +10,19 @@ import beworkify.service.ConversationService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the ConversationService interface. Handles business logic for chat
+ * conversations, including creation, retrieval, and message management.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ConversationServiceImpl implements ConversationService {
 
   private final ConversationRepository conversationRepository;
@@ -60,10 +65,6 @@ public class ConversationServiceImpl implements ConversationService {
                       .hasEmployerMessage(false)
                       .build();
 
-              log.info(
-                  "Creating new conversation for job: {} and application: {}",
-                  jobId,
-                  applicationId);
               return conversationRepository.save(conversation);
             });
   }

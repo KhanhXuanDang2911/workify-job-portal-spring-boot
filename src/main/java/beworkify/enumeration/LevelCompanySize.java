@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for company size ranges.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum LevelCompanySize {
   LESS_THAN_10("LESS_THAN_10"),

@@ -5,6 +5,12 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Custom annotation for validating image files. Ensures that the uploaded file is a valid image.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Documented
 @Constraint(validatedBy = ImageFileValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

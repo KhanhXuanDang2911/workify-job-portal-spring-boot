@@ -28,6 +28,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the IndustryService interface. Handles business logic for industries, including
+ * CRUD operations and caching.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class IndustryServiceImpl implements IndustryService {

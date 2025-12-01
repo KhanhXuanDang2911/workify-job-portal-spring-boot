@@ -6,6 +6,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Utility class for processing hashtags in text content. Extracts hashtags and formats them for
+ * storage or processing.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class TagUtils {
 
   private static final Pattern HASHTAG = Pattern.compile("#([A-Za-z0-9_-]+)");

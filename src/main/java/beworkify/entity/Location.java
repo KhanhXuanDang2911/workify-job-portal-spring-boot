@@ -6,6 +6,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
 
+/**
+ * Entity class representing a location. Contains details about the province, district, and detailed
+ * address.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

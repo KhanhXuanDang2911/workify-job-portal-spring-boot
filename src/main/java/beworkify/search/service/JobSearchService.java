@@ -6,6 +6,12 @@ import beworkify.entity.Job;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 
+/**
+ * Service interface for job search operations using Elasticsearch.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface JobSearchService {
   void index(Job job);
 

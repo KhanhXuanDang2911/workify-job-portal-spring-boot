@@ -5,6 +5,12 @@ import beworkify.dto.response.EmployerResponse;
 import beworkify.entity.Employer;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between Employer entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(
     componentModel = "spring",
     uses = {ProvinceMapper.class, DistrictMapper.class})

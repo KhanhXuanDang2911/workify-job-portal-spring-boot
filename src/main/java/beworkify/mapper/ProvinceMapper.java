@@ -9,6 +9,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+/**
+ * Mapper for converting between Province entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(componentModel = "spring")
 public interface ProvinceMapper {
   Province toEntity(ProvinceRequest request);

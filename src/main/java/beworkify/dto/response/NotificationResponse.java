@@ -3,6 +3,12 @@ package beworkify.dto.response;
 import java.time.LocalDateTime;
 import lombok.*;
 
+/**
+ * DTO for notification response. Contains notification details and read status.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @Builder

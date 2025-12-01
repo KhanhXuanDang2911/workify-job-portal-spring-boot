@@ -38,6 +38,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Implementation of the ApplicationService interface. Handles business logic for job applications,
+ * including creation, retrieval, and status updates.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j

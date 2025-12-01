@@ -17,6 +17,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+/**
+ * Interceptor for WebSocket authentication. Validates JWT tokens in STOMP headers during connection
+ * establishment.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

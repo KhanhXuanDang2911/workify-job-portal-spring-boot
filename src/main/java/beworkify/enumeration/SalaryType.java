@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for salary types in job postings.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum SalaryType {
   RANGE("RANGE"),

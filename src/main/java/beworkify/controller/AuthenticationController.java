@@ -14,7 +14,6 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -22,7 +21,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+/**
+ * REST controller for authentication and authorization operations. Handles user and employer
+ * sign-in, sign-out, token refresh, email verification, and password management.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -190,7 +195,6 @@ public class AuthenticationController {
   @PostMapping("/authenticate/google")
   public ResponseEntity<ResponseData<TokenResponse<UserResponse>>> authenticateGoogle(
       @RequestHeader("G-Code") String code) {
-    log.info("Authenticating user with Google code: {}", code);
     TokenResponse<UserResponse> response = authenticationService.authenticateGoogle(code);
     String message =
         messageSource.getMessage("auth.google.success", null, LocaleContextHolder.getLocale());
@@ -200,7 +204,6 @@ public class AuthenticationController {
   @PostMapping("/authenticate/linkedin")
   public ResponseEntity<ResponseData<TokenResponse<UserResponse>>> authenticateLinkedIn(
       @RequestHeader("L-Code") String code) {
-    log.info("Authenticating user with LinkedIn code: {}", code);
     TokenResponse<UserResponse> response = authenticationService.authenticateLinkedIn(code);
     String message =
         messageSource.getMessage("auth.linkedin.success", null, LocaleContextHolder.getLocale());

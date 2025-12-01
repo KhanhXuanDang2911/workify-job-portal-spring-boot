@@ -4,10 +4,15 @@ import beworkify.dto.request.PostRequest;
 import beworkify.dto.response.PageResponse;
 import beworkify.dto.response.PostResponse;
 import java.util.List;
-
-import jakarta.validation.constraints.Min;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Service interface for managing blog posts. Handles creating, updating, and retrieving blog posts
+ * with thumbnails.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface PostService {
   PostResponse create(PostRequest request, MultipartFile thumbnail) throws Exception;
 

@@ -5,6 +5,12 @@ import beworkify.dto.response.CategoryJobResponse;
 import beworkify.entity.CategoryJob;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between CategoryJob entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(componentModel = "spring")
 public interface CategoryJobMapper {
   @Mapping(target = "industries", ignore = true)

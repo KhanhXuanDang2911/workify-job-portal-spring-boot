@@ -5,6 +5,12 @@ import beworkify.dto.response.UserResponse;
 import beworkify.entity.User;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between User entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(
     componentModel = "spring",
     uses = {ProvinceMapper.class, DistrictMapper.class, IndustryMapper.class})

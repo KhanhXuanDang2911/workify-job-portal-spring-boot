@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for blog post status.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum StatusPost {
   PENDING("PENDING"),
@@ -15,7 +21,7 @@ public enum StatusPost {
     this.value = value;
   }
 
-    public static StatusPost fromValue(String value) {
+  public static StatusPost fromValue(String value) {
     if (value == null) return null;
     for (StatusPost post : StatusPost.values()) {
       if (post.value.equalsIgnoreCase(value)) {

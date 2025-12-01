@@ -2,6 +2,12 @@ package beworkify.enumeration;
 
 import beworkify.exception.AppException;
 
+/**
+ * Enumeration for gender preference in job postings.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public enum JobGender {
   MALE("MALE"),
   FEMALE("FEMALE"),

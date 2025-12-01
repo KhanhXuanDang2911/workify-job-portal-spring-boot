@@ -3,6 +3,12 @@ package beworkify.dto.response;
 import beworkify.enumeration.*;
 import lombok.*;
 
+/**
+ * DTO for job summary response. Contains essential job details for list views or summaries.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @AllArgsConstructor

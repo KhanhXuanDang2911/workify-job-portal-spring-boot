@@ -32,6 +32,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+/**
+ * Global exception handler for the application. Captures and processes exceptions thrown by
+ * controllers and other components, returning standardized error responses.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
@@ -238,28 +245,19 @@ public class GlobalExceptionHandler {
     return buildErrorResponse(HttpStatus.NOT_FOUND, message, request, null);
   }
 
-  //  @ExceptionHandler(Exception.class)
-  //  public ResponseEntity<ErrorResponse> handleInternalError(Exception e, WebRequest request) {
-  //    String message =
-  //        messageSource.getMessage("error.internal.server", null,
-  // LocaleContextHolder.getLocale());
-  //    return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request, null);
-  //  }
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ErrorResponse> handleInternalError(Exception e, WebRequest request) {
+    String message =
+        messageSource.getMessage("error.internal.server", null, LocaleContextHolder.getLocale());
+    return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, request, null);
+  }
 
   @ExceptionHandler(AppException.class)
   public ResponseEntity<ErrorResponse> handleAppError(AppException e, WebRequest request) {
     String message =
         messageSource.getMessage(e.getMessage(), null, LocaleContextHolder.getLocale());
-    return ResponseEntity.status(500)
-        .body(
-            ErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(e.getErrorCode().getCode())
-                .path(request.getDescription(false).replace("uri=", ""))
-                .error(message)
-                .message(message)
-                .errors(null)
-                .build());
+    return buildErrorResponse(
+        HttpStatus.valueOf(e.getErrorCode().getCode()), message, request, null);
   }
 
   private ResponseEntity<ErrorResponse> buildErrorResponse(

@@ -6,6 +6,12 @@ import beworkify.entity.Industry;
 import java.util.List;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between Industry entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(componentModel = "spring")
 public interface IndustryMapper {
   @Mapping(target = "jobIndustries", ignore = true)

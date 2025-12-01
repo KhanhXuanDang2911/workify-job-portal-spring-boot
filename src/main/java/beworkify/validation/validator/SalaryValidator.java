@@ -6,6 +6,13 @@ import beworkify.validation.annotation.ValidSalary;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * Validator for salary configuration. Validates that the salary range and unit are consistent with
+ * the selected salary type.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class SalaryValidator implements ConstraintValidator<ValidSalary, JobRequest> {
 
   @Override

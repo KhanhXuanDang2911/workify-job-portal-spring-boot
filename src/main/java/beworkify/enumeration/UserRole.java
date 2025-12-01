@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for user roles.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum UserRole {
   JOB_SEEKER("JOB_SEEKER"),

@@ -2,6 +2,12 @@ package beworkify.enumeration;
 
 import lombok.Getter;
 
+/**
+ * Enumeration for account types (USER, EMPLOYER).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum AccountType {
   USER("USER"),

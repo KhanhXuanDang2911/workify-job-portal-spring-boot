@@ -2,6 +2,12 @@ package beworkify.dto.response;
 
 import lombok.*;
 
+/**
+ * DTO for popular industry response. Contains industry details and job count.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @AllArgsConstructor

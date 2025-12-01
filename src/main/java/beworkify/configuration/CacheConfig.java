@@ -19,6 +19,13 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * Configuration class for caching. Sets up Redis cache manager with specific TTLs for different
+ * cache names.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Configuration
 @EnableCaching
 public class CacheConfig {

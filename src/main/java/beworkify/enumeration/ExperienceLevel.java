@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for experience levels required for a job.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum ExperienceLevel {
   LESS_THAN_ONE_YEAR("LESS_THAN_ONE_YEAR"),

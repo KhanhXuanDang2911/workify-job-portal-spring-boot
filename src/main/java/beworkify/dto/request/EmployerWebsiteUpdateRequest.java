@@ -4,6 +4,12 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO for updating employer website links.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class EmployerWebsiteUpdateRequest {

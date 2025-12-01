@@ -16,6 +16,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for managing user notifications. Provides endpoints for retrieving and marking
+ * notifications as read.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequestMapping("/api/v1/notifications")
 @RequiredArgsConstructor

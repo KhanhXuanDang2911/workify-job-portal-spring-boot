@@ -3,6 +3,12 @@ package beworkify.dto.response;
 import java.time.LocalDateTime;
 import lombok.*;
 
+/**
+ * DTO for message response. Contains message content, sender details, and timestamp.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

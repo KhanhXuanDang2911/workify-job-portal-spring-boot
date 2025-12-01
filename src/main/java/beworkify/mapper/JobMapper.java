@@ -14,6 +14,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between Job entity and DTOs. Handles complex mappings for industries,
+ * locations, and benefits.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(
     componentModel = "spring",
     uses = {

@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for job benefit types. Represents various perks and benefits offered by employers.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum BenefitType {
   TRAVEL_OPPORTUNITY("TRAVEL_OPPORTUNITY"),

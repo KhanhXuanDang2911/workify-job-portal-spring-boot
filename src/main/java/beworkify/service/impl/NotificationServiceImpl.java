@@ -23,6 +23,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the NotificationService interface. Handles business logic for notifications,
+ * including creation, retrieval, and WebSocket broadcasting.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {

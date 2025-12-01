@@ -6,6 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO for verifying email via mobile (OTP).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 public class VerifyEmailMobileRequest {

@@ -13,7 +13,6 @@ import beworkify.util.AppUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -25,9 +24,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the ProvinceService interface. Handles business logic for provinces, including
+ * CRUD operations and caching.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProvinceServiceImpl implements ProvinceService {
 
   private final ProvinceRepository repository;
@@ -129,7 +134,6 @@ public class ProvinceServiceImpl implements ProvinceService {
           "@keyGenerator.buildKeyWithPaginationSortsKeyword(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('name', 'createdAt', 'updatedAt'))")
   public PageResponse<List<ProvinceResponse>> getAllWithPaginationAndSort(
       int pageNumber, int pageSize, List<String> sorts, String keyword) {
-    log.info("Query provinces with pagination and sorts...");
     String kw = (keyword == null) ? "" : keyword.toLowerCase();
     Pageable pageable =
         AppUtils.generatePageableWithSort(
@@ -162,7 +166,6 @@ public class ProvinceServiceImpl implements ProvinceService {
   @Override
   @Cacheable(value = "provinces", key = "'all'")
   public List<ProvinceResponse> getAll() {
-    log.info("Query all provinces...");
     List<Province> list = repository.findAllByOrderByNameAsc();
     return list.stream().map(mapper::toDTO).collect(Collectors.toList());
   }

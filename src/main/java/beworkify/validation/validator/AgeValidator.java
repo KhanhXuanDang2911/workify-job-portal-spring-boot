@@ -6,6 +6,13 @@ import beworkify.validation.annotation.ValidAge;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+/**
+ * Validator for age configuration. Validates that the age range is logical and consistent with the
+ * selected age type.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class AgeValidator implements ConstraintValidator<ValidAge, JobRequest> {
 
   @Override

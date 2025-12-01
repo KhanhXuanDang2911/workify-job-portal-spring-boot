@@ -4,6 +4,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
+/**
+ * Component for generating custom cache keys. Used by Spring Cache to create unique keys for cached
+ * methods based on parameters.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Component("keyGenerator")
 public class KeyGenerator {
   public static String buildKeyWithPaginationSortsKeyword(

@@ -5,6 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
 
+/**
+ * DTO for job category response. Contains category details and popular industries.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @AllArgsConstructor

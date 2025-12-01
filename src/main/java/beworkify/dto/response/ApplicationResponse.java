@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * DTO for application response. Contains applicant details, status, and associated job summary.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @AllArgsConstructor

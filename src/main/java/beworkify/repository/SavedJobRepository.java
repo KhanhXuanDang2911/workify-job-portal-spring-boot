@@ -9,6 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing SavedJob entities. Provides methods for CRUD operations and
+ * custom queries related to saved jobs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface SavedJobRepository extends JpaRepository<SavedJob, Long> {
 
@@ -17,11 +24,9 @@ public interface SavedJobRepository extends JpaRepository<SavedJob, Long> {
   Optional<SavedJob> findByUser_IdAndJob_Id(Long userId, Long jobId);
 
   @Query(
-      """
-			SELECT j.id FROM SavedJob sj
-			JOIN sj.job j
-			WHERE sj.user.id = :userId
-			ORDER BY sj.createdAt DESC
-			""")
+      "SELECT j.id FROM SavedJob sj "
+          + "JOIN sj.job j "
+          + "WHERE sj.user.id = :userId "
+          + "ORDER BY sj.createdAt DESC")
   Page<Long> findJobIdsByUserId(@Param("userId") Long userId, Pageable pageable);
 }

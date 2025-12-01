@@ -10,6 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing CategoryJob entities. Provides methods for CRUD operations and
+ * custom queries related to job categories.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface CategoryJobRepository
     extends JpaRepository<CategoryJob, Long>, CategoryJobRepositoryCustom {
@@ -18,7 +25,11 @@ public interface CategoryJobRepository
   boolean existsByNameAndIdNot(String name, Long id);
 
   @Query(
-      "select c from CategoryJob c where lower(c.name) like %:keyword% OR lower(c.description) like %:keyword% or lower(c.engName) like %:keyword%")
+      "SELECT c "
+          + "FROM CategoryJob c "
+          + "WHERE lower(c.name) LIKE %:keyword% "
+          + "   OR lower(c.description) LIKE %:keyword% "
+          + "   OR lower(c.engName) LIKE %:keyword%")
   Page<CategoryJob> searchJobCategories(@Param("keyword") String keyword, Pageable pageable);
 
   Optional<CategoryJob> findByName(String name);

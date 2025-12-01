@@ -7,6 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Base DTO for common response fields. Contains ID and timestamps (createdAt, updatedAt).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

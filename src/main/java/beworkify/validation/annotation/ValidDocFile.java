@@ -5,6 +5,13 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Custom annotation for validating document files. Ensures that the uploaded file is a valid
+ * document (e.g., .doc, .docx).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Documented
 @Constraint(validatedBy = DocFileValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})

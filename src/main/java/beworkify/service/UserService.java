@@ -11,6 +11,13 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Service interface for managing users (job seekers). Handles user registration, profile
+ * management, and authentication operations.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface UserService {
 
   UserResponse getUserById(Long id);

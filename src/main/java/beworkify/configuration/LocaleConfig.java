@@ -6,6 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
+/**
+ * Configuration class for locale resolution. Sets the default locale to Vietnamese (vi-VN).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Configuration
 public class LocaleConfig {
 

@@ -5,6 +5,12 @@ import beworkify.validation.annotation.ValueOfEnum;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+/**
+ * DTO for creating or updating a user role.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

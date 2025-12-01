@@ -25,6 +25,7 @@ import beworkify.util.RedisUtils;
 import beworkify.util.TagUtils;
 import java.util.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -41,8 +42,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Implementation of the PostService interface. Handles business logic for blog posts, including
+ * creation, updates, and search operations.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PostServiceImpl implements PostService {
 
   private final PostRepository repository;
@@ -56,15 +65,20 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional
-  @CachePut(value = "posts", key = "#result.id", unless = "#result == null or #result.status != T(beworkify.enumeration.StatusPost).PUBLIC")
+  @CachePut(
+      value = "posts",
+      key = "#result.id",
+      unless = "#result == null or #result.status != T(beworkify.enumeration.StatusPost).PUBLIC")
   public PostResponse create(PostRequest request, MultipartFile thumbnail) throws Exception {
     Post entity = mapper.toEntity(request);
-    CategoryPost category = categoryRepository
-        .findById(request.getCategoryId())
-        .orElseThrow(
-            () -> new ResourceNotFoundException(
-                messageSource.getMessage(
-                    "categoryPost.notFound", null, LocaleContextHolder.getLocale())));
+    CategoryPost category =
+        categoryRepository
+            .findById(request.getCategoryId())
+            .orElseThrow(
+                () ->
+                    new ResourceNotFoundException(
+                        messageSource.getMessage(
+                            "categoryPost.notFound", null, LocaleContextHolder.getLocale())));
     entity.setCategory(category);
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     if (AppUtils.hasRole(auth, UserRole.ADMIN.getName())) {
@@ -123,19 +137,24 @@ public class PostServiceImpl implements PostService {
 
   @Override
   @Transactional
-  @CachePut(value = "posts", key = "#result.id", unless = "#result == null or #result.status != T(beworkify.enumeration.StatusPost).PUBLIC")
+  @CachePut(
+      value = "posts",
+      key = "#result.id",
+      unless = "#result == null or #result.status != T(beworkify.enumeration.StatusPost).PUBLIC")
   public PostResponse update(Long id, PostRequest request, MultipartFile thumbnail)
       throws Exception {
     Post entity = findPostById(id);
     validateOwner(entity);
     mapper.updateEntityFromRequest(request, entity);
     if (request.getCategoryId() != null) {
-      CategoryPost category = categoryRepository
-          .findById(request.getCategoryId())
-          .orElseThrow(
-              () -> new ResourceNotFoundException(
-                  messageSource.getMessage(
-                      "categoryPost.notFound", null, LocaleContextHolder.getLocale())));
+      CategoryPost category =
+          categoryRepository
+              .findById(request.getCategoryId())
+              .orElseThrow(
+                  () ->
+                      new ResourceNotFoundException(
+                          messageSource.getMessage(
+                              "categoryPost.notFound", null, LocaleContextHolder.getLocale())));
       entity.setCategory(category);
     }
 
@@ -192,7 +211,10 @@ public class PostServiceImpl implements PostService {
   }
 
   @Override
-  @Cacheable(value = "posts", key = "@keyGenerator.buildKeyWithPaginationSortsKeywordForPost(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('createdAt', 'updatedAt'),#categoryId, #isPublic, #authorId)")
+  @Cacheable(
+      value = "posts",
+      key =
+          "@keyGenerator.buildKeyWithPaginationSortsKeywordForPost(#pageNumber, #pageSize, #sorts, #keyword, T(java.util.List).of('createdAt', 'updatedAt'),#categoryId, #isPublic, #authorId)")
   public PageResponse<List<PostResponse>> getAll(
       int pageNumber,
       int pageSize,
@@ -202,21 +224,23 @@ public class PostServiceImpl implements PostService {
       boolean isPublic) {
     String kw = (keyword == null) ? "" : keyword.toLowerCase();
     List<String> whiteListFieldSorts = List.of("createdAt", "updatedAt");
-    Pageable pageable = AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);
+    Pageable pageable =
+        AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);
     Page<Post> page;
     if (!isPublic) {
       page = repository.searchPosts(kw, categoryId, pageable);
     } else {
       page = repository.searchPublicPosts(kw, categoryId, StatusPost.PUBLIC, pageable);
     }
-    List<PostResponse> items = page.getContent().stream()
-        .map(
-            entity -> {
-              PostResponse response = mapper.toDTO(entity);
-              mapAuthorResponse(response, entity);
-              return response;
-            })
-        .toList();
+    List<PostResponse> items =
+        page.getContent().stream()
+            .map(
+                entity -> {
+                  PostResponse response = mapper.toDTO(entity);
+                  mapAuthorResponse(response, entity);
+                  return response;
+                })
+            .toList();
     return PageResponse.<List<PostResponse>>builder()
         .pageNumber(pageNumber)
         .pageSize(pageSize)
@@ -234,47 +258,52 @@ public class PostServiceImpl implements PostService {
     List<Post> related = new ArrayList<>();
     Set<Long> addedIds = new HashSet<>();
 
-    String searchText = cleanSearchText(
-        anchor.getTitle()
-            + " "
-            + (anchor.getContentText() != null ? anchor.getContentText() : ""));
+    String searchText =
+        cleanSearchText(
+            anchor.getTitle()
+                + " "
+                + (anchor.getContentText() != null ? anchor.getContentText() : ""));
     if (!searchText.trim().isEmpty()) {
       try {
-        var fullTextResults = repository.findRelatedByFullTextSearch(anchor.getId(), searchText, limit);
+        var fullTextResults =
+            repository.findRelatedByFullTextSearch(anchor.getId(), searchText, limit);
         addUniqueResults(related, addedIds, fullTextResults);
       } catch (Exception e) {
-        System.out.println("Full-text search failed: " + e.getMessage());
+        log.warn("Full-text search failed for post {}: {}", anchor.getId(), e.getMessage());
       }
     }
 
     if (related.size() < limit) {
       int remaining = limit - related.size();
       try {
-        var similarityResults = repository.findRelatedBySimilarity(
-            anchor.getId(),
-            anchor.getTitle(),
-            anchor.getContentText() != null ? anchor.getContentText() : "",
-            remaining);
+        var similarityResults =
+            repository.findRelatedBySimilarity(
+                anchor.getId(),
+                anchor.getTitle(),
+                anchor.getContentText() != null ? anchor.getContentText() : "",
+                remaining);
         addUniqueResults(related, addedIds, similarityResults);
       } catch (Exception e) {
-        System.out.println("Similarity search failed: " + e.getMessage());
+        log.warn("Similarity search failed for post {}: {}", anchor.getId(), e.getMessage());
       }
     }
 
     if (related.size() < limit && anchor.getCategory() != null) {
       int remaining = limit - related.size();
-      var categoryResults = repository.findRelatedByCategory(
-          StatusPost.PUBLIC,
-          anchor.getCategory().getId(),
-          anchor.getId(),
-          PageRequest.of(0, remaining));
+      var categoryResults =
+          repository.findRelatedByCategory(
+              StatusPost.PUBLIC,
+              anchor.getCategory().getId(),
+              anchor.getId(),
+              PageRequest.of(0, remaining));
       addUniqueResults(related, addedIds, categoryResults);
     }
 
     if (related.size() < limit) {
       int remaining = limit - related.size();
-      var latestResults = repository.findLatestPosts(
-          StatusPost.PUBLIC, anchor.getId(), PageRequest.of(0, remaining));
+      var latestResults =
+          repository.findLatestPosts(
+              StatusPost.PUBLIC, anchor.getId(), PageRequest.of(0, remaining));
       addUniqueResults(related, addedIds, latestResults);
     }
 
@@ -299,8 +328,7 @@ public class PostServiceImpl implements PostService {
   }
 
   private String cleanSearchText(String text) {
-    if (text == null)
-      return "";
+    if (text == null) return "";
     return text.replaceAll("[^\\p{L}\\p{N}\\s]", " ").replaceAll("\\s+", " ").trim();
   }
 
@@ -330,7 +358,8 @@ public class PostServiceImpl implements PostService {
       String status) {
     String kw = (keyword == null) ? "" : keyword.toLowerCase();
     List<String> whiteListFieldSorts = List.of("createdAt", "updatedAt");
-    Pageable pageable = AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);
+    Pageable pageable =
+        AppUtils.generatePageableWithSort(sorts, whiteListFieldSorts, pageNumber, pageSize);
 
     Long employerId = AppUtils.getEmployerIdFromSecurityContext();
     Page<Post> page;
@@ -341,12 +370,15 @@ public class PostServiceImpl implements PostService {
       page = repository.searchPostsByEmployerAndStatus(kw, categoryId, employerId, s, pageable);
     }
 
-    List<PostResponse> items = page.getContent().stream()
-        .map(entity -> {
-          PostResponse response = mapper.toDTO(entity);
-          mapAuthorResponse(response, entity);
-          return response;
-        }).toList();
+    List<PostResponse> items =
+        page.getContent().stream()
+            .map(
+                entity -> {
+                  PostResponse response = mapper.toDTO(entity);
+                  mapAuthorResponse(response, entity);
+                  return response;
+                })
+            .toList();
 
     return PageResponse.<List<PostResponse>>builder()
         .pageNumber(pageNumber)
@@ -430,8 +462,9 @@ public class PostServiceImpl implements PostService {
     return repository
         .findById(id)
         .orElseThrow(
-            () -> new ResourceNotFoundException(
-                messageSource.getMessage(
-                    "error.resource.not.found", null, LocaleContextHolder.getLocale())));
+            () ->
+                new ResourceNotFoundException(
+                    messageSource.getMessage(
+                        "error.resource.not.found", null, LocaleContextHolder.getLocale())));
   }
 }

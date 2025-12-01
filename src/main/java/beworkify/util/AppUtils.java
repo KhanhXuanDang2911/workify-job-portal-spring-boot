@@ -15,6 +15,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+/**
+ * Utility class providing common helper methods for the application. Includes methods for slug
+ * generation, validation, HTML processing, and security context access.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class AppUtils {
 
   private static final String DIGITS = "0123456789";

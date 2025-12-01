@@ -20,6 +20,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the RoleService interface. Handles business logic for user roles, including
+ * creation, updates, and retrieval.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -33,7 +40,6 @@ public class RoleServiceImpl implements RoleService {
   @Override
   @CacheEvict(value = "roles", allEntries = true)
   public RoleResponse createRole(RoleRequest request) {
-    log.info("Attempting to create new role: {}", request.getRole());
 
     if (roleRepository.existsByRole(UserRole.getRoleFromName(request.getRole()))) {
       log.error("Role with name '{}' already exists", request.getRole());
@@ -49,17 +55,12 @@ public class RoleServiceImpl implements RoleService {
     role.setRole(UserRole.getRoleFromName(request.getRole()));
     roleRepository.save(role);
 
-    log.info(
-        "Successfully created role with id = {}, name = {}",
-        role.getId(),
-        role.getRole().getName());
     return roleMapper.toDTO(role);
   }
 
   @Override
   @CacheEvict(value = "roles", allEntries = true)
   public RoleResponse updateRole(RoleRequest request, Long id) {
-    log.info("Attempting to update role with id = {}", id);
 
     if (roleRepository.existsByRoleExceptForId(UserRole.getRoleFromName(request.getRole()), id)) {
       log.error("Role with name '{}' already exists (conflict)", request.getRole());
@@ -76,7 +77,6 @@ public class RoleServiceImpl implements RoleService {
     role.setRole(UserRole.getRoleFromName(request.getRole()));
     roleRepository.save(role);
 
-    log.info("Successfully updated role with id = {}", id);
     return roleMapper.toDTO(role);
   }
 
@@ -84,7 +84,6 @@ public class RoleServiceImpl implements RoleService {
   @Transactional(readOnly = true)
   @Cacheable(value = "roles", key = "'all'")
   public List<RoleResponse> getAllRoles() {
-    log.info("Fetching all roles");
 
     List<Role> roles = roleRepository.findAllRoles();
     List<RoleResponse> responses =
@@ -100,7 +99,6 @@ public class RoleServiceImpl implements RoleService {
                         .build())
             .collect(Collectors.toList());
 
-    log.info("Found {} roles", responses.size());
     return responses;
   }
 
@@ -108,11 +106,8 @@ public class RoleServiceImpl implements RoleService {
   @Transactional(readOnly = true)
   @Cacheable(value = "roles", key = "#roleName")
   public RoleResponse getRoleByRoleName(String roleName) {
-    log.info("Fetching role by name: {}", roleName);
 
     Role role = findRoleByRoleName(roleName);
-
-    log.info("Found role with id = {} for name = {}", role.getId(), roleName);
 
     return RoleResponse.builder()
         .id(role.getId())
@@ -126,17 +121,13 @@ public class RoleServiceImpl implements RoleService {
   @Override
   @CacheEvict(value = "roles", allEntries = true)
   public void deleteRole(Long id) {
-    log.info("Attempting to delete role with id = {}", id);
 
     Role role = findRoleById(id);
     roleRepository.delete(role);
-
-    log.info("Successfully deleted role with id = {}", id);
   }
 
   @Override
   public Role findRoleById(Long id) {
-    log.debug("Looking up role by id = {}", id);
 
     return roleRepository
         .findById(id)
@@ -150,7 +141,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   public Role findRoleByRoleName(String roleName) {
-    log.debug("Looking up role by roleName = {}", roleName);
+
     UserRole userRole = UserRole.getRoleFromName(roleName);
     return roleRepository
         .findByRole(userRole)

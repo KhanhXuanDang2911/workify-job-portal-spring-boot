@@ -14,6 +14,12 @@ import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.stereotype.Component;
 
+/**
+ * Configuration class for Elasticsearch. Initializes indices and mappings for search functionality.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Component
 @RequiredArgsConstructor
 @Profile("!test")

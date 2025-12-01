@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
 
+/**
+ * Entity class representing a conversation between a job seeker and an employer. Tracks messages,
+ * unread counts, and the associated job application.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

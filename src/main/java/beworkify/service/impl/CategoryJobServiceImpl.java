@@ -31,6 +31,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the CategoryJobService interface. Handles business logic for job categories,
+ * including CRUD operations and caching.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryJobServiceImpl implements CategoryJobService {

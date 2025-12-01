@@ -10,6 +10,12 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * Configuration class for Redis. Sets up Redis connection factory and templates for data access.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @EnableRedisRepositories
 @Configuration
 public class RedisConfig {

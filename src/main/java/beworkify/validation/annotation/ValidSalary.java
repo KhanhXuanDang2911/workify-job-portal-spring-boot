@@ -5,6 +5,13 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Custom annotation for validating salary configuration. Ensures that the salary range is valid
+ * based on the selected salary type.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Documented
 @Constraint(validatedBy = SalaryValidator.class)
 @Target({ElementType.TYPE})

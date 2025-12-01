@@ -17,6 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the JwtService interface. Handles generation, validation, and extraction of JWT
+ * tokens.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {

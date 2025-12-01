@@ -8,6 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing Industry entities. Provides methods for CRUD operations and
+ * custom queries related to industries.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface IndustryRepository extends JpaRepository<Industry, Long> {
   boolean existsByName(String name);
@@ -19,11 +26,13 @@ public interface IndustryRepository extends JpaRepository<Industry, Long> {
   boolean existsByEngNameAndIdNot(String engName, Long id);
 
   @Query(
-      "select i from Industry i left join i.categoryJob ic "
-          + "where (lower(i.name) like %:keyword% "
-          + "OR lower(i.engName) like %:keyword% "
-          + "OR lower(i.description) like %:keyword%) "
-          + "AND (:categoryId is null or ic.id = :categoryId)")
+      "SELECT i "
+          + "FROM Industry i "
+          + "LEFT JOIN i.categoryJob ic "
+          + "WHERE (lower(i.name) LIKE %:keyword% "
+          + "       OR lower(i.engName) LIKE %:keyword% "
+          + "       OR lower(i.description) LIKE %:keyword%) "
+          + "  AND (:categoryId IS NULL OR ic.id = :categoryId)")
   Page<Industry> searchIndustries(
       @Param("keyword") String keyword, @Param("categoryId") Long categoryId, Pageable pageable);
 }

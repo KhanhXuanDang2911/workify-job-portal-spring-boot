@@ -6,6 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * DTO for location response. Contains province, district, and detailed address.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @AllArgsConstructor

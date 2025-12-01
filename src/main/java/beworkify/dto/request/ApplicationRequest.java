@@ -4,6 +4,12 @@ import beworkify.validation.group.OnLinkApply;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+/**
+ * DTO for creating a new job application. Contains applicant details, cover letter, and CV URL.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

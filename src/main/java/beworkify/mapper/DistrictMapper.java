@@ -8,6 +8,12 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+/**
+ * Mapper for converting between District entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(componentModel = "spring")
 public interface DistrictMapper {
   District toEntity(DistrictRequest request);

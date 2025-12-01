@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for job seniority levels.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum JobLevel {
   INTERN("INTERN"),

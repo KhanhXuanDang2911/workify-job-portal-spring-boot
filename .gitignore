@@ -36,3 +36,7 @@ build/
 
 # Project docs (ignore generated/spec files)
 /API_DOCS.md
+
+# Logs
+logs/
+*.log
