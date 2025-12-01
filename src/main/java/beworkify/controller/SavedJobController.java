@@ -8,7 +8,6 @@ import beworkify.util.ResponseBuilder;
 import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+/**
+ * REST controller for managing saved jobs. Allows job seekers to save and manage their favorite job
+ * listings.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -31,7 +36,6 @@ public class SavedJobController {
   @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
   public ResponseEntity<ResponseData<Void>> toggle(
       @PathVariable @Min(value = 1, message = "{validation.id.min}") Long jobId) {
-    log.info("Request: Toggle saved jobId={}", jobId);
     service.toggle(jobId);
     String message =
         messageSource.getMessage("saved_job.toggle.success", null, LocaleContextHolder.getLocale());
@@ -45,7 +49,6 @@ public class SavedJobController {
           int pageNumber,
       @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}")
           int pageSize) {
-    log.info("Request: Get saved jobs with pageNumber={}, pageSize={}", pageNumber, pageSize);
     PageResponse<List<JobResponse>> response = service.getSavedJobs(pageNumber, pageSize);
     String message =
         messageSource.getMessage(
@@ -57,7 +60,6 @@ public class SavedJobController {
   @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
   public ResponseEntity<ResponseData<Boolean>> checkSaved(
       @PathVariable @Min(value = 1, message = "{validation.id.min}") Long jobId) {
-    log.info("Request: Check saved jobId={}", jobId);
     boolean saved = service.isSaved(jobId);
     String message =
         messageSource.getMessage("saved_job.check.success", null, LocaleContextHolder.getLocale());

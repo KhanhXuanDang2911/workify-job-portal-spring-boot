@@ -4,6 +4,13 @@ import beworkify.dto.response.ConversationResponse;
 import beworkify.entity.Conversation;
 import java.util.List;
 
+/**
+ * Service interface for managing conversations. Handles business logic for chat conversations
+ * between job seekers and employers.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface ConversationService {
 
   Conversation createOrGetConversation(Long jobId, Long applicationId, Long employerId);

@@ -11,6 +11,13 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+/**
+ * Entity class representing a job posting. Contains comprehensive details about the job, including
+ * title, description, requirements, salary, and location.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

@@ -20,7 +20,6 @@ import jakarta.validation.constraints.Min;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -32,7 +31,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
+/**
+ * REST controller for managing job applications. Provides endpoints for creating, retrieving, and
+ * managing job applications.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -48,7 +53,6 @@ public class ApplicationController {
       @Valid @RequestPart("application") ApplicationRequest request,
       @RequestPart("cv") @ValidDocFile(message = "{application.cv.file.not.valid}")
           MultipartFile cv) {
-    log.info("Request: Create application for job id ={}", request.getJobId());
     ApplicationResponse dto = service.create(request, cv);
     String message =
         messageSource.getMessage(
@@ -94,7 +98,6 @@ public class ApplicationController {
   @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
   public ResponseEntity<ResponseData<ApplicationResponse>> applyWithoutFile(
       @RequestBody @Validated(OnLinkApply.class) ApplicationRequest request) {
-    log.info("Request: Create application (link) for job id ={}", request.getJobId());
     ApplicationResponse dto = service.createWithoutFile(request);
     String message =
         messageSource.getMessage(
@@ -110,7 +113,6 @@ public class ApplicationController {
       @RequestParam(defaultValue = "10") @Min(value = 1, message = "{validation.page.size.min}")
           int pageSize,
       @RequestParam(required = false) List<String> sorts) {
-    log.info("Request: Get my applications pageNumber={}, pageSize={}", pageNumber, pageSize);
     PageResponse<List<ApplicationResponse>> response =
         service.getMyApplications(pageNumber, pageSize, sorts);
     String message =
@@ -123,7 +125,6 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('JOB_SEEKER', 'ADMIN', 'EMPLOYER')")
   public ResponseEntity<ResponseData<ApplicationResponse>> getById(
       @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id) {
-    log.info("Request: Get application by id = {}", id);
     ApplicationResponse dto = service.getById(id);
     String message =
         messageSource.getMessage("application.get.success", null, LocaleContextHolder.getLocale());
@@ -134,7 +135,6 @@ public class ApplicationController {
   @PreAuthorize("hasRole('JOB_SEEKER') or hasRole('ADMIN')")
   public ResponseEntity<ResponseData<ApplicationResponse>> getLatestByJob(
       @PathVariable("jobId") @Min(value = 1, message = "{validation.id.min}") Long jobId) {
-    log.info("Request: Get latest application by job id = {}", jobId);
     ApplicationResponse dto = service.getLatestByJob(jobId);
     String message =
         messageSource.getMessage("application.get.success", null, LocaleContextHolder.getLocale());
@@ -173,7 +173,6 @@ public class ApplicationController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ResponseData<Void>> delete(
       @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id) {
-    log.info("Request: Delete application id = {}", id);
     service.deleteById(id);
     String message =
         messageSource.getMessage(
@@ -190,7 +189,6 @@ public class ApplicationController {
               enumClass = ApplicationStatus.class,
               message = "{error.invalid.application.status.enum}")
           String status) {
-    log.info("Request: Change status application id = {} to {}", id, status);
     ApplicationResponse dto = service.changeStatus(id, ApplicationStatus.fromValue(status));
     String message =
         messageSource.getMessage(

@@ -7,6 +7,12 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Validator for a single enum value. Checks if the string corresponds to a valid enum constant.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, String> {
   private Set<String> acceptedValues;
   private boolean required;

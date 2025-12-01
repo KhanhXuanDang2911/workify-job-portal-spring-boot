@@ -3,6 +3,12 @@ package beworkify.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity class representing the relationship between a Job and an Industry.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Entity
 @Table(name = "job_industries")
 @Getter

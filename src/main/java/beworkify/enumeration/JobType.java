@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for job employment types.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum JobType {
   FULL_TIME("FULL_TIME"),

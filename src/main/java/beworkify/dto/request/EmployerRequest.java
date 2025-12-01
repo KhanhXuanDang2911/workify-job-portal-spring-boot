@@ -9,6 +9,13 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 import lombok.*;
 
+/**
+ * DTO for employer registration and update. Contains company details, contact information, and
+ * account settings.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

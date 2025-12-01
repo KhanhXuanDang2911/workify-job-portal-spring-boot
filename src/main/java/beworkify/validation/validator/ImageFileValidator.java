@@ -6,6 +6,12 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Validator for image files. Checks if the uploaded file has a valid image content type.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class ImageFileValidator implements ConstraintValidator<ValidImageFile, MultipartFile> {
 
   private boolean required;

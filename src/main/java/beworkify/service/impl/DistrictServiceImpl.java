@@ -24,6 +24,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the DistrictService interface. Handles business logic for districts, including
+ * CRUD operations and caching.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class DistrictServiceImpl implements DistrictService {

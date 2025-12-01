@@ -14,6 +14,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Implementation of the AzureBlobService interface. Handles file upload and deletion operations
+ * using Azure Blob Storage.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 public class AzureBlobServiceImpl implements AzureBlobService {
@@ -27,11 +34,7 @@ public class AzureBlobServiceImpl implements AzureBlobService {
   @Override
   public String uploadFile(MultipartFile file) {
     String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
-    log.info(
-        "Uploading file to Azure: fileName={}, containerName={}, contentType={}",
-        fileName,
-        containerName,
-        file.getContentType());
+
     try {
       byte[] bytes = file.getBytes();
       ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes);
@@ -49,7 +52,6 @@ public class AzureBlobServiceImpl implements AzureBlobService {
       BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(file.getContentType());
       blobClient.setHttpHeaders(headers);
 
-      log.info("Upload successful: {}", blobClient.getBlobUrl());
       return blobClient.getBlobUrl();
 
     } catch (IOException e) {
@@ -82,11 +84,7 @@ public class AzureBlobServiceImpl implements AzureBlobService {
   @Override
   public String uploadBytes(byte[] data, String filename, String contentType) {
     String fileName = UUID.randomUUID() + "-" + filename;
-    log.info(
-        "Uploading bytes to Azure: fileName={}, containerName={}, contentType={}",
-        fileName,
-        containerName,
-        contentType);
+
     try {
       ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
 
@@ -103,7 +101,6 @@ public class AzureBlobServiceImpl implements AzureBlobService {
       BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(contentType);
       blobClient.setHttpHeaders(headers);
 
-      log.info("Upload successful: {}", blobClient.getBlobUrl());
       return blobClient.getBlobUrl();
 
     } catch (Exception e) {

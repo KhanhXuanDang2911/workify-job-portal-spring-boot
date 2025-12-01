@@ -5,6 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.*;
 
+/**
+ * DTO for error response. Standardized format for returning API errors.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

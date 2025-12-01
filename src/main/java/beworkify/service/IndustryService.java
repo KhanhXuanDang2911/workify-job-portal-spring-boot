@@ -6,6 +6,13 @@ import beworkify.dto.response.PageResponse;
 import beworkify.entity.Industry;
 import java.util.List;
 
+/**
+ * Service interface for managing industries. Provides business logic for CRUD operations on
+ * industry data.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface IndustryService {
   IndustryResponse create(IndustryRequest request);
 

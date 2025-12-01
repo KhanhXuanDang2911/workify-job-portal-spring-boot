@@ -7,6 +7,13 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/**
+ * Base entity class providing common fields for all entities. Includes ID, creation timestamp, and
+ * update timestamp.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @MappedSuperclass

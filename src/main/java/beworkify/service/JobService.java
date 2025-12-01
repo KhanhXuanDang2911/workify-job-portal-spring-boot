@@ -6,6 +6,13 @@ import beworkify.entity.Job;
 import beworkify.enumeration.JobStatus;
 import java.util.List;
 
+/**
+ * Service interface for managing job postings. Handles business logic for creating, updating, and
+ * retrieving job listings.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface JobService {
   JobResponse create(JobRequest request);
 

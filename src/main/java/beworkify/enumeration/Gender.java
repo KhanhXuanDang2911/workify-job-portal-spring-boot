@@ -2,6 +2,12 @@ package beworkify.enumeration;
 
 import beworkify.exception.AppException;
 
+/**
+ * Enumeration for user gender.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public enum Gender {
   MALE("MALE"),
   FEMALE("FEMALE"),

@@ -15,13 +15,13 @@ public class CategoryJobRepositoryCustomImpl implements CategoryJobRepositoryCus
   @Override
   public List<Object[]> findCategoryJobWithIndustryCount() {
     String query =
-        "select c, i, count(distinct j.id), 0 "
-            + "from CategoryJob c "
-            + "left join c.industries i "
-            + "left join i.jobIndustries ji "
-            + "left join ji.job j on j.status = :status "
-            + "group by i, c "
-            + "order by count(distinct j.id) desc";
+        "SELECT c, i, COUNT(DISTINCT j.id), 0 "
+            + "FROM CategoryJob c "
+            + "LEFT JOIN c.industries i "
+            + "LEFT JOIN i.jobIndustries ji "
+            + "LEFT JOIN ji.job j ON j.status = :status "
+            + "GROUP BY i, c "
+            + "ORDER BY COUNT(DISTINCT j.id) DESC";
     return entityManager
         .createQuery(query, Object[].class)
         .setParameter("status", JobStatus.APPROVED)

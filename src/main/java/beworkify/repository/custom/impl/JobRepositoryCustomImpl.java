@@ -14,11 +14,12 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom {
   @Override
   public List<Object[]> getPopularProvinces(int limit) {
     String jpql =
-        "select p, count(j.id) from Province p "
-            + "left join p.locations jl "
-            + "left join jl.job j on j.status = :status "
-            + "group by p "
-            + "order by count(distinct j.id) desc";
+        "SELECT p, COUNT(j.id) "
+            + "FROM Province p "
+            + "LEFT JOIN p.locations jl "
+            + "LEFT JOIN jl.job j ON j.status = :status "
+            + "GROUP BY p "
+            + "ORDER BY COUNT(DISTINCT j.id) DESC";
     return entityManager
         .createQuery(jpql, Object[].class)
         .setMaxResults(limit)
@@ -29,11 +30,12 @@ public class JobRepositoryCustomImpl implements JobRepositoryCustom {
   @Override
   public List<Object[]> getPopularIndustries(int limit) {
     String jpql =
-        "select i, count(j.id) from Industry i "
-            + "left join i.jobIndustries ji "
-            + "left join ji.job j on j.status = :status "
-            + "group by i "
-            + "order by count(distinct j.id) desc";
+        "SELECT i, COUNT(j.id) "
+            + "FROM Industry i "
+            + "LEFT JOIN i.jobIndustries ji "
+            + "LEFT JOIN ji.job j ON j.status = :status "
+            + "GROUP BY i "
+            + "ORDER BY COUNT(DISTINCT j.id) DESC";
     return entityManager
         .createQuery(jpql, Object[].class)
         .setMaxResults(limit)

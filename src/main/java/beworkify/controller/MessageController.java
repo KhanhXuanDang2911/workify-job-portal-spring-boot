@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,9 +21,15 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for chat and messaging functionality. Handles WebSocket and REST endpoints for sending
+ * messages and managing conversations.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Message", description = "Chat and messaging APIs")
 @RequestMapping("/api/v1")
 public class MessageController {
@@ -34,7 +39,6 @@ public class MessageController {
 
   @MessageMapping("/chat.sendMessage")
   public void sendMessageViaWebSocket(@Payload SendMessageRequest request) {
-    log.info("Received WebSocket message");
     messageService.sendMessage(request);
   }
 

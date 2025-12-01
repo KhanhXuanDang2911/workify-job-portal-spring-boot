@@ -34,6 +34,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Implementation of the UserService interface. Handles business logic for users, including
+ * registration, profile management, and authentication.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -68,7 +75,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public PageResponse<List<UserResponse>> getUsersWithPaginationAndKeywordAndSorts(
       int pageNumber, int pageSize, List<String> sorts, String keyword) {
-    log.info("Fetching users with pagination: pageNumber={}, pageSize={}", pageNumber, pageSize);
 
     List<String> whiteListFieldSorts =
         List.of(
@@ -96,12 +102,6 @@ public class UserServiceImpl implements UserService {
                 })
             .toList();
 
-    log.info(
-        "Fetched {} users (page {}/{})",
-        userPage.getNumberOfElements(),
-        pageNumber,
-        userPage.getTotalPages());
-
     return PageResponse.<List<UserResponse>>builder()
         .pageNumber(pageNumber)
         .pageSize(pageSize)
@@ -114,7 +114,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @CachePut(value = "users", key = "#result.id", condition = "#result != null")
   public UserResponse createUser(UserRequest request, MultipartFile avatar) {
-    log.info("Admin creating user with email {}", request.getEmail());
+
     if (userRepository.existsByEmail(request.getEmail())) {
       String message =
           messageSource.getMessage(
@@ -156,14 +156,13 @@ public class UserServiceImpl implements UserService {
     UserResponse response = userMapper.toDTO(user);
     response.setRole(user.getRole().getRole());
 
-    log.info("Admin create user successfully with id = {}", user.getId());
     return response;
   }
 
   @Override
   @CachePut(value = "users", key = "#result.id", condition = "#result != null")
   public UserResponse updateUser(UserRequest request, MultipartFile avatar, Long id) {
-    log.info("Admin updating user with email {}", request.getEmail());
+
     User user = findUserById(id);
     userMapper.updateEntityFromDTO(request, user);
     if (userRepository.existsByEmailAndIdNot(request.getEmail(), id)) {
@@ -209,14 +208,13 @@ public class UserServiceImpl implements UserService {
     UserResponse response = userMapper.toDTO(user);
     response.setRole(user.getRole().getRole());
 
-    log.info("Admin updating user successfully with id = {}", user.getId());
     return response;
   }
 
   @Override
   @CachePut(value = "users", key = "#result.id", condition = "#result != null")
   public UserResponse updateProfile(Long userId, UserRequest request) {
-    log.info("User with email {} updating profile", request.getEmail());
+
     User user = findUserById(userId);
     userMapper.updateEntityFromDTO(request, user);
 
@@ -240,7 +238,6 @@ public class UserServiceImpl implements UserService {
     UserResponse response = userMapper.toDTO(user);
     response.setRole(user.getRole().getRole());
 
-    log.info("User with email {} updated profile successfully", response.getEmail());
     return response;
   }
 
@@ -372,7 +369,6 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse signUp(UserRequest request, boolean isMobile)
       throws MessagingException, UnsupportedEncodingException {
-    log.info("Signing up user with email {}", request.getEmail());
 
     if (userRepository.existsByEmail(request.getEmail())) {
       String message =
@@ -407,24 +403,20 @@ public class UserServiceImpl implements UserService {
     }
     UserResponse response = userMapper.toDTO(user);
     response.setRole(user.getRole().getRole());
-    log.info("User signed up successfully with id = {}", user.getId());
+
     return response;
   }
 
   @Override
   @CacheEvict(value = "users", key = "#id")
   public void deleteUser(Long id) {
-    log.info("Deleting user with ID: {}", id);
 
     User user = findUserById(id);
     userRepository.delete(user);
-
-    log.info("User deleted successfully with ID: {}", id);
   }
 
   @Override
   public User findUserByEmail(String email) {
-    log.info("Looking up user by email {}", email);
 
     return userRepository
         .findByEmail(email)
@@ -442,7 +434,6 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User findUserById(Long id) {
-    log.debug("Looking up user by ID: {}", id);
 
     return userRepository
         .findById(id)

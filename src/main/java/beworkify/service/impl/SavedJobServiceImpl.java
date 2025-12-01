@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +25,13 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
+/**
+ * Implementation of the SavedJobService interface. Handles business logic for saved jobs, including
+ * toggling save status and retrieving saved jobs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class SavedJobServiceImpl implements SavedJobService {
@@ -42,7 +47,6 @@ public class SavedJobServiceImpl implements SavedJobService {
   @Transactional
   public void toggle(Long jobId) {
     Long userId = AppUtils.getUserIdFromSecurityContext();
-    log.info("Toggle saved job: userId={}, jobId={}", userId, jobId);
 
     User user = userService.findUserById(userId);
     Job job = jobService.findJobById(jobId);
@@ -56,12 +60,10 @@ public class SavedJobServiceImpl implements SavedJobService {
         .ifPresentOrElse(
             existing -> {
               repository.delete(existing);
-              log.info("Un-saved job {} for user {}", jobId, userId);
             },
             () -> {
               SavedJob sj = SavedJob.builder().user(user).job(job).build();
               repository.save(sj);
-              log.info("Saved job {} for user {}", jobId, userId);
             });
   }
 
@@ -69,11 +71,6 @@ public class SavedJobServiceImpl implements SavedJobService {
   @Transactional(readOnly = true)
   public PageResponse<List<JobResponse>> getSavedJobs(int pageNumber, int pageSize) {
     Long userId = AppUtils.getUserIdFromSecurityContext();
-    log.info(
-        "Fetching saved jobs for userId={}, pageNumber={}, pageSize={}",
-        userId,
-        pageNumber,
-        pageSize);
 
     Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
     Page<Long> page = repository.findJobIdsByUserId(userId, pageable);
@@ -95,7 +92,7 @@ public class SavedJobServiceImpl implements SavedJobService {
     // Validate job exists (avoid silently returning false on invalid job)
     jobService.findJobById(jobId);
     boolean exists = repository.existsByUser_IdAndJob_Id(userId, jobId);
-    log.debug("Check saved job: userId={}, jobId={}, exists={}", userId, jobId, exists);
+
     return exists;
   }
 

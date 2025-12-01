@@ -42,6 +42,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Implementation of the EmployerService interface. Handles business logic for employers, including
+ * registration, profile management, and authentication.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor

@@ -9,6 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing Role entities. Provides methods for CRUD operations and custom
+ * queries related to user roles.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
   @Query("select distinct r from Role r")
@@ -20,6 +27,9 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
   boolean existsByRole(UserRole role);
 
   @Query(
-      "select case when count(r) > 0 then true else false end from Role r where r.role = :role and r.id != :id")
+      "SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END "
+          + "FROM Role r "
+          + "WHERE r.role = :role "
+          + "  AND r.id != :id")
   boolean existsByRoleExceptForId(@Param("role") UserRole role, @Param("id") Long id);
 }

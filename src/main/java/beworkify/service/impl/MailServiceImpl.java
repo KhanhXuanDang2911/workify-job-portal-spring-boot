@@ -24,6 +24,13 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+/**
+ * Implementation of the MailService interface. Handles sending emails for confirmation, password
+ * reset, and other notifications.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -101,7 +108,6 @@ public class MailServiceImpl implements MailService {
 
       javaMailSender.send(message);
 
-      log.info("Confirmation email sent successfully to {}", userEmail);
     } catch (Exception e) {
       log.error("Failed to send confirmation email to {}: {}", userEmail, e.getMessage(), e);
       throw e;
@@ -175,7 +181,7 @@ public class MailServiceImpl implements MailService {
       }
 
       javaMailSender.send(message);
-      log.info("Reset url sent successfully to {}", userEmail);
+
     } catch (Exception e) {
       log.error("Failed to send reset link to email {}: {}", userEmail, e.getMessage(), e);
       throw e;

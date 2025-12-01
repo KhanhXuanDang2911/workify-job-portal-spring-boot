@@ -28,6 +28,13 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+/**
+ * Security configuration class. Configures security filter chains, authentication providers, CORS,
+ * and access rules.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

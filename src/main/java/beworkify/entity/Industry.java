@@ -4,6 +4,13 @@ import jakarta.persistence.*;
 import java.util.List;
 import lombok.*;
 
+/**
+ * Entity class representing an industry. Contains details about the industry name, description, and
+ * associated job category.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Entity
 @Table(name = "industries")
 @Getter

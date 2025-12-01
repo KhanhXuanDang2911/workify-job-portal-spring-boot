@@ -3,6 +3,13 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for job application statuses. Tracks the progress of an application from submission
+ * to decision.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum ApplicationStatus {
   UNREAD("UNREAD"),

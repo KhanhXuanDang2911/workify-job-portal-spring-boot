@@ -5,6 +5,12 @@ import beworkify.dto.response.RoleResponse;
 import beworkify.entity.Role;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between Role entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
   @Mapping(target = "role", ignore = true)

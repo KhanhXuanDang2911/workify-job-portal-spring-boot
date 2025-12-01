@@ -32,6 +32,12 @@ import org.springframework.data.elasticsearch.core.suggest.Completion;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+/**
+ * Implementation of JobSearchService. Handles indexing and advanced search queries for jobs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 public class JobSearchServiceImpl implements JobSearchService {

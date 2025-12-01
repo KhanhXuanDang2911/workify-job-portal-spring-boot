@@ -12,6 +12,13 @@ import java.time.LocalDate;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+/**
+ * DTO for creating or updating a user profile. Contains personal details, contact info, and
+ * address.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

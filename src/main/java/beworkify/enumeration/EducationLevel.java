@@ -3,6 +3,12 @@ package beworkify.enumeration;
 import beworkify.exception.AppException;
 import lombok.Getter;
 
+/**
+ * Enumeration for education levels required for a job.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum EducationLevel {
   HIGH_SCHOOL("HIGH_SCHOOL"),

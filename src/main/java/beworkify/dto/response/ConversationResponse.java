@@ -3,6 +3,13 @@ package beworkify.dto.response;
 import java.time.LocalDateTime;
 import lombok.*;
 
+/**
+ * DTO for conversation response. Contains details about the job, participants, and the last
+ * message.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

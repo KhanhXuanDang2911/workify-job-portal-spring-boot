@@ -7,6 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Validator for document files. Checks if the uploaded file has a valid extension (.doc, .docx,
+ * .pdf).
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class DocFileValidator implements ConstraintValidator<ValidDocFile, MultipartFile> {
 
   private boolean required;

@@ -6,6 +6,13 @@ import beworkify.dto.response.PageResponse;
 import beworkify.entity.CategoryJob;
 import java.util.List;
 
+/**
+ * Service interface for managing job categories. Provides business logic for CRUD operations on job
+ * categories.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface CategoryJobService {
   CategoryJobResponse create(CategoryJobRequest request);
 

@@ -5,6 +5,12 @@ import beworkify.dto.response.DistrictResponse;
 import beworkify.entity.District;
 import java.util.List;
 
+/**
+ * Service interface for managing districts. Provides business logic for district data operations.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface DistrictService {
   DistrictResponse create(DistrictRequest request);
 

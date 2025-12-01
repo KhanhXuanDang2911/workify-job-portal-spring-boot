@@ -1,0 +1,57 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------< workify-spring-boot:workify--spring-boot >--------------
+[INFO] Building workify-spring-boot 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ workify--spring-boot ---
+[INFO] Deleting D:\S1-2025-2026\PBL6\SourceCode\Workify\be-workify\target
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ workify--spring-boot ---
+[INFO] argLine set to -javaagent:C:\\Users\\caube\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.11\\org.jacoco.agent-0.8.11-runtime.jar=destfile=D:\\S1-2025-2026\\PBL6\\SourceCode\\Workify\\be-workify\\target\\jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ workify--spring-boot ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 9 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ workify--spring-boot ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 246 source files with javac [debug parameters release 17] to target\classes
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/entity/Notification.java:[31,19] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/EmployerMapper.java:[19,20] Unmapped target property: "numberOfHiringJobs".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/EmployerMapper.java:[23,12] Unmapped target properties: "avatarUrl, backgroundUrl, employerSlug, province, district, jobs, posts".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/EmployerMapper.java:[30,8] Unmapped target properties: "id, createdAt, updatedAt, avatarUrl, backgroundUrl, employerSlug, province, district, jobs, posts, authorities".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/RoleMapper.java:[17,8] Unmapped target properties: "id, createdAt, updatedAt, users".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/IndustryMapper.java:[18,12] Unmapped target property: "categoryJob".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ProvinceMapper.java:[20,12] Unmapped target properties: "id, createdAt, updatedAt, provinceSlug, district, locations".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/CategoryJobMapper.java:[24,8] Unmapped target properties: "id, createdAt, updatedAt".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/PostMapper.java:[24,8] Unmapped target properties: "id, createdAt, updatedAt, contentText, thumbnailUrl".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/UserMapper.java:[21,8] Unmapped target properties: "avatarUrl, noPassword, province, district, posts, applications, savedJobs, industry".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/DistrictMapper.java:[19,12] Unmapped target properties: "id, createdAt, updatedAt, districtSlug, province".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/CategoryPostMapper.java:[17,16] Unmapped target properties: "id, createdAt, updatedAt, posts".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/PostMapper.java:[24,8] Unmapped target properties: "id, createdAt, updatedAt, contentText, thumbnailUrl".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/PostMapper.java:[38,8] Unmapped target properties: "id, createdAt, updatedAt, contentText, thumbnailUrl".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/RoleMapper.java:[17,8] Unmapped target properties: "id, createdAt, updatedAt, users".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/RoleMapper.java:[23,8] Unmapped target properties: "id, createdAt, updatedAt, users".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ProvinceMapper.java:[20,12] Unmapped target properties: "id, createdAt, updatedAt, provinceSlug, district, locations".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ProvinceMapper.java:[27,8] Unmapped target properties: "id, createdAt, updatedAt, provinceSlug, district, locations".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/IndustryMapper.java:[18,12] Unmapped target property: "categoryJob".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/IndustryMapper.java:[26,8] Unmapped target properties: "id, createdAt, updatedAt, categoryJob".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/UserMapper.java:[21,8] Unmapped target properties: "avatarUrl, noPassword, province, district, posts, applications, savedJobs, industry".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/UserMapper.java:[31,8] Unmapped target properties: "id, createdAt, updatedAt, avatarUrl, noPassword, province, district, posts, applications, savedJobs, industry, authorities".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/DistrictMapper.java:[19,12] Unmapped target properties: "id, createdAt, updatedAt, districtSlug, province".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/DistrictMapper.java:[24,8] Unmapped target properties: "id, createdAt, updatedAt, districtSlug, province".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ApplicationMapper.java:[20,23] Unmapped target property: "employer". Mapping from property "Job job" to "JobSummaryResponse job".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ApplicationMapper.java:[22,15] Unmapped target properties: "id, createdAt, updatedAt, status, user, job, applyCount".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/ApplicationMapper.java:[25,8] Unmapped target properties: "id, createdAt, updatedAt, status, user, job, applyCount".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/CategoryPostMapper.java:[17,16] Unmapped target properties: "id, createdAt, updatedAt, posts".
+[WARNING] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/mapper/CategoryPostMapper.java:[23,8] Unmapped target properties: "id, createdAt, updatedAt, posts".
+[INFO] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/configuration/CacheConfig.java: Some input files use or override a deprecated API.
+[INFO] /D:/S1-2025-2026/PBL6/SourceCode/Workify/be-workify/src/main/java/beworkify/configuration/CacheConfig.java: Recompile with -Xlint:deprecation for details.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  31.077 s
+[INFO] Finished at: 2025-12-02T00:03:45+07:00
+[INFO] ------------------------------------------------------------------------

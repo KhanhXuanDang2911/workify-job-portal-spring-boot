@@ -5,6 +5,13 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.*;
 
+/**
+ * Entity class representing a job category. Contains details about the category name, description,
+ * and associated industries.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

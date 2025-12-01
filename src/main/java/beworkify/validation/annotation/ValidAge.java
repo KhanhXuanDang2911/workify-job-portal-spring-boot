@@ -5,6 +5,13 @@ import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.*;
 
+/**
+ * Custom annotation for validating age configuration. Ensures that the age range is valid based on
+ * the selected age type.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Documented
 @Constraint(validatedBy = AgeValidator.class)
 @Target({ElementType.TYPE})

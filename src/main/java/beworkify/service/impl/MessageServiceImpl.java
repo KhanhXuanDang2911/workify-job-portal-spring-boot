@@ -9,7 +9,9 @@ import beworkify.repository.ConversationRepository;
 import beworkify.repository.MessageRepository;
 import beworkify.service.ConversationService;
 import beworkify.service.MessageService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the MessageService interface. Handles business logic for chat messages,
+ * including sending, retrieving, and WebSocket broadcasting.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -133,10 +142,10 @@ public class MessageServiceImpl implements MessageService {
       totalUnreadConversations = cnt == null ? 0 : cnt.intValue();
     }
 
-    java.util.Map<String, Object> payload = new java.util.HashMap<>();
+    Map<String, Object> payload = new HashMap<>();
     payload.put("type", "MESSAGE");
     payload.put("message", messageResponse);
-    java.util.Map<String, Object> unread = new java.util.HashMap<>();
+    Map<String, Object> unread = new HashMap<>();
     unread.put("conversationId", conversation.getId());
     unread.put("unreadForRecipient", unreadForRecipient);
     unread.put("totalUnreadConversations", totalUnreadConversations);
@@ -225,16 +234,16 @@ public class MessageServiceImpl implements MessageService {
       Integer totalJobSeeker = cntJS == null ? 0 : cntJS.intValue();
       Integer totalEmployer = cntEmp == null ? 0 : cntEmp.intValue();
 
-      java.util.Map<String, Object> payload = new java.util.HashMap<>();
+      Map<String, Object> payload = new HashMap<>();
       payload.put("type", "SEEN_UPDATE");
       payload.put("conversationId", conversation.getId());
       payload.put("updatedByUserId", userId);
-      java.util.Map<String, Object> unread = new java.util.HashMap<>();
+      Map<String, Object> unread = new HashMap<>();
       unread.put("conversationId", conversation.getId());
       unread.put("unreadForJobSeeker", conversation.getUnreadCountJobSeeker());
       unread.put("unreadForEmployer", conversation.getUnreadCountEmployer());
       payload.put("unread", unread);
-      java.util.Map<String, Object> total = new java.util.HashMap<>();
+      Map<String, Object> total = new HashMap<>();
       total.put("jobSeeker", totalJobSeeker);
       total.put("employer", totalEmployer);
       payload.put("totalUnreadConversations", total);
@@ -281,16 +290,16 @@ public class MessageServiceImpl implements MessageService {
       Integer totalJobSeeker = cntJS == null ? 0 : cntJS.intValue();
       Integer totalEmployer = cntEmp == null ? 0 : cntEmp.intValue();
 
-      java.util.Map<String, Object> payload = new java.util.HashMap<>();
+      Map<String, Object> payload = new HashMap<>();
       payload.put("type", "SEEN_UPDATE");
       payload.put("conversationId", conversation.getId());
       payload.put("updatedByUserId", userId);
-      java.util.Map<String, Object> unread = new java.util.HashMap<>();
+      Map<String, Object> unread = new HashMap<>();
       unread.put("conversationId", conversation.getId());
       unread.put("unreadForJobSeeker", conversation.getUnreadCountJobSeeker());
       unread.put("unreadForEmployer", conversation.getUnreadCountEmployer());
       payload.put("unread", unread);
-      java.util.Map<String, Object> total = new java.util.HashMap<>();
+      Map<String, Object> total = new HashMap<>();
       total.put("jobSeeker", totalJobSeeker);
       total.put("employer", totalEmployer);
       payload.put("totalUnreadConversations", total);

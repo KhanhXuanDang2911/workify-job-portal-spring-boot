@@ -10,6 +10,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Service interface for managing employers. Handles employer registration, profile management, and
+ * authentication operations.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface EmployerService {
 
   PageResponse<List<EmployerResponse>> getEmployersWithPaginationAndKeywordAndSorts(

@@ -4,6 +4,13 @@ import beworkify.dto.response.ResponseData;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Utility class for building standardized API responses. Simplifies the creation of ResponseEntity
+ * objects with consistent structure.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class ResponseBuilder {
   public static ResponseEntity<ResponseData<Void>> noData(HttpStatus status, String message) {
     return ResponseEntity.status(status)

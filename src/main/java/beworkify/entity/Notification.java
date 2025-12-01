@@ -3,6 +3,13 @@ package beworkify.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity class representing a notification. Contains details about the notification content,
+ * recipient, and read status.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor

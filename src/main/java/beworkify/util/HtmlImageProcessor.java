@@ -12,6 +12,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+/**
+ * Utility class for processing images within HTML content. Extracts base64 images, uploads them to
+ * Azure Blob Storage, and replaces them with URLs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RequiredArgsConstructor
 public class HtmlImageProcessor {
 

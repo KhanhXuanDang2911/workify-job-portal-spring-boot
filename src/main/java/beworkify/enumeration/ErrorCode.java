@@ -2,6 +2,13 @@ package beworkify.enumeration;
 
 import lombok.Getter;
 
+/**
+ * Enumeration for application error codes and messages. Maps internal error codes to HTTP status
+ * codes and message keys.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 public enum ErrorCode {
   INVALID_ROLE_ENUM(410, "error.invalid.role.enum"),
@@ -27,8 +34,6 @@ public enum ErrorCode {
   EMPLOYER_READ_APPLICATION(412, "employer.read.application"),
   ERROR_USER_AGENT_MOBILE_REQUIRED(412, "error.useragent.mobile.required"),
   UPLOAD_FILE_FAILED(501, "error.upload.failed"),
-  // Chat/Message related errors (codes for internal use in JSON response, HTTP
-  // status is 500)
   BAD_REQUEST(400, "error.bad.request"),
   CONVERSATION_NOT_FOUND(404, "error.conversation.not.found"),
   MESSAGE_NOT_FOUND(404, "error.message.not.found"),

@@ -5,6 +5,13 @@ import beworkify.dto.response.RoleResponse;
 import beworkify.entity.Role;
 import java.util.List;
 
+/**
+ * Service interface for managing user roles. Provides business logic for CRUD operations on role
+ * data.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface RoleService {
   RoleResponse createRole(RoleRequest request);
 

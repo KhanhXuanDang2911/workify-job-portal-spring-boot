@@ -3,6 +3,13 @@ package beworkify.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entity class representing a chat message. Contains details about the sender, content, and seen
+ * status.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,12 +23,9 @@ public class Message extends BaseEntity {
   @JoinColumn(name = "conversation_id", nullable = false)
   private Conversation conversation;
 
-  // Sender có thể là User (JOB_SEEKER) hoặc Employer
-  // Chỉ lưu ID và type, không dùng FK để linh hoạt
   @Column(nullable = false)
   private Long senderId;
 
-  // "USER" hoặc "EMPLOYER"
   @Column(nullable = false, length = 20)
   private String senderType;
 

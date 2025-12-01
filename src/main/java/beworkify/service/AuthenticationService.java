@@ -5,6 +5,13 @@ import beworkify.dto.response.EmployerResponse;
 import beworkify.dto.response.TokenResponse;
 import beworkify.dto.response.UserResponse;
 
+/**
+ * Service interface for authentication and authorization operations. Handles user and employer
+ * sign-in, token management, and third-party authentication.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface AuthenticationService {
   TokenResponse<EmployerResponse> employerSignIn(SignInRequest request);
 

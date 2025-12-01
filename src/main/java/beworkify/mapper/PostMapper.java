@@ -5,6 +5,12 @@ import beworkify.dto.response.PostResponse;
 import beworkify.entity.Post;
 import org.mapstruct.*;
 
+/**
+ * Mapper for converting between Post entity and DTOs.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Mapper(
     componentModel = "spring",
     uses = {CategoryPostMapper.class})

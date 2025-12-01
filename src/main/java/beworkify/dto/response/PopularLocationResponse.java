@@ -2,6 +2,12 @@ package beworkify.dto.response;
 
 import lombok.*;
 
+/**
+ * DTO for popular location response. Contains location details and job count.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @Builder

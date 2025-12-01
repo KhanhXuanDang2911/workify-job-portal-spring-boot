@@ -19,7 +19,6 @@ import beworkify.repository.httpclient.LinkedInUserInfoClient;
 import beworkify.service.*;
 import beworkify.service.redis.RedisTokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,10 +31,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Implementation of the AuthenticationService interface. Handles user and employer authentication,
+ * token management, and OAuth2 integration.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
-@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
   @Autowired
@@ -258,10 +263,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     ExchangeTokenLinkedInResponse exchangeTokenResponse =
         linkedInIdentityClient.getToken(
             GRANT_TYPE, code, LINKEDIN_REDIRECT_URI, LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET);
-    System.out.println("Access token linkedin: " + exchangeTokenResponse.getAccessToken());
     LinkedInUserInfoResponse userInfoResponse =
         linkedInUserInfoClient.getUserInfo("Bearer " + exchangeTokenResponse.getAccessToken());
-    System.out.println(userInfoResponse);
     if (!userRepository.existsByEmail(userInfoResponse.getEmail())) {
       Role role = roleService.findRoleByRoleName(UserRole.JOB_SEEKER.getName());
       User user =

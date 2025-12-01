@@ -15,6 +15,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing Application entities. Provides methods for CRUD operations and
+ * custom queries related to job applications.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
   Optional<Application> findByUserAndJob(User user, Job job);
@@ -29,14 +36,13 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
   @Query(
       value =
-          """
-			SELECT a.* FROM applications a
-			INNER JOIN jobs j ON j.id = a.job_id
-			LEFT JOIN employers e ON e.id = j.employer_id
-			WHERE a.job_id = CAST(:jobId AS bigint)
-			                    AND a.created_at >= COALESCE(CAST(:thresholdDateTime AS timestamp), '1970-01-01 00:00:00'::timestamp)
-			                    AND (CAST(:status AS varchar) IS NULL OR a.status = CAST(:status AS varchar))
-			""",
+          "SELECT a.* "
+              + "FROM applications a "
+              + "INNER JOIN jobs j ON j.id = a.job_id "
+              + "LEFT JOIN employers e ON e.id = j.employer_id "
+              + "WHERE a.job_id = CAST(:jobId AS bigint) "
+              + "  AND a.created_at >= COALESCE(CAST(:thresholdDateTime AS timestamp), '1970-01-01 00:00:00'::timestamp) "
+              + "  AND (CAST(:status AS varchar) IS NULL OR a.status = CAST(:status AS varchar))",
       nativeQuery = true)
   Page<Application> findByJobId(
       @Param("jobId") Long jobId,
@@ -47,11 +53,9 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
   long countByJobId(Long jobId);
 
   @Query(
-      """
-			SELECT a.job.id AS jobId, COUNT(a) AS cnt
-			FROM Application a
-			WHERE a.job.id IN :jobIds
-			GROUP BY a.job.id
-			""")
+      "SELECT a.job.id AS jobId, COUNT(a) AS cnt "
+          + "FROM Application a "
+          + "WHERE a.job.id IN :jobIds "
+          + "GROUP BY a.job.id")
   List<Object[]> countByJobIds(@Param("jobIds") List<Long> jobIds);
 }

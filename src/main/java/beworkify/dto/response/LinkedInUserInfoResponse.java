@@ -2,6 +2,12 @@ package beworkify.dto.response;
 
 import lombok.*;
 
+/**
+ * DTO for LinkedIn user info response.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Getter
 @Setter
 @Builder

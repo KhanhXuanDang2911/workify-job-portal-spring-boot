@@ -6,6 +6,13 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Validator for a list of enum values. Checks if all strings in the list correspond to valid enum
+ * constants.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public class ValueOfEnumListValidator
     implements ConstraintValidator<ValueOfEnumList, List<String>> {
 

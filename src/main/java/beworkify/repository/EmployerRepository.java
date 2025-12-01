@@ -10,6 +10,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+/**
+ * Repository interface for managing Employer entities. Provides methods for CRUD operations and
+ * custom queries related to employers.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @Repository
 public interface EmployerRepository extends JpaRepository<Employer, Long> {
   Optional<Employer> findByEmail(String email);
@@ -19,10 +26,14 @@ public interface EmployerRepository extends JpaRepository<Employer, Long> {
   boolean existsByEmailAndIdNot(String email, Long id);
 
   @Query(
-      "select e from Employer e where (:keyword is null or lower(e.companyName) like %:keyword% OR lower(e.email) like %:keyword%)"
-          + " and (:companySize is null or e.companySize = :companySize)"
-          + " and (:provinceId is null or e.province.id = :provinceId)"
-          + " and (:isAdmin = true or e.status = beworkify.enumeration.StatusUser.ACTIVE)")
+      "SELECT e "
+          + "FROM Employer e "
+          + "WHERE (:keyword IS NULL "
+          + "       OR lower(e.companyName) LIKE %:keyword% "
+          + "       OR lower(e.email) LIKE %:keyword%) "
+          + "  AND (:companySize IS NULL OR e.companySize = :companySize) "
+          + "  AND (:provinceId IS NULL OR e.province.id = :provinceId) "
+          + "  AND (:isAdmin = true OR e.status = beworkify.enumeration.StatusUser.ACTIVE)")
   Page<Employer> searchEmployers(
       @Param("keyword") String keyword,
       @Param("companySize") LevelCompanySize companySize,

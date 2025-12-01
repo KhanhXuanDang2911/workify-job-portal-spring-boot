@@ -7,6 +7,13 @@ import beworkify.enumeration.ApplicationStatus;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * Service interface for managing job applications. Handles business logic for creating, retrieving,
+ * and managing job applications.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 public interface ApplicationService {
   ApplicationResponse create(ApplicationRequest request, MultipartFile cv);
 

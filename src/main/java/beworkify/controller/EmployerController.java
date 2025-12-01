@@ -22,7 +22,6 @@ import jakarta.validation.groups.Default;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -36,7 +35,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
+/**
+ * REST controller for managing employers. Handles employer registration, profile management, and
+ * company information.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -213,9 +218,7 @@ public class EmployerController {
   public ResponseEntity<ResponseData<Void>> changePassword(
       @Valid @RequestBody UpdatePasswordRequest request) {
     Long employerId = AppUtils.getEmployerIdFromSecurityContext();
-    log.info("Request: Update password for employer ID = {}", employerId);
     employerService.updatePassword(employerId, request);
-    log.info("Response: password updated");
     String message =
         messageSource.getMessage(
             "user.password.update.success", null, LocaleContextHolder.getLocale());

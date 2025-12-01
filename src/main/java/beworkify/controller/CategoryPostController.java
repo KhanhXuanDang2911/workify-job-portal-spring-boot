@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.groups.Default;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
@@ -21,7 +20,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
+/**
+ * REST controller for managing post categories. Provides endpoints for CRUD operations on post
+ * categories.
+ *
+ * @author KhanhDX
+ * @since 1.0.0
+ */
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -33,7 +38,6 @@ public class CategoryPostController {
 
   @GetMapping("/all")
   public ResponseEntity<ResponseData<List<CategoryPostResponse>>> getAll() {
-    log.info("Request: Get all categories post");
     List<CategoryPostResponse> response = service.getAll();
     String message =
         messageSource.getMessage(
@@ -51,12 +55,6 @@ public class CategoryPostController {
               int pageSize,
           @RequestParam(required = false) List<String> sorts,
           @RequestParam(defaultValue = "") String keyword) {
-    log.info(
-        "Request: Get categories post with pageNumber={}, pageSize={}, sorts={}, keyword={}",
-        pageNumber,
-        pageSize,
-        sorts,
-        keyword);
     PageResponse<List<CategoryPostResponse>> response =
         service.getAllWithPaginationAndSort(pageNumber, pageSize, sorts, keyword);
     String message =
@@ -68,7 +66,6 @@ public class CategoryPostController {
   @GetMapping("/{id}")
   public ResponseEntity<ResponseData<CategoryPostResponse>> getById(
       @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id) {
-    log.info("Request: Get category post by id = {}", id);
     CategoryPostResponse dto = service.getById(id);
     String message =
         messageSource.getMessage("categoryPost.get.success", null, LocaleContextHolder.getLocale());
@@ -79,7 +76,6 @@ public class CategoryPostController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ResponseData<CategoryPostResponse>> create(
       @Validated({OnCreate.class, Default.class}) @RequestBody CategoryPostRequest request) {
-    log.info("Request: Create category post = {}", request);
     CategoryPostResponse dto = service.create(request);
     String message =
         messageSource.getMessage(
@@ -92,7 +88,6 @@ public class CategoryPostController {
   public ResponseEntity<ResponseData<CategoryPostResponse>> update(
       @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id,
       @Validated({OnUpdate.class, Default.class}) @RequestBody CategoryPostRequest request) {
-    log.info("Request: Update category post id = {}, data = {}", id, request);
     CategoryPostResponse dto = service.update(id, request);
     String message =
         messageSource.getMessage(
@@ -104,7 +99,6 @@ public class CategoryPostController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<ResponseData<Void>> delete(
       @PathVariable("id") @Min(value = 1, message = "{validation.id.min}") Long id) {
-    log.info("Request: Delete category post id = {}", id);
     service.delete(id);
     String message =
         messageSource.getMessage(
